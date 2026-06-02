@@ -1,0 +1,140 @@
+/* BASE */
+* {
+  font-family: 'EB Garamond', Georgia, serif;
+}
+
+/*  NAVBAR  */
+#mainNav {
+  background-color: #1a3c2e;
+}
+
+#mainNav .nav-link:hover {
+  color: #f0ad4e !important;
+}
+
+/*  HERO SECTION */
+.hero-section {
+  min-height: 88vh;
+  background-image: url('https://images.unsplash.com/photo-1562571708-527276a391ac');
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 40, 20, 0.72);
+}
+
+.letter-space {
+  letter-spacing: 2px;
+  font-size: 0.82rem;
+}
+
+/* CAROUSEL  */
+.slide-one,
+.slide-two,
+.slide-three {
+  height: 400px;
+  background-size: cover;
+  background-position: center;
+}
+
+.slide-one {
+  background-image: url('https://plus.unsplash.com/premium_photo-1664360228209-bb15b0c5be8f');
+}
+
+.slide-two {
+  background-image: url('https://images.unsplash.com/photo-1639696318296-2079d8a9216b');
+}
+
+.slide-three {
+  background-image: url('https://images.unsplash.com/photo-1765188987879-08ac9384f430');
+}
+
+/* Dark gradient at the bottom so caption is readable */
+.carousel-item::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 65%;
+  background: linear-gradient(to top, rgba(0,0,0,0.80) 0%, transparent 100%);
+}
+
+/* Caption stays at bottom above the gradient */
+.carousel-caption {
+  z-index: 2;
+  bottom: 30px;
+}
+
+/*  HOW IT WORKS  */
+.step-card {
+  background: #fff;
+  border-left: 4px solid #28a745;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.step-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12) !important;
+}
+
+/*  FEATURE CARDS  */
+.feature-card {
+  background: #fff;
+  border-bottom: 3px solid transparent;
+  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+
+.feature-card:hover {
+  border-bottom-color: #28a745;
+  transform: translateY(-5px);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.1) !important;
+}
+
+/* STATS  */
+.stats-section {
+  background-color: #1a3c2e;
+}
+
+.stat-box {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  transition: background 0.2s;
+}
+
+.stat-box:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+/* BUTTONS */
+.btn-warning:hover {
+  background-color: #e69500;
+  border-color: #e69500;
+}
+
+.btn-success:hover {
+  background-color: #1e7e34;
+}
+
+.btn-outline-success:hover {
+  background-color: #28a745;
+  color: #fff;
+}
+
+/* FOOTER  */
+.footer-section {
+  background-color: #111d17;
+}
+
+.footer-link {
+  color: #aaa;
+  text-decoration: none;
+}
+
+.footer-link:hover {
+  color: #f0ad4e;
+}
