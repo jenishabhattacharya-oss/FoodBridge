@@ -1,0 +1,176 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Donate Food - Food Bridge</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand fw-bold fs-4" href="#">
+      <i class="bi bi-basket2-fill me-2 text-warning"></i>Food Bridge
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="index.html#how">How It Works</a></li>
+        <li class="nav-item"><a class="nav-link text-warning fw-semibold" href="#">Donate</a></li>
+        <li class="nav-item"><a class="nav-link" href="index.html#stats">Impact</a></li>
+        <li class="nav-item"><a class="nav-link" href="index.html#contact">Contact</a></li>
+      </ul>
+      <a href="#" class="btn btn-warning ms-3 fw-semibold px-3">Join as NGO</a>
+    </div>
+  </div>
+</nav>
+
+<!-- PAGE HEADER -->
+<section class="py-5 text-center" style="padding-top:3rem !important;">
+  <div class="container">
+    <p class="text-warning letter-space mb-1">MAKING A DIFFERENCE</p>
+    <h1 class="fw-bold display-6">Donate Surplus Food</h1>
+    <p class="text-muted">Fill out the details below, and we'll match you with a nearby NGO instantly.</p>
+  </div>
+</section>
+
+<!-- STATS ROW -->
+<section class="pb-4">
+  <div class="container">
+    <div class="row g-3 justify-content-center">
+      <div class="col-6 col-md-3"><div class="stat-box text-center py-3"><div class="text-warning fw-bold fs-5">12,400+</div><div class="text-muted small letter-space">MEALS SHARED</div></div></div>
+      <div class="col-6 col-md-3"><div class="stat-box text-center py-3"><div class="text-warning fw-bold fs-5">380+</div><div class="text-muted small letter-space">NGO PARTNERS</div></div></div>
+      <div class="col-6 col-md-3"><div class="stat-box text-center py-3"><div class="text-warning fw-bold fs-5">92%</div><div class="text-muted small letter-space">ON-TIME PICKUP</div></div></div>
+      <div class="col-6 col-md-3"><div class="stat-box text-center py-3"><div class="text-warning fw-bold fs-5">24 hrs</div><div class="text-muted small letter-space">AVG. MATCH TIME</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS MINI -->
+<section class="py-4">
+  <div class="container" style="max-width:860px;">
+    <h6 class="text-center text-muted letter-space mb-4">HOW FOOD BRIDGE WORKS</h6>
+    <div class="row g-3">
+      <div class="col-md-4"><div class="step-card p-3 h-100"><i class="bi bi-pencil-square fs-3 text-warning d-block mb-2"></i><div class="fw-bold mb-1">1. Fill the Form</div><div class="text-muted small">Tell us what surplus food you have and when it's available for pickup.</div></div></div>
+      <div class="col-md-4"><div class="step-card p-3 h-100"><i class="bi bi-lightning-charge-fill fs-3 text-warning d-block mb-2"></i><div class="fw-bold mb-1">2. Instant Match</div><div class="text-muted small">Our system matches you with the nearest verified NGO in seconds.</div></div></div>
+      <div class="col-md-4"><div class="step-card p-3 h-100"><i class="bi bi-truck fs-3 text-warning d-block mb-2"></i><div class="fw-bold mb-1">3. We Handle Pickup</div><div class="text-muted small">The NGO arrives at your location — no extra effort needed from you.</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- DONATION FORM -->
+<section class="py-5">
+  <div class="container" style="max-width:700px;">
+    <div class="glass p-4 p-md-5">
+      <form>
+
+        <!-- Donor Info -->
+        <h6 class="text-muted fw-bold mb-3 letter-space"><i class="bi bi-person-fill me-2"></i>DONOR INFORMATION</h6>
+        <div class="row g-3 mb-4">
+          <div class="col-md-6">
+            <label class="form-label small fw-semibold">Name / Organization</label>
+            <input type="text" class="form-control" placeholder="e.g. Taj Hotel or Rahul Sharma" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label small fw-semibold">Contact Number</label>
+            <input type="tel" class="form-control" placeholder="+91 98XXXXXXXX" required>
+          </div>
+        </div>
+
+        <!-- Food Info -->
+        <h6 class="text-muted fw-bold mb-3 letter-space"><i class="bi bi-egg-fried me-2"></i>FOOD DETAILS</h6>
+        <div class="row g-3 mb-4">
+          <div class="col-md-6">
+            <label class="form-label small fw-semibold">Food Type</label>
+            <select class="form-select" required>
+              <option value="" disabled selected>Select type...</option>
+              <option>Vegetarian (Cooked)</option>
+              <option>Non-Vegetarian (Cooked)</option>
+              <option>Raw Ingredients</option>
+              <option>Packaged/Bakery Items</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label small fw-semibold">Approx. Quantity</label>
+            <input type="text" class="form-control" placeholder="e.g. Feeds 50 people / 10 kg" required>
+          </div>
+        </div>
+
+        <!-- Pickup Details -->
+        <h6 class="text-muted fw-bold mb-3 letter-space"><i class="bi bi-geo-alt-fill me-2"></i>PICKUP DETAILS</h6>
+        <div class="mb-3">
+          <label class="form-label small fw-semibold">Pickup Address</label>
+          <textarea class="form-control" rows="2" placeholder="Full address with landmarks..." required></textarea>
+        </div>
+        <div class="row g-3 mb-4">
+          <div class="col-md-6">
+            <label class="form-label small fw-semibold">Available From</label>
+            <input type="time" class="form-control" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label small fw-semibold">Must Pick Up By</label>
+            <input type="time" class="form-control" required>
+          </div>
+        </div>
+
+        <!-- Feature badges -->
+        <div class="row g-2 mb-4">
+          <div class="col-4"><div class="glass-sm text-center p-3"><i class="bi bi-patch-check-fill text-success fs-4"></i><div class="small fw-semibold mt-1">Verified NGOs</div></div></div>
+          <div class="col-4"><div class="glass-sm text-center p-3"><i class="bi bi-clock-fill text-warning fs-4"></i><div class="small fw-semibold mt-1">Fast Matching</div></div></div>
+          <div class="col-4"><div class="glass-sm text-center p-3"><i class="bi bi-heart-fill text-danger fs-4"></i><div class="small fw-semibold mt-1">Zero Waste</div></div></div>
+        </div>
+
+        <div class="d-grid">
+          <button type="submit" class="btn btn-warning btn-lg fw-bold">
+            <i class="bi bi-check-circle-fill me-2"></i>Submit Donation
+          </button>
+        </div>
+      </form>
+    </div>
+    <p class="text-center text-muted small mt-3">
+      <i class="bi bi-shield-check me-1"></i> Your food will be handled by verified NGOs following strict safety guidelines.
+    </p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer-section pt-5 pb-3">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-md-4">
+        <h5 class="fw-bold mb-2"><i class="bi bi-basket2-fill me-2 text-warning"></i>Food Bridge</h5>
+        <p class="small text-secondary">Bridging the gap between surplus food and hungry communities — one donation at a time.</p>
+      </div>
+      <div class="col-md-4">
+        <h6 class="fw-semibold mb-3">Quick Links</h6>
+        <ul class="list-unstyled small">
+          <li><a href="index.html" class="footer-link">Home</a></li>
+          <li><a href="index.html#how" class="footer-link">How It Works</a></li>
+          <li><a href="index.html#features" class="footer-link">Features</a></li>
+          <li><a href="index.html#stats" class="footer-link">Impact</a></li>
+        </ul>
+      </div>
+      <div class="col-md-4">
+        <h6 class="fw-semibold mb-3">Contact Us</h6>
+        <p class="small text-secondary mb-1"><i class="bi bi-envelope me-2"></i>contact@foodbridge.org</p>
+        <p class="small text-secondary mb-1"><i class="bi bi-telephone me-2"></i>+91 98300 XXXXX</p>
+        <p class="small text-secondary"><i class="bi bi-geo-alt me-2"></i>Siliguri, West Bengal, India</p>
+      </div>
+    </div>
+    <hr class="border-secondary mt-4"/>
+    <p class="text-center text-secondary small mb-0">&copy; 2026 Food Bridge. All rights reserved.</p>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
