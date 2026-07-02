@@ -473,3 +473,88 @@ h6 {
 .footer-link:hover {
   color: var(--amber);
 }
+
+/* ══════════════════════════════════════
+   CONTACT PAGE — BLURRED HEADER BG
+══════════════════════════════════════ */
+.contact-hero {
+  position: relative;
+  min-height: 46vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* image lives on a pseudo-element so the blur never touches the text */
+.contact-hero::before {
+  content: '';
+  position: absolute;
+  inset: -20px;
+  background-image: url('https://images.pexels.com/photos/26628058/pexels-photo-26628058.jpeg');
+  background-size: cover;
+  background-position: center;
+  filter: blur(10px);
+  transform: scale(1.08);
+}
+
+.contact-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 10, 8, 0.6);
+}
+
+.contact-hero .container {
+  position: relative;
+  z-index: 1;
+}
+
+/* Feedback form card */
+.feedback-card {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* Support / help cards */
+.support-card {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius);
+  box-shadow: var(--glass-shadow);
+  color: #e8f5ee;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.support-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--amber);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(240, 173, 78, 0.15);
+}
+
+.support-card i {
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.support-card:hover i {
+  transform: scale(1.15);
+  filter: drop-shadow(0 0 6px rgba(240, 173, 78, 0.55));
+}
+
+/* ── FOOTER ── */
+.footer-section {
+  background: rgba(5, 15, 8, 0.85);
+  border-top: 1px solid var(--glass-border);
+}
+
+.footer-link {
+  color: rgba(255, 255, 255, 0.45);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-link:hover {
+  color: var(--amber);
+}
