@@ -36,18 +36,25 @@
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navMenu">
-          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-            <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="#home">Home</a>
+            </li>
+
             <li class="nav-item">
               <a class="nav-link" href="#how">How It Works</a>
             </li>
+
             <li class="nav-item dropdown">
               <a
                 class="nav-link dropdown-toggle"
                 href="#"
+                id="featuresDropdown"
                 data-bs-toggle="dropdown"
-                >Features</a
               >
+                Features
+              </a>
+
               <ul class="dropdown-menu dropdown-menu-dark">
                 <li>
                   <a class="dropdown-item" href="#features"
@@ -67,11 +74,13 @@
                 </li>
               </ul>
             </li>
+
             <li class="nav-item">
               <a class="nav-link" href="#stats">Impact</a>
             </li>
+
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'contact'%}">Contact</a>
+              <a class="nav-link" href="{% url 'contact' %}"> Contact </a>
             </li>
           </ul>
           <a
@@ -427,6 +436,14 @@
       document
         .querySelectorAll(".reveal")
         .forEach((el) => observer.observe(el));
+    </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        new bootstrap.ScrollSpy(document.body, {
+          target: "#mainNav",
+          offset: 90,
+        });
+      });
     </script>
   </body>
 </html>

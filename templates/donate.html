@@ -23,7 +23,7 @@
     <!-- NAVBAR -->
     <nav class="navbar navbar-expand-lg navbar-dark sticky-top" id="mainNav">
       <div class="container">
-        <a class="navbar-brand fw-bold fs-4" href="#">
+        <a class="navbar-brand fw-bold fs-4" href="{% url 'index' %}">
           <i class="bi bi-basket2-fill me-2 text-warning"></i>Food Bridge
         </a>
         <button
@@ -45,8 +45,8 @@
             <li class="nav-item">
               <a
                 class="nav-link text-warning fw-semibold"
-                href="{% url 'donate' %}"
-                >Donate</a
+                href="{% url 'index' %}#features"
+                >Features</a
               >
             </li>
             <li class="nav-item">
@@ -80,25 +80,25 @@
       <div class="container">
         <div class="row g-3 justify-content-center">
           <div class="col-6 col-md-3">
-            <div class="stat-box text-center py-3">
+            <div class="stat-box glass-card text-center py-3">
               <div class="text-warning fw-bold fs-5">12,400+</div>
               <div class="text-muted small letter-space">MEALS SHARED</div>
             </div>
           </div>
           <div class="col-6 col-md-3">
-            <div class="stat-box text-center py-3">
+            <div class="stat-box glass-card text-center py-3">
               <div class="text-warning fw-bold fs-5">380+</div>
               <div class="text-muted small letter-space">NGO PARTNERS</div>
             </div>
           </div>
           <div class="col-6 col-md-3">
-            <div class="stat-box text-center py-3">
+            <div class="stat-box glass-card text-center py-3">
               <div class="text-warning fw-bold fs-5">92%</div>
               <div class="text-muted small letter-space">ON-TIME PICKUP</div>
             </div>
           </div>
           <div class="col-6 col-md-3">
-            <div class="stat-box text-center py-3">
+            <div class="stat-box glass-card text-center py-3">
               <div class="text-warning fw-bold fs-5">24 hrs</div>
               <div class="text-muted small letter-space">AVG. MATCH TIME</div>
             </div>
@@ -115,7 +115,7 @@
         </h6>
         <div class="row g-3">
           <div class="col-md-4">
-            <div class="step-card p-3 h-100">
+            <div class="step-card glass-card p-3 h-100">
               <i class="bi bi-pencil-square fs-3 text-warning d-block mb-2"></i>
               <div class="fw-bold mb-1">1. Fill the Form</div>
               <div class="text-muted small">
@@ -125,7 +125,7 @@
             </div>
           </div>
           <div class="col-md-4">
-            <div class="step-card p-3 h-100">
+            <div class="step-card glass-card p-3 h-100">
               <i
                 class="bi bi-lightning-charge-fill fs-3 text-warning d-block mb-2"
               ></i>
@@ -136,7 +136,7 @@
             </div>
           </div>
           <div class="col-md-4">
-            <div class="step-card p-3 h-100">
+            <div class="step-card glass-card p-3 h-100">
               <i class="bi bi-truck fs-3 text-warning d-block mb-2"></i>
               <div class="fw-bold mb-1">3. We Handle Pickup</div>
               <div class="text-muted small">
@@ -242,19 +242,19 @@
             <!-- Feature badges -->
             <div class="row g-2 mb-4">
               <div class="col-4">
-                <div class="glass-sm text-center p-3">
+                <div class="glass-card text-center p-3">
                   <i class="bi bi-patch-check-fill text-success fs-4"></i>
                   <div class="small fw-semibold mt-1">Verified NGOs</div>
                 </div>
               </div>
               <div class="col-4">
-                <div class="glass-sm text-center p-3">
+                <div class="glass-card text-center p-3">
                   <i class="bi bi-clock-fill text-warning fs-4"></i>
                   <div class="small fw-semibold mt-1">Fast Matching</div>
                 </div>
               </div>
               <div class="col-4">
-                <div class="glass-sm text-center p-3">
+                <div class="glass-card text-center p-3">
                   <i class="bi bi-heart-fill text-danger fs-4"></i>
                   <div class="small fw-semibold mt-1">Zero Waste</div>
                 </div>
@@ -316,7 +316,7 @@
               <i class="bi bi-telephone me-2"></i>+91 98300 XXXXX
             </p>
             <p class="small text-secondary">
-              <i class="bi bi-geo-alt me-2"></i>Siliguri, West Bengal, India
+              <i class="bi bi-geo-alt me-2"></i>Kolkata, West Bengal, India
             </p>
           </div>
         </div>
