@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load static %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+{% endblock %}
+{% block content %}
+    <section class="auth-page">
+        <div class="container">
+            <div class="auth-wrapper glass">
+                <!-- Left Side -->
+                <div class="auth-brand">
+                    <div class="auth-brand-content">
+                        <div class="brand-logo">🌱</div>
+                        <h1>FoodBridge</h1>
+                        <p class="lead">Connecting surplus food with people who need it.</p>
+                        <div class="brand-features">
+                            <div class="feature">
+                                <i class="bi bi-check-circle-fill"></i>
+                                <span>Reduce Food Waste</span>
+                            </div>
+                            <div class="feature">
+                                <i class="bi bi-building-check"></i>
+                                <span>Verified NGOs</span>
+                            </div>
+                            <div class="feature">
+                                <i class="bi bi-truck"></i>
+                                <span>Easy Pickup & Delivery</span>
+                            </div>
+                            <div class="feature">
+                                <i class="bi bi-heart-fill"></i>
+                                <span>Community Driven</span>
+                            </div>
+                        </div>
+                        <blockquote>
+                            “Every meal shared is hope delivered.”
+                        </blockquote>
+                    </div>
+                </div>
+                <!-- Right Side -->
+                <div class="auth-form-container">
+                    {% block auth_content %}{% endblock %}
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+{% block extra_js %}
+    <script src="{% static 'js/auth.js' %}"></script>
+{% endblock %}

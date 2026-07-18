@@ -1,0 +1,8 @@
+<div class="form-group">
+    {{ field.label_tag }}
+    {{ field }}
+    {% if field.help_text %}
+        <small class="form-text text-muted">{{ field.help_text }}</small>
+    {% endif %}
+    {% include "components/auth/errors.html" with field=field %}
+</div>

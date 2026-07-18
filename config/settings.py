@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     "bridge",
     "accounts",
     "donors",
+    "volunteers",
+    "ngos",
 ]
 
 MIDDLEWARE = [

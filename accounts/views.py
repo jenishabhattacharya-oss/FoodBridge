@@ -1,6 +1,8 @@
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponseBadRequest
 from django.shortcuts import redirect, render
+from django.contrib import messages
+
 
 from .forms import LoginForm
 from .registration import FORM_MAP
@@ -42,29 +44,23 @@ def register(request):
 
 
 def login_view(request):
-    if request.method == "POST":
-        form = LoginForm(request.POST)
+    form = LoginForm(request.POST or None)
 
-        if form.is_valid():
-            user = authenticate(
-                request,
-                email=form.cleaned_data["email"],
-                password=form.cleaned_data["password"],
-            )
+    if request.method == "POST" and form.is_valid():
+        user = authenticate(
+            request,
+            email=form.cleaned_data["email"],
+            password=form.cleaned_data["password"],
+        )
 
-            if user is not None:
-                login(request, user)
-                return redirect("home")
+        if user:
+            login(request, user)
+            return redirect("home")
 
-            form.add_error(None, "Invalid email or password.")
-
-    else:
-        form = LoginForm()
+        messages.error(request, "Invalid email or password.")
 
     return render(
         request,
         "accounts/login.html",
-        {
-            "form": form,
-        },
+        {"form": form},
     )

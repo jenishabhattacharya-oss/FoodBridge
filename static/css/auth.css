@@ -1,0 +1,410 @@
+/* ==========================================================
+   AUTHENTICATION
+   FoodBridge Authentication Pages
+========================================================== */
+
+/* ==========================================================
+   LAYOUT
+========================================================== */
+
+.auth-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 6rem 0;
+}
+
+.auth-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+
+    overflow: hidden;
+
+    border-radius: 28px;
+
+    background: rgba(255, 255, 255, 0.08);
+
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    border: 1px solid rgba(255, 255, 255, 0.12);
+
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+
+    animation: authFade 0.5s ease;
+}
+
+@keyframes authFade {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ==========================================================
+   LEFT PANEL
+========================================================== */
+
+.auth-brand {
+    position: relative;
+
+    padding: 4rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: linear-gradient(155deg, rgba(40, 167, 69, 0.25), rgba(18, 43, 26, 0.95));
+}
+
+.auth-brand::before {
+    content: '';
+
+    position: absolute;
+    inset: 0;
+
+    background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.15), transparent 45%);
+
+    pointer-events: none;
+}
+
+.auth-brand-content {
+    position: relative;
+    z-index: 2;
+}
+
+.brand-logo {
+    width: 90px;
+    height: 90px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.08);
+
+    border: 1px solid rgba(255, 255, 255, 0.18);
+
+    font-size: 2.7rem;
+
+    margin-bottom: 2rem;
+}
+
+.auth-brand h1 {
+    margin-bottom: 1rem;
+}
+
+.auth-brand .lead {
+    color: rgba(255, 255, 255, 0.75);
+    margin-bottom: 2.5rem;
+}
+
+.brand-features {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.brand-features .feature {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.brand-features i {
+    color: var(--amber);
+}
+
+.auth-brand blockquote {
+    margin-top: 3rem;
+
+    padding-left: 1rem;
+
+    border-left: 3px solid var(--amber);
+
+    color: rgba(255, 255, 255, 0.65);
+
+    font-style: italic;
+}
+
+/* ==========================================================
+   RIGHT PANEL
+========================================================== */
+
+.auth-form-container {
+    padding: 4rem;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.auth-header p {
+    color: rgba(255, 255, 255, 0.65);
+}
+
+/* ==========================================================
+   ROLE SELECTOR
+========================================================== */
+
+.role-selector {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 1rem;
+
+    margin-bottom: 2rem;
+}
+
+.role-card {
+    cursor: pointer;
+}
+
+.role-card input {
+    display: none;
+}
+
+.role-card span {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 0.45rem;
+
+    padding: 1.2rem;
+
+    border-radius: 18px;
+
+    background: rgba(255, 255, 255, 0.05);
+
+    border: 1px solid rgba(255, 255, 255, 0.12);
+
+    transition: all 0.25s ease;
+}
+
+.role-card:hover span {
+    transform: translateY(-5px);
+
+    background: rgba(255, 255, 255, 0.08);
+
+    border-color: var(--amber);
+}
+
+.role-card input:checked + span,
+.role-card.selected span {
+    background: rgba(240, 173, 78, 0.12);
+
+    border-color: var(--amber);
+
+    box-shadow: 0 0 20px rgba(240, 173, 78, 0.15);
+}
+
+.role-card i {
+    font-size: 2rem;
+    color: var(--amber);
+}
+
+.role-card strong {
+    color: white;
+}
+
+.role-card small {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* ==========================================================
+   FORM
+========================================================== */
+
+.form-group {
+    margin-bottom: 1.3rem;
+
+    transition: transform 0.25s ease;
+}
+
+.form-group.focused {
+    transform: translateY(-2px);
+}
+
+.form-group label {
+    margin-bottom: 0.5rem;
+
+    color: white;
+
+    font-weight: 500;
+}
+
+.form-control,
+.form-select {
+    width: 100%;
+}
+
+.form-control::placeholder {
+    color: rgba(255, 255, 255, 0.45);
+}
+
+/* ==========================================================
+   PASSWORD
+========================================================== */
+
+.password-wrapper {
+    position: relative;
+}
+
+.password-wrapper .form-control {
+    padding-right: 50px;
+}
+
+.password-toggle {
+    position: absolute;
+
+    right: 15px;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    background: transparent;
+    border: none;
+
+    color: rgba(255, 255, 255, 0.6);
+
+    transition: color 0.25s;
+}
+
+.password-toggle:hover {
+    color: var(--amber);
+}
+
+/* ==========================================================
+   BUTTON
+========================================================== */
+
+.auth-btn,
+.auth-form-container .btn-warning {
+    width: 100%;
+
+    padding: 0.95rem;
+
+    margin-top: 1rem;
+
+    border-radius: 999px;
+
+    font-size: 1rem;
+
+    font-weight: 700;
+}
+
+/* ==========================================================
+   FOOTER
+========================================================== */
+
+.auth-footer {
+    margin-top: 2rem;
+
+    text-align: center;
+
+    color: rgba(255, 255, 255, 0.65);
+}
+
+.auth-footer a {
+    color: var(--amber);
+
+    text-decoration: none;
+}
+
+.auth-footer a:hover {
+    text-decoration: underline;
+}
+
+.forgot-link {
+    color: var(--amber);
+
+    text-decoration: none;
+
+    transition: 0.25s;
+}
+
+.forgot-link:hover {
+    color: white;
+}
+
+/* ==========================================================
+   CHECKBOX
+========================================================== */
+
+.form-check-label {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.form-check-input:checked {
+    background: var(--amber);
+    border-color: var(--amber);
+}
+
+/* ==========================================================
+   ERRORS
+========================================================== */
+
+.errorlist {
+    margin-top: 0.5rem;
+
+    padding: 0;
+
+    list-style: none;
+
+    color: #ffbcbc;
+
+    font-size: 0.9rem;
+}
+
+/* ==========================================================
+   LOADING
+========================================================== */
+
+.spinner-border-sm {
+    vertical-align: middle;
+}
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media (max-width: 992px) {
+    .auth-wrapper {
+        grid-template-columns: 1fr;
+    }
+
+    .auth-brand {
+        display: none;
+    }
+
+    .auth-form-container {
+        padding: 2.5rem;
+    }
+
+    .role-selector {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 576px) {
+    .auth-page {
+        padding: 4rem 1rem;
+    }
+
+    .auth-form-container {
+        padding: 2rem 1.5rem;
+    }
+}
