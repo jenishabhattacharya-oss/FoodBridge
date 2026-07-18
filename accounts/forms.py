@@ -39,3 +39,23 @@ class BaseUserRegistrationForm(forms.ModelForm):
         )
 
         return user
+
+
+class LoginForm(forms.Form):
+    email = forms.EmailField(
+        widget=forms.EmailInput(
+            attrs={
+                "placeholder": "Enter your email",
+                "autocomplete": "email",
+            }
+        )
+    )
+
+    password = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={
+                "placeholder": "Enter your password",
+                "autocomplete": "current-password",
+            }
+        )
+    )

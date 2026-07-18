@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}
+    Register | FoodBridge
+{% endblock %}
+{% block meta_description %}
+    Create a FoodBridge account as a donor, volunteer, or NGO and help reduce food waste.
+{% endblock %}
+{% block content %}
+    <header class="text-center py-5">
+        <h1>FoodBridge</h1>
+    </header>
+    <main class="container">
+        <h2>Create Account</h2>
+        <form method="post">
+            {% csrf_token %}
+            <fieldset>
+                <legend>Choose your role</legend>
+                <label>
+                    <input type="radio" name="role" value="DONOR" checked>
+                    Donor
+                </label>
+                <label>
+                    <input type="radio" name="role" value="VOLUNTEER">
+                    Volunteer
+                </label>
+                <label>
+                    <input type="radio" name="role" value="NGO">
+                    NGO
+                </label>
+            </fieldset>
+            <hr>
+            <h3>Account Information</h3>
+            <div>
+                <label for="email">Email</label>
+                <br>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <br>
+            <div>
+                <label for="first_name">First Name</label>
+                <br>
+                <input type="text" id="first_name" name="first_name" required>
+            </div>
+            <br>
+            <div>
+                <label for="last_name">Last Name</label>
+                <br>
+                <input type="text" id="last_name" name="last_name" required>
+            </div>
+            <br>
+            <div>
+                <label for="phone">Phone</label>
+                <br>
+                <input type="tel" id="phone" name="phone" required>
+            </div>
+            <br>
+            <div>
+                <label for="password">Password</label>
+                <br>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <br>
+            <div>
+                <label for="confirm_password">Confirm Password</label>
+                <br>
+                <input type="password"
+                       id="confirm_password"
+                       name="confirm_password"
+                       required>
+            </div>
+            <hr>
+            <section id="role-fields">
+                <h3>Role-specific Details</h3>
+                <div id="donor-fields">
+                    <label for="address">Address</label>
+                    <br>
+                    <textarea id="address" name="address" rows="4"></textarea>
+                </div>
+            </section>
+            <br>
+            <button type="submit">Register</button>
+        </form>
+        <p>
+            Already have an account?
+            <a href="#">Login</a>
+        </p>
+    </main>
+{% endblock %}

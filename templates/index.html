@@ -1,449 +1,223 @@
-{% load static %}
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Food Bridge - Redistribute. Reduce. Restore.</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
-  </head>
-
-  <body>
-    <!-- NAVBAR -->
-    <nav class="navbar navbar-expand-lg navbar-dark sticky-top" id="mainNav">
-      <div class="container">
-        <a class="navbar-brand fw-bold fs-4" href="#">
-          <i class="bi bi-basket2-fill me-2 text-warning"></i>Food Bridge
-        </a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navMenu"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navMenu">
-          <ul class="navbar-nav ms-auto">
-            <li class="nav-item">
-              <a class="nav-link" href="#home">Home</a>
-            </li>
-
-            <li class="nav-item">
-              <a class="nav-link" href="#how">How It Works</a>
-            </li>
-
-            <li class="nav-item dropdown">
-              <a
-                class="nav-link dropdown-toggle"
-                href="#"
-                id="featuresDropdown"
-                data-bs-toggle="dropdown"
-              >
-                Features
-              </a>
-
-              <ul class="dropdown-menu dropdown-menu-dark">
-                <li>
-                  <a class="dropdown-item" href="#features"
-                    >Donor Registration</a
-                  >
-                </li>
-                <li>
-                  <a class="dropdown-item" href="#features"
-                    >Real-Time Tracking</a
-                  >
-                </li>
-                <li>
-                  <a class="dropdown-item" href="#features">Volunteer Pickup</a>
-                </li>
-                <li>
-                  <a class="dropdown-item" href="#features">Impact Reports</a>
-                </li>
-              </ul>
-            </li>
-
-            <li class="nav-item">
-              <a class="nav-link" href="#stats">Impact</a>
-            </li>
-
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'contact' %}"> Contact </a>
-            </li>
-          </ul>
-          <a
-            href="{% url 'donate' %}"
-            class="btn btn-warning ms-3 fw-semibold px-3"
-            >Donate Food</a
-          >
-        </div>
-      </div>
-    </nav>
-
+{% extends "base.html" %}
+{% block title %}FoodBridge - Redistribute. Reduce. Restore.
+{% endblock %}
+{% block content %}
     <!-- HERO — glass card removed, text sits directly on the background image -->
     <section id="home" class="hero-section d-flex align-items-center">
-      <div class="hero-overlay"></div>
-      <div class="container position-relative z-1 py-5">
-        <div class="row justify-content-center">
-          <div class="col-lg-8 text-center">
-            <p class="text-warning fw-semibold mb-2 letter-space hero-tagline">
-              FIGHTING HUNGER, ONE EVENT AT A TIME
-            </p>
-            <h1 class="display-5 fw-bold mb-3 hero-title">
-              Turn Surplus Food<br />Into Someone's Next Meal
-            </h1>
-            <p
-              class="lead mb-4 mx-auto text-white-50 hero-lead"
-              style="max-width: 540px"
-            >
-              We connect event organizers and corporates with nearby shelters
-              and NGOs, in real time, so no safe food goes to waste.
-            </p>
-            <div class="hero-btns">
-              <a href="#how" class="btn btn-warning btn-lg fw-bold me-2"
-                >How It Works</a
-              >
-              <a href="#features" class="btn btn-outline-light btn-lg"
-                >Explore Features</a
-              >
+        <div class="hero-overlay"></div>
+        <div class="container position-relative z-1 py-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 text-center">
+                    <p class="text-warning fw-semibold mb-2 letter-space hero-tagline">FIGHTING HUNGER, ONE EVENT AT A TIME</p>
+                    <h1 class="display-5 fw-bold mb-3 hero-title">
+                        Turn Surplus Food
+                        <br />
+                        Into Someone's Next Meal
+                    </h1>
+                    <p class="lead mb-4 mx-auto text-white-50 hero-lead">
+                        We connect event organizers and corporates with nearby shelters and NGOs, in
+                        real time, so no safe food goes to waste.
+                    </p>
+                    <div class="hero-btns">
+                        <a href="#how" class="btn btn-warning btn-lg fw-bold me-2">How It Works</a>
+                        <a href="#features" class="btn btn-outline-light btn-lg">Explore Features</a>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
     </section>
-
     <!-- CAROUSEL -->
     <section class="py-5 reveal">
-      <div class="container">
-        <h2 class="text-center fw-bold mb-4">Real Stories. Real Impact.</h2>
-        <div
-          id="foodCarousel"
-          class="carousel slide glass-card overflow-hidden"
-          data-bs-ride="carousel"
-        >
-          <div class="carousel-indicators">
-            <button
-              type="button"
-              data-bs-target="#foodCarousel"
-              data-bs-slide-to="0"
-              class="active"
-            ></button>
-            <button
-              type="button"
-              data-bs-target="#foodCarousel"
-              data-bs-slide-to="1"
-            ></button>
-            <button
-              type="button"
-              data-bs-target="#foodCarousel"
-              data-bs-slide-to="2"
-            ></button>
-          </div>
-          <div class="carousel-inner">
-            <div class="carousel-item active slide-one">
-              <div class="carousel-caption">
-                <h4 class="fw-bold">
-                  Corporate Lunch Surplus Redistributed in 45 Minutes
-                </h4>
-                <p>
-                  A Kolkata tech firm donated 200 meals from a board meeting.
-                  Delivered to a local shelter before 2 PM.
-                </p>
-              </div>
+        <div class="container">
+            <h2 class="text-center fw-bold mb-4">Real Stories. Real Impact.</h2>
+            <div id="foodCarousel"
+                 class="carousel slide glass-card overflow-hidden"
+                 data-bs-ride="carousel">
+                <div class="carousel-indicators">
+                    <button type="button"
+                            data-bs-target="#foodCarousel"
+                            data-bs-slide-to="0"
+                            class="active"></button>
+                    <button type="button" data-bs-target="#foodCarousel" data-bs-slide-to="1"></button>
+                    <button type="button" data-bs-target="#foodCarousel" data-bs-slide-to="2"></button>
+                </div>
+                <div class="carousel-inner">
+                    <div class="carousel-item active slide-one">
+                        <div class="carousel-caption">
+                            <h4 class="fw-bold">Corporate Lunch Surplus Redistributed in 45 Minutes</h4>
+                            <p>
+                                A Kolkata tech firm donated 200 meals from a board meeting. Delivered to
+                                a local shelter before 2 PM.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="carousel-item slide-two">
+                        <div class="carousel-caption">
+                            <h4 class="fw-bold">Wedding Feast, Zero Waste</h4>
+                            <p>
+                                500 servings of food saved from a Siliguri wedding. Matched with 3 NGOs
+                                via our real-time system.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="carousel-item slide-three">
+                        <div class="carousel-caption">
+                            <h4 class="fw-bold">University Canteen Joins the Network</h4>
+                            <p>
+                                Daily leftover meals now routed to nearby student welfare centers every
+                                evening automatically.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <button class="carousel-control-prev"
+                        type="button"
+                        data-bs-target="#foodCarousel"
+                        data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon"></span>
+                </button>
+                <button class="carousel-control-next"
+                        type="button"
+                        data-bs-target="#foodCarousel"
+                        data-bs-slide="next">
+                    <span class="carousel-control-next-icon"></span>
+                </button>
             </div>
-            <div class="carousel-item slide-two">
-              <div class="carousel-caption">
-                <h4 class="fw-bold">Wedding Feast, Zero Waste</h4>
-                <p>
-                  500 servings of food saved from a Siliguri wedding. Matched
-                  with 3 NGOs via our real-time system.
-                </p>
-              </div>
-            </div>
-            <div class="carousel-item slide-three">
-              <div class="carousel-caption">
-                <h4 class="fw-bold">University Canteen Joins the Network</h4>
-                <p>
-                  Daily leftover meals now routed to nearby student welfare
-                  centers every evening automatically.
-                </p>
-              </div>
-            </div>
-          </div>
-          <button
-            class="carousel-control-prev"
-            type="button"
-            data-bs-target="#foodCarousel"
-            data-bs-slide="prev"
-          >
-            <span class="carousel-control-prev-icon"></span>
-          </button>
-          <button
-            class="carousel-control-next"
-            type="button"
-            data-bs-target="#foodCarousel"
-            data-bs-slide="next"
-          >
-            <span class="carousel-control-next-icon"></span>
-          </button>
         </div>
-      </div>
     </section>
-
     <!-- HOW IT WORKS -->
     <section id="how" class="py-5 reveal">
-      <div class="container text-center">
-        <h2 class="fw-bold mb-2">How It Works</h2>
-        <p class="text-muted mb-5">
-          Three simple steps to get food from event to plate.
-        </p>
-        <div class="row g-4">
-          <div class="col-md-4">
-            <div class="step-card glass-card p-4 h-100">
-              <i class="bi bi-pencil-square fs-2 text-warning mb-3 d-block"></i>
-              <h5 class="fw-bold mb-3">1. Post Surplus</h5>
-              <p class="text-muted">
-                Event organizers log available food including quantity, type,
-                location, and pickup window.
-              </p>
+        <div class="container text-center">
+            <h2 class="fw-bold mb-2">How It Works</h2>
+            <p class="text-muted mb-5">Three simple steps to get food from event to plate.</p>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="step-card glass-card p-4 h-100">
+                        <i class="bi bi-pencil-square fs-2 text-warning mb-3 d-block"></i>
+                        <h5 class="fw-bold mb-3">1. Post Surplus</h5>
+                        <p class="text-muted">
+                            Event organizers log available food including quantity, type, location, and
+                            pickup window.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="step-card glass-card p-4 h-100">
+                        <i class="bi bi-lightning-charge-fill fs-2 text-warning mb-3 d-block"></i>
+                        <h5 class="fw-bold mb-3">2. Auto Match</h5>
+                        <p class="text-muted">
+                            Our system instantly notifies nearby verified NGOs, shelters, and food
+                            banks.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="step-card glass-card p-4 h-100">
+                        <i class="bi bi-truck fs-2 text-warning mb-3 d-block"></i>
+                        <h5 class="fw-bold mb-3">3. Pickup and Deliver</h5>
+                        <p class="text-muted">
+                            Volunteers or NGO teams collect and distribute the food, fully tracked in
+                            the app.
+                        </p>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div class="col-md-4">
-            <div class="step-card glass-card p-4 h-100">
-              <i
-                class="bi bi-lightning-charge-fill fs-2 text-warning mb-3 d-block"
-              ></i>
-              <h5 class="fw-bold mb-3">2. Auto Match</h5>
-              <p class="text-muted">
-                Our system instantly notifies nearby verified NGOs, shelters,
-                and food banks.
-              </p>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="step-card glass-card p-4 h-100">
-              <i class="bi bi-truck fs-2 text-warning mb-3 d-block"></i>
-              <h5 class="fw-bold mb-3">3. Pickup and Deliver</h5>
-              <p class="text-muted">
-                Volunteers or NGO teams collect and distribute the food, fully
-                tracked in the app.
-              </p>
-            </div>
-          </div>
         </div>
-      </div>
     </section>
-
     <!-- FEATURES -->
     <section id="features" class="py-5 reveal">
-      <div class="container">
-        <h2 class="fw-bold text-center mb-2">Key Features</h2>
-        <p class="text-center text-muted mb-5">
-          Everything you need for seamless food redistribution.
-        </p>
-        <div class="row g-4">
-          <div class="col-md-3 col-sm-6">
-            <div class="feature-card glass-card text-center p-4 h-100">
-              <i
-                class="bi bi-person-check-fill fs-2 text-warning mb-3 d-block"
-              ></i>
-              <h6 class="fw-bold mb-2">Donor Registration</h6>
-              <p class="text-muted small">
-                Easy sign-up for corporates, caterers, and event venues to start
-                donating.
-              </p>
+        <div class="container">
+            <h2 class="fw-bold text-center mb-2">Key Features</h2>
+            <p class="text-center text-muted mb-5">Everything you need for seamless food redistribution.</p>
+            <div class="row g-4">
+                <div class="col-md-3 col-sm-6">
+                    <div class="feature-card glass-card text-center p-4 h-100">
+                        <i class="bi bi-person-check-fill fs-2 text-warning mb-3 d-block"></i>
+                        <h6 class="fw-bold mb-2">Donor Registration</h6>
+                        <p class="text-muted small">Easy sign-up for corporates, caterers, and event venues to start donating.</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="feature-card glass-card text-center p-4 h-100">
+                        <i class="bi bi-map-fill fs-2 text-warning mb-3 d-block"></i>
+                        <h6 class="fw-bold mb-2">Real-Time Tracking</h6>
+                        <p class="text-muted small">
+                            Live map view of food listings and volunteer locations for fast
+                            coordination.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="feature-card glass-card text-center p-4 h-100">
+                        <i class="bi bi-shield-check fs-2 text-warning mb-3 d-block"></i>
+                        <h6 class="fw-bold mb-2">Safety Verification</h6>
+                        <p class="text-muted small">
+                            Food safety checks and NGO verification before any redistribution takes
+                            place.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="feature-card glass-card text-center p-4 h-100">
+                        <i class="bi bi-bar-chart-fill fs-2 text-warning mb-3 d-block"></i>
+                        <h6 class="fw-bold mb-2">Impact Dashboard</h6>
+                        <p class="text-muted small">
+                            Track meals donated, CO2 saved, and communities served with detailed
+                            reports.
+                        </p>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div class="col-md-3 col-sm-6">
-            <div class="feature-card glass-card text-center p-4 h-100">
-              <i class="bi bi-map-fill fs-2 text-warning mb-3 d-block"></i>
-              <h6 class="fw-bold mb-2">Real-Time Tracking</h6>
-              <p class="text-muted small">
-                Live map view of food listings and volunteer locations for fast
-                coordination.
-              </p>
-            </div>
-          </div>
-          <div class="col-md-3 col-sm-6">
-            <div class="feature-card glass-card text-center p-4 h-100">
-              <i class="bi bi-shield-check fs-2 text-warning mb-3 d-block"></i>
-              <h6 class="fw-bold mb-2">Safety Verification</h6>
-              <p class="text-muted small">
-                Food safety checks and NGO verification before any
-                redistribution takes place.
-              </p>
-            </div>
-          </div>
-          <div class="col-md-3 col-sm-6">
-            <div class="feature-card glass-card text-center p-4 h-100">
-              <i
-                class="bi bi-bar-chart-fill fs-2 text-warning mb-3 d-block"
-              ></i>
-              <h6 class="fw-bold mb-2">Impact Dashboard</h6>
-              <p class="text-muted small">
-                Track meals donated, CO2 saved, and communities served with
-                detailed reports.
-              </p>
-            </div>
-          </div>
         </div>
-      </div>
     </section>
-
     <!-- STATS -->
     <section id="stats" class="py-5 stats-section text-center reveal">
-      <div class="container">
-        <h2 class="fw-bold mb-5">Our Impact So Far</h2>
-        <div class="row g-4">
-          <div class="col-md-3 col-6">
-            <div class="stat-box p-4">
-              <h2 class="fw-bold text-warning">12,000+</h2>
-              <p class="mb-0 text-muted">Meals Redistributed</p>
+        <div class="container">
+            <h2 class="fw-bold mb-5">Our Impact So Far</h2>
+            <div class="row g-4">
+                <div class="col-md-3 col-6">
+                    <div class="stat-box p-4">
+                        <h2 class="fw-bold text-warning">12,000+</h2>
+                        <p class="mb-0 text-muted">Meals Redistributed</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-box p-4">
+                        <h2 class="fw-bold text-warning">80+</h2>
+                        <p class="mb-0 text-muted">Partner NGOs</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-box p-4">
+                        <h2 class="fw-bold text-warning">340+</h2>
+                        <p class="mb-0 text-muted">Food Donors</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-box p-4">
+                        <h2 class="fw-bold text-warning">5 Tons</h2>
+                        <p class="mb-0 text-muted">Food Waste Prevented</p>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div class="col-md-3 col-6">
-            <div class="stat-box p-4">
-              <h2 class="fw-bold text-warning">80+</h2>
-              <p class="mb-0 text-muted">Partner NGOs</p>
-            </div>
-          </div>
-          <div class="col-md-3 col-6">
-            <div class="stat-box p-4">
-              <h2 class="fw-bold text-warning">340+</h2>
-              <p class="mb-0 text-muted">Food Donors</p>
-            </div>
-          </div>
-          <div class="col-md-3 col-6">
-            <div class="stat-box p-4">
-              <h2 class="fw-bold text-warning">5 Tons</h2>
-              <p class="mb-0 text-muted">Food Waste Prevented</p>
-            </div>
-          </div>
         </div>
-      </div>
     </section>
-
     <!-- CTA -->
     <section class="py-5 text-center reveal">
-      <div class="container">
-        <div class="glass glass-cta d-inline-block px-5 py-5 rounded-5">
-          <h3 class="fw-bold mb-2">Ready to Make a Difference?</h3>
-
-          <p class="text-muted mb-4">
-            Join our growing network of donors, volunteers, and NGOs.
-          </p>
-
-          <!-- Top Buttons -->
-          <div
-            class="d-flex flex-column flex-lg-row justify-content-center gap-3 mb-4"
-          >
-            <a
-              href="{% url 'donate' %}"
-              class="btn btn-success btn-lg px-5 py-3 fw-semibold"
-            >
-              Register as Donor
-            </a>
-            <a
-              href="#"
-              class="btn btn-outline-success btn-lg px-5 py-3 fw-semibold"
-            >
-              Become a Volunteer
-            </a>
-          </div>
-
-          <div class="text-center">
-            <a href="#" class="btn btn-warning btn-lg px-5 py-3 fw-semibold">
-              Join as NGO
-            </a>
-          </div>
+        <div class="container">
+            <div class="glass glass-cta d-inline-block px-5 py-5 rounded-5">
+                <h3 class="fw-bold mb-2">Ready to Make a Difference?</h3>
+                <p class="text-muted mb-4">Join our growing network of donors, volunteers, and NGOs.</p>
+                <!-- Top Buttons -->
+                <div class="d-flex flex-column flex-lg-row justify-content-center gap-3 mb-4">
+                    <a href="{% url 'donate' %}"
+                       class="btn btn-success btn-lg px-5 py-3 fw-semibold">Register as Donor</a>
+                    <a href="#" class="btn btn-outline-success btn-lg px-5 py-3 fw-semibold">Become a Volunteer</a>
+                </div>
+                <div class="text-center">
+                    <a href="#" class="btn btn-warning btn-lg px-5 py-3 fw-semibold">Join as NGO</a>
+                </div>
+            </div>
         </div>
-      </div>
     </section>
-
-    <!-- FOOTER -->
-    <footer id="contact" class="footer-section pt-5 pb-3">
-      <div class="container">
-        <div class="row g-4">
-          <div class="col-md-4">
-            <h5 class="fw-bold mb-2">
-              <i class="bi bi-basket2-fill me-2 text-warning"></i>Food Bridge
-            </h5>
-            <p class="small text-secondary">
-              Real-time surplus food redistribution to fight urban hunger, one
-              event at a time.
-            </p>
-          </div>
-          <div class="col-md-4">
-            <h6 class="fw-semibold mb-3">Quick Links</h6>
-            <ul class="list-unstyled small">
-              <li><a href="#home" class="footer-link">Home</a></li>
-              <li><a href="#how" class="footer-link">How It Works</a></li>
-              <li><a href="#features" class="footer-link">Features</a></li>
-              <li><a href="#stats" class="footer-link">Impact</a></li>
-            </ul>
-          </div>
-          <div class="col-md-4">
-            <h6 class="fw-semibold mb-3">Contact Us</h6>
-            <p class="small text-secondary mb-1">
-              <i class="bi bi-envelope me-2"></i>contact@foodbridge.org
-            </p>
-            <p class="small text-secondary mb-1">
-              <i class="bi bi-telephone me-2"></i>+91 98300 XXXXX
-            </p>
-            <p class="small text-secondary">
-              <i class="bi bi-geo-alt me-2"></i>Kolkata, West Bengal, India
-            </p>
-          </div>
-        </div>
-        <hr class="border-secondary mt-4" />
-        <p class="text-center text-secondary small mb-0">
-          &copy; 2026 Food Bridge. All rights reserved.
-        </p>
-      </div>
-    </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-      /* Navbar: becomes slightly more opaque on scroll */
-      const nav = document.getElementById("mainNav");
-      window.addEventListener("scroll", () => {
-        nav.classList.toggle("scrolled", window.scrollY > 60);
-      });
-
-      /* Scroll-reveal: fade sections up as they enter the viewport */
-      const observer = new IntersectionObserver(
-        (entries) =>
-          entries.forEach((e) => {
-            if (e.isIntersecting) {
-              e.target.classList.add("visible");
-              observer.unobserve(e.target);
-            }
-          }),
-        { threshold: 0.1 },
-      );
-      document
-        .querySelectorAll(".reveal")
-        .forEach((el) => observer.observe(el));
-    </script>
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        new bootstrap.ScrollSpy(document.body, {
-          target: "#mainNav",
-          offset: 90,
-        });
-      });
-    </script>
-  </body>
-</html>
+{% endblock %}
