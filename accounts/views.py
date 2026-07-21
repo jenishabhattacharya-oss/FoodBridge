@@ -69,12 +69,20 @@ def login_view(request):
             password=form.cleaned_data["password"],
         )
 
-        if user:
+        if user is not None:
             login(request, user)
-            messages.success(request, f"Welcome back, {user.first_name}!")
+
+            messages.success(
+                request,
+                f"Welcome back, {user.first_name}!",
+            )
+
             return redirect(get_dashboard_url(user))
 
-        messages.error(request, "Invalid email or password.")
+        form.add_error(
+            None,
+            "Invalid email or password.",
+        )
 
     return render(
         request,

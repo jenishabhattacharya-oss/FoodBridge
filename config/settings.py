@@ -124,3 +124,6 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 
 # Custom User Model
 AUTH_USER_MODEL = "accounts.User"
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+DEFAULT_FROM_EMAIL = "noreply@foodbridge.local"

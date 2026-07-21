@@ -11,7 +11,7 @@ class NGOProfile(models.Model):
     )
 
     organization_name = models.CharField(max_length=200)
-    address = models.TextField()
+    address = models.TextField(default="")
 
     def clean(self):
         if self.user.role != self.user.Role.NGO:
