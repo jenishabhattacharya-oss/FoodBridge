@@ -6,7 +6,10 @@ from .models import VolunteerProfile
 
 class VolunteerRegistrationForm(BaseUserRegistrationForm):
     def save(self, commit=True):
-        user = self._create_user(User.Role.VOLUNTEER)
+        user = self._create_user(
+            User.Role.VOLUNTEER,
+            commit=commit,
+        )
 
         if commit:
             VolunteerProfile.objects.create(

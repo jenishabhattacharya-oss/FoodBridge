@@ -16,39 +16,20 @@
         <!-- Role Selector -->
         <!-- ========================= -->
         <div class="role-selector">
-            <label class="role-card">
-                <input type="radio"
-                       name="role"
-                       value="DONOR"
-                       {% if selected_role == "DONOR" %}checked{% endif %}>
-                <span>
-                    <i class="bi bi-person-heart"></i>
-                    <strong>Donor</strong>
-                    <small>Donate surplus food</small>
-                </span>
-            </label>
-            <label class="role-card">
-                <input type="radio"
-                       name="role"
-                       value="VOLUNTEER"
-                       {% if selected_role == "VOLUNTEER" %}checked{% endif %}>
-                <span>
-                    <i class="bi bi-people"></i>
-                    <strong>Volunteer</strong>
-                    <small>Help deliver food</small>
-                </span>
-            </label>
-            <label class="role-card">
-                <input type="radio"
-                       name="role"
-                       value="NGO"
-                       {% if selected_role == "NGO" %}checked{% endif %}>
-                <span>
-                    <i class="bi bi-building"></i>
-                    <strong>NGO</strong>
-                    <small>Receive donations</small>
-                </span>
-            </label>
+            {% for role, info in roles.items %}
+                <label class="role-card">
+                    <input type="radio"
+                           name="role"
+                           value="{{ role }}"
+                           {% if selected_role == role %}checked{% endif %}>
+                    <span>
+                        <strong>{{ info.label }}</strong>
+                        {% if info.description %}
+                            <small>{{ info.description }}</small>
+                        {% endif %}
+                    </span>
+                </label>
+            {% endfor %}
         </div>
         <!-- Email -->
         <div class="form-group">
@@ -101,6 +82,13 @@
             </div>
             {{ form.confirm_password.errors }}
         </div>
+        {% if form.organization_name %}
+            <div class="form-group">
+                {{ form.organization_name.label_tag }}
+                {{ form.organization_name }}
+                {{ form.organization_name.errors }}
+            </div>
+        {% endif %}
         {% if form.address %}
             <div class="form-group">
                 {{ form.address.label_tag }}

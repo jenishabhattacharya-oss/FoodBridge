@@ -22,4 +22,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("bridge.urls")),
     path("", include("accounts.urls")),
+    path("donor/", include("donors.urls")),
+    path("volunteer/", include("volunteers.urls")),
+    path("ngo/", include("ngos.urls")),
 ]

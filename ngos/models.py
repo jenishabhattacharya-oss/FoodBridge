@@ -11,18 +11,15 @@ class NGOProfile(models.Model):
     )
 
     organization_name = models.CharField(max_length=200)
-
-    def __str__(self):
-        return f"{self.organization_name} (NGO)"
+    address = models.TextField()
 
     def clean(self):
-        super().clean()
-
         if self.user.role != self.user.Role.NGO:
-            raise ValidationError(
-                "Only users with the NGO role can have an NGOProfile."
-            )
+            raise ValidationError("Only NGO users can have an NGO profile.")
 
     def save(self, *args, **kwargs):
         self.full_clean()
         super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.organization_name

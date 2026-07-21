@@ -80,12 +80,22 @@ function initInputEffects() {
 
 function initRoleCards() {
     const cards = document.querySelectorAll('.role-card');
+    const roleInputs = document.querySelectorAll('input[name="role"]');
 
     cards.forEach((card) => {
         card.addEventListener('click', () => {
             cards.forEach((c) => c.classList.remove('selected'));
-
             card.classList.add('selected');
+        });
+    });
+
+    roleInputs.forEach((input) => {
+        input.addEventListener('change', () => {
+            const url = new URL(window.location.href);
+
+            url.searchParams.set('role', input.value);
+
+            window.location.href = url.toString();
         });
     });
 }
