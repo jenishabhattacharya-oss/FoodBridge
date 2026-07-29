@@ -1,2 +1,11 @@
-<h1>Donor Dashboard</h1>
-<p>Welcome {{ request.user.get_full_name }}</p>
+{% extends "dashboards/base_dashboard.html" %}
+{% block dashboard_content %}
+    {% include "components/dashboard/welcome_banner.html" %}
+    <section class="dashboard-section">
+        <div class="row g-4">
+            {% for stat in dashboard.stats %}
+                <div class="col-xl-3 col-md-6">{% include "components/dashboard/stat_card.html" %}</div>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}

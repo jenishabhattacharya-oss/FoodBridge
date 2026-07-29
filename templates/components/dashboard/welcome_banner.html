@@ -1,0 +1,22 @@
+<section class="dashboard-section">
+    <div class="dashboard-card">
+        <div class="dashboard-card-body">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <p class="text-warning fw-semibold mb-2">GOOD TO SEE YOU AGAIN</p>
+                    <h2 class="fw-bold mb-3">
+                        Welcome back,
+                        {{ user.first_name|default:user.email }} 👋
+                    </h2>
+                    <p class="text-muted mb-4">{{ dashboard.welcome.message }}</p>
+                    {% if dashboard.welcome.button %}
+                        <a href="{{ dashboard.welcome.button.url }}" class="btn btn-warning">{{ dashboard.welcome.button.label }}</a>
+                    {% endif %}
+                </div>
+                <div class="col-lg-4 text-center">
+                    <i class="bi bi-heart-fill text-warning fs-1"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

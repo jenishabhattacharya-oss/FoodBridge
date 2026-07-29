@@ -1,0 +1,32 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description"
+              content="{% block description %}FoodBridge Dashboard{% endblock %}">
+        <title>
+            {% block title %}
+                Dashboard
+            {% endblock %}
+        </title>
+        <link rel="stylesheet" href="{% static 'css/style.css' %}">
+        <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+        {% block extra_css %}{% endblock %}
+    </head>
+    <body>
+        <div class="dashboard-layout">
+            {% include "components/dashboard/sidebar.html" %}
+            <div class="dashboard-main">
+                {% include "components/dashboard/navbar.html" %}
+                <main class="dashboard-content">
+                    {% include "components/dashboard/breadcrumb.html" %}
+                    {% block content %}{% endblock %}
+                </main>
+            </div>
+        </div>
+        <script src="{% static 'js/main.js' %}"></script>
+        {% block extra_js %}{% endblock %}
+    </body>
+</html>

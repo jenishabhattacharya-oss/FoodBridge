@@ -1,0 +1,37 @@
+<div class="dashboard-topbar">
+    <div class="glass-card px-4 py-3">
+        <div class="d-flex justify-content-between align-items-center">
+            <!-- Left -->
+            <div>
+                <h4 class="fw-bold mb-0">{{ page_title|default:"Dashboard" }}</h4>
+                {% include "components/dashboard/breadcrumb.html" %}
+            </div>
+            <!-- Right -->
+            <div class="d-flex align-items-center gap-3">
+                <button class="btn btn-outline-light position-relative">
+                    <i class="bi bi-bell"></i>
+                    {% if notification_count %}
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark">
+                            {{ notification_count }}
+                        </span>
+                    {% endif %}
+                </button>
+                <div class="d-flex align-items-center">
+                    <div class="text-end me-3">
+                        <div class="fw-semibold">{{ user.get_full_name|default:user.email }}</div>
+                        <small class="text-muted">{{ user.role }}</small>
+                    </div>
+                    <div class="rounded-circle bg-warning d-flex align-items-center justify-content-center avatar-circle">
+                        <i class="bi bi-person-fill text-dark"></i>
+                    </div>
+                    <style>
+                        .avatar-circle {
+                            width: 45px;
+                            height: 45px;
+                        }
+                    </style>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
