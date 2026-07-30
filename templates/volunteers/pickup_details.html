@@ -1,39 +1,48 @@
 {% extends "dashboards/base_dashboard.html" %}
-{% block title %}
-    Pickup Details
-{% endblock %}
+{% block title %}Pickup Details{% endblock %}
 {% block dashboard_content %}
     <section class="dashboard-section">
+        {% if messages %}{% for message in messages %}<div class="alert alert-{{ message.tags|default:'info' }}" role="alert">{{ message }}</div>{% endfor %}{% endif %}
         <div class="dashboard-card">
-            <div class="dashboard-card-header">
-                <h3>{{ pickup.donor }}</h3>
+            <div class="dashboard-card-header d-flex justify-content-between align-items-center">
+                <h3 class="mb-0">{{ pickup.donor_name }}</h3>
+                <span class="badge bg-primary">{{ pickup.get_status_display }}</span>
             </div>
             <div class="dashboard-card-body">
                 <div class="row">
                     <div class="col-md-6">
-                        <p><strong>Food:</strong> {{ pickup.food }}</p>
+                        <p><strong>Food:</strong> {{ pickup.food_description }}</p>
                         <p><strong>Quantity:</strong> {{ pickup.quantity }}</p>
-                        <p><strong>Pickup Window:</strong> {{ pickup.window }}</p>
+                        <p><strong>Pickup Window:</strong> {{ pickup.pickup_window_start|date:"M j, Y, g:i A" }} – {{ pickup.pickup_window_end|date:"g:i A" }}</p>
                     </div>
                     <div class="col-md-6">
-                        <p><strong>Address:</strong> {{ pickup.address }}</p>
-                        <p><strong>Distance:</strong> {{ pickup.distance }}</p>
-                        <p><strong>Contact:</strong> {{ pickup.contact }}</p>
+                        <p><strong>Address:</strong> {{ pickup.pickup_address }}, {{ pickup.pickup_city }}</p>
+                        <p><strong>Contact:</strong> {{ pickup.donor_phone }}</p>
+                        {% if pickup.recipient_name %}<p><strong>Delivered to:</strong> {{ pickup.recipient_name }}</p>{% endif %}
                     </div>
                 </div>
-                <hr>
-                <h5>Pickup Notes</h5>
-                <p>{{ pickup.notes }}</p>
-                <div class="mt-4 d-flex gap-3">
-                    {% if pickup_is_assigned %}
-                        <span class="btn btn-success disabled">Pickup Assigned</span>
-                    {% else %}
-                        <form method="post" action="{% url 'accept_pickup' pickup.id %}">
+                {% if pickup.instructions %}
+                    <hr>
+                    <h5>Pickup Notes</h5>
+                    <p>{{ pickup.instructions }}</p>
+                {% endif %}
+                <div class="mt-4">
+                    {% if pickup.status == 'OPEN' %}
+                        <form method="post" action="{% url 'accept_pickup' pickup.id %}">{% csrf_token %}<button type="submit" class="btn btn-warning">Claim Pickup</button></form>
+                    {% elif pickup.status == 'CLAIMED' %}
+                        <form method="post" action="{% url 'collect_pickup' pickup.id %}">{% csrf_token %}<button type="submit" class="btn btn-warning">Mark as Collected</button></form>
+                    {% elif pickup.status == 'COLLECTED' %}
+                        <h5 class="mb-3">Confirm Delivery</h5>
+                        <form method="post"
+                              action="{% url 'deliver_pickup' pickup.id %}"
+                              enctype="multipart/form-data">
                             {% csrf_token %}
-                            <button type="submit" class="btn btn-warning">Accept Pickup</button>
+                            {{ delivery_form.as_p }}
+                            <button type="submit" class="btn btn-success">Confirm Delivery</button>
                         </form>
+                    {% else %}
+                        <p class="text-success mb-0">Delivered {{ pickup.delivered_at|date:"M j, Y, g:i A" }} to {{ pickup.recipient_name }}.</p>
                     {% endif %}
-                    <a href="{% url 'available_pickups' %}" class="btn btn-outline-light">Back</a>
                 </div>
             </div>
         </div>

@@ -20,6 +20,16 @@ urlpatterns = [
         name="accept_pickup",
     ),
     path(
+        "pickups/<int:pickup_id>/collect/",
+        views.collect_pickup,
+        name="collect_pickup",
+    ),
+    path(
+        "pickups/<int:pickup_id>/deliver/",
+        views.deliver_pickup,
+        name="deliver_pickup",
+    ),
+    path(
         "assigned/",
         views.assigned_pickups,
         name="assigned_pickups",
@@ -29,4 +39,5 @@ urlpatterns = [
         views.pickup_history,
         name="pickup_history",
     ),
+    path("profile/", views.volunteer_profile, name="volunteer_profile"),
 ]

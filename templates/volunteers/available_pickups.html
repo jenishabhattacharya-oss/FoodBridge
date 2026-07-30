@@ -10,15 +10,31 @@
                 <p class="text-muted mb-0">Browse donations waiting for a volunteer.</p>
             </div>
         </div>
+        <form method="get" class="dashboard-card mb-4">
+            <div class="dashboard-card-body row g-3 align-items-end">
+                <div class="col-md-5">
+                    <label class="form-label" for="pickup-city">City</label>
+                    <input id="pickup-city" class="form-control" name="city" value="{{ city }}" placeholder="e.g. Bengaluru">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label" for="pickup-date">Pickup date</label>
+                    <input id="pickup-date" class="form-control" type="date" name="date" value="{{ pickup_date }}">
+                </div>
+                <div class="col-md-3 d-flex gap-2">
+                    <button class="btn btn-warning" type="submit">Filter</button>
+                    <a class="btn btn-outline-light" href="{% url 'available_pickups' %}?city=">Clear</a>
+                </div>
+            </div>
+        </form>
         <div class="row g-4">
             {% for pickup in pickups %}
                 <div class="col-lg-6">
                     <div class="dashboard-card h-100">
                         <div class="dashboard-card-body">
-                            <h4 class="fw-bold mb-3">{{ pickup.donor }}</h4>
+                            <h4 class="fw-bold mb-3">{{ pickup.donor_name }}</h4>
                             <p>
                                 <i class="bi bi-basket2-fill text-warning me-2"></i>
-                                {{ pickup.food }}
+                                {{ pickup.food_description }}
                             </p>
                             <p>
                                 <i class="bi bi-box-seam text-warning me-2"></i>
@@ -26,15 +42,11 @@
                             </p>
                             <p>
                                 <i class="bi bi-geo-alt-fill text-warning me-2"></i>
-                                {{ pickup.address }}
+                                {{ pickup.pickup_address }}, {{ pickup.pickup_city }}
                             </p>
                             <p>
                                 <i class="bi bi-clock-fill text-warning me-2"></i>
-                                {{ pickup.window }}
-                            </p>
-                            <p>
-                                <i class="bi bi-signpost-2-fill text-warning me-2"></i>
-                                {{ pickup.distance }}
+                                {{ pickup.pickup_window_start|date:"M j, g:i A" }} – {{ pickup.pickup_window_end|date:"g:i A" }}
                             </p>
                             <div class="d-grid mt-4">
                                 <a href="{% url 'pickup_details' pickup.id %}" class="btn btn-warning">

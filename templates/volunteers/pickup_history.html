@@ -23,12 +23,12 @@
                         <tbody>
                             {% for pickup in pickups %}
                                 <tr>
-                                    <td>{{ pickup.donor }}</td>
-                                    <td>{{ pickup.ngo }}</td>
-                                    <td>{{ pickup.food }}</td>
+                                    <td>{{ pickup.donor_name }}</td>
+                                    <td>{{ pickup.recipient_name }}</td>
+                                    <td>{{ pickup.food_description }}</td>
                                     <td>{{ pickup.quantity }}</td>
                                     <td>
-                                        <span class="badge bg-success">{{ pickup.completed }}</span>
+                                        <span class="badge bg-success">{{ pickup.delivered_at|date:"M j, Y, g:i A" }}</span>
                                     </td>
                                 </tr>
                             {% empty %}

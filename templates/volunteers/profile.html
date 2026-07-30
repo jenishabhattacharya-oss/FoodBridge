@@ -1,0 +1,26 @@
+{% extends "dashboards/base_dashboard.html" %}
+{% block title %}My Volunteer Profile{% endblock %}
+{% block dashboard_content %}
+    <section class="dashboard-section">
+        {% if messages %}{% for message in messages %}<div class="alert alert-{{ message.tags|default:'info' }}" role="alert">{{ message }}</div>{% endfor %}{% endif %}
+        <div class="dashboard-card">
+            <div class="dashboard-card-header"><h3 class="mb-0">My Volunteer Profile</h3></div>
+            <div class="dashboard-card-body">
+                <form method="post" class="row g-3">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        <div class="col-md-6 {% if field.name == 'is_available' %}d-flex align-items-end{% endif %}">
+                            {% if field.name == 'is_available' %}
+                                <div class="form-check">{{ field }} <label class="form-check-label" for="{{ field.id_for_label }}">Available to accept pickups</label></div>
+                            {% else %}
+                                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}
+                            {% endif %}
+                            {% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+                        </div>
+                    {% endfor %}
+                    <div class="col-12"><button class="btn btn-warning" type="submit">Save Profile</button></div>
+                </form>
+            </div>
+        </div>
+    </section>
+{% endblock %}

@@ -27,12 +27,12 @@
                         <tbody>
                             {% for pickup in pickups %}
                                 <tr>
-                                    <td>{{ pickup.donor }}</td>
-                                    <td>{{ pickup.food }}</td>
+                                    <td>{{ pickup.donor_name }}</td>
+                                    <td>{{ pickup.food_description }}</td>
                                     <td>{{ pickup.quantity }}</td>
-                                    <td>{{ pickup.window }}</td>
+                                    <td>{{ pickup.pickup_window_start|date:"M j, g:i A" }}</td>
                                     <td>
-                                        <span class="badge bg-primary">{{ pickup.status }}</span>
+                                        <span class="badge bg-primary">{{ pickup.get_status_display }}</span>
                                     </td>
                                     <td>
                                         <a href="{% url 'pickup_details' pickup.id %}"

@@ -30,9 +30,9 @@
                                 <tbody>
                                     {% for pickup in assigned_pickups %}
                                         <tr>
-                                            <td>{{ pickup.donor }}</td>
-                                            <td>{{ pickup.window }}</td>
-                                            <td><span class="badge bg-warning text-dark">{{ pickup.status }}</span></td>
+                                            <td>{{ pickup.donor_name }}</td>
+                                            <td>{{ pickup.pickup_window_start|date:"M j, g:i A" }}</td>
+                                            <td><span class="badge bg-warning text-dark">{{ pickup.get_status_display }}</span></td>
                                             <td><a href="{% url 'pickup_details' pickup.id %}" class="btn btn-sm btn-outline-light">View</a></td>
                                         </tr>
                                     {% empty %}
@@ -87,9 +87,9 @@
                                 <tbody>
                                     {% for pickup in available_pickups %}
                                         <tr>
-                                            <td>{{ pickup.donor }}</td>
-                                            <td>{{ pickup.distance }}</td>
-                                            <td>{{ pickup.window }}</td>
+                                            <td>{{ pickup.donor_name }}</td>
+                                            <td>{{ pickup.pickup_city }}</td>
+                                            <td>{{ pickup.pickup_window_start|date:"M j, g:i A" }}</td>
                                             <td><a href="{% url 'pickup_details' pickup.id %}" class="btn btn-success btn-sm">View</a></td>
                                         </tr>
                                     {% empty %}
