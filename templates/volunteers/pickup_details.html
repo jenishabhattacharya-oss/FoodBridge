@@ -1,49 +1,89 @@
 {% extends "dashboards/base_dashboard.html" %}
 {% block title %}Pickup Details{% endblock %}
 {% block dashboard_content %}
-    <section class="dashboard-section">
-        {% if messages %}{% for message in messages %}<div class="alert alert-{{ message.tags|default:'info' }}" role="alert">{{ message }}</div>{% endfor %}{% endif %}
-        <div class="dashboard-card">
-            <div class="dashboard-card-header d-flex justify-content-between align-items-center">
-                <h3 class="mb-0">{{ pickup.donor_name }}</h3>
-                <span class="badge bg-primary">{{ pickup.get_status_display }}</span>
-            </div>
-            <div class="dashboard-card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <p><strong>Food:</strong> {{ pickup.food_description }}</p>
-                        <p><strong>Quantity:</strong> {{ pickup.quantity }}</p>
-                        <p><strong>Pickup Window:</strong> {{ pickup.pickup_window_start|date:"M j, Y, g:i A" }} – {{ pickup.pickup_window_end|date:"g:i A" }}</p>
-                    </div>
-                    <div class="col-md-6">
-                        <p><strong>Address:</strong> {{ pickup.pickup_address }}, {{ pickup.pickup_city }}</p>
-                        <p><strong>Contact:</strong> {{ pickup.donor_phone }}</p>
-                        {% if pickup.recipient_name %}<p><strong>Delivered to:</strong> {{ pickup.recipient_name }}</p>{% endif %}
-                    </div>
-                </div>
-                {% if pickup.instructions %}
-                    <hr>
-                    <h5>Pickup Notes</h5>
-                    <p>{{ pickup.instructions }}</p>
-                {% endif %}
-                <div class="mt-4">
-                    {% if pickup.status == 'OPEN' %}
-                        <form method="post" action="{% url 'accept_pickup' pickup.id %}">{% csrf_token %}<button type="submit" class="btn btn-warning">Claim Pickup</button></form>
-                    {% elif pickup.status == 'CLAIMED' %}
-                    {% elif pickup.status == 'COLLECTED' %}
-                        <h5 class="mb-3">Confirm Delivery</h5>
-                        <form method="post"
-                              action="{% url 'deliver_pickup' pickup.id %}"
-                              enctype="multipart/form-data">
-                            {% csrf_token %}
-                            {{ delivery_form.as_p }}
-                            <button type="submit" class="btn btn-success">Confirm Delivery</button>
-                        </form>
-                    {% else %}
-                        <p class="text-success mb-0">Delivered {{ pickup.delivered_at|date:"M j, Y, g:i A" }} to {{ pickup.recipient_name }}.</p>
-                    {% endif %}
+    <section class="volunteer-page-header reveal">
+        <div>
+            <p class="volunteer-eyebrow">PICKUP DETAILS</p>
+            <h1>{{ pickup.donor_name }}</h1>
+            <p>Everything you need for a smooth collection and delivery.</p>
+        </div>
+        <a href="{% url 'assigned_pickups' %}"
+           class="btn volunteer-btn volunteer-btn--ghost"><i class="bi bi-arrow-left"></i> Active pickups</a>
+    </section>
+    {% if messages %}{% for message in messages %}<div class="alert alert-{{ message.tags|default:'info' }}" role="alert">{{ message }}</div>{% endfor %}{% endif %}
+    <section class="pickup-detail-panel reveal">
+        <div class="pickup-detail-panel__header">
+            <div class="pickup-detail-panel__donor">
+                <span><i class="bi bi-shop"></i></span>
+                <div>
+                    <p>Collect from</p>
+                    <h2>{{ pickup.donor_name }}</h2>
                 </div>
             </div>
+            <span class="pickup-status pickup-status--{{ pickup.status|lower }}">{{ pickup.get_status_display }}</span>
+        </div>
+        <div class="pickup-facts-grid">
+            <article><span><i class="bi bi-basket2"></i></span>
+                <div>
+                    <small>FOOD DONATION</small><strong>{{ pickup.food_description }}</strong>
+                    <p>{{ pickup.quantity }}</p>
+                </div>
+            </article>
+            <article><span><i class="bi bi-calendar3"></i></span>
+                <div>
+                    <small>PICKUP WINDOW</small><strong>{{ pickup.pickup_window_start|date:"M j, Y" }}</strong>
+                    <p>{{ pickup.pickup_window_start|date:"g:i A" }} – {{ pickup.pickup_window_end|date:"g:i A" }}</p>
+                </div>
+            </article>
+            <article><span><i class="bi bi-geo-alt"></i></span>
+                <div>
+                    <small>COLLECTION ADDRESS</small><strong>{{ pickup.pickup_city }}</strong>
+                    <p>{{ pickup.pickup_address }}</p>
+                </div>
+            </article>
+            <article><span><i class="bi bi-telephone"></i></span>
+                <div>
+                    <small>DONOR CONTACT</small><strong>{{ pickup.donor_phone }}</strong>
+                    <p>Call if you need directions</p>
+                </div>
+            </article>
+        </div>
+        {% if pickup.instructions %}<div class="pickup-note"><span><i class="bi bi-lightbulb"></i></span><div><strong>Pickup note</strong><p>{{ pickup.instructions }}</p></div></div>{% endif %}
+        <div class="pickup-action-area">
+            {% if pickup.status == 'OPEN' %}
+                <div>
+                    <p class="volunteer-eyebrow">READY TO HELP?</p>
+                    <h2>Claim this pickup</h2>
+                    <p>Once claimed, it will be reserved for you.</p>
+                </div>
+                <form method="post" action="{% url 'accept_pickup' pickup.id %}">{% csrf_token %}<button type="submit" class="btn volunteer-btn volunteer-btn--primary"><i class="bi bi-bag-check"></i> Claim pickup</button></form>
+            {% elif pickup.status == 'CLAIMED' %}
+                <div>
+                    <p class="volunteer-eyebrow">NEXT STEP</p>
+                    <h2>Have you collected the food?</h2>
+                    <p>Mark it collected only after it is safely with you.</p>
+                </div>
+                <form method="post" action="{% url 'collect_pickup' pickup.id %}">{% csrf_token %}<button type="submit" class="btn volunteer-btn volunteer-btn--primary"><i class="bi bi-box2-heart"></i> Mark as collected</button></form>
+            {% elif pickup.status == 'COLLECTED' %}
+                <div class="delivery-form-heading">
+                    <p class="volunteer-eyebrow">FINAL STEP</p>
+                    <h2>Confirm delivery</h2>
+                    <p>Record who received the donation and attach delivery proof.</p>
+                </div>
+                <form method="post"
+                      action="{% url 'deliver_pickup' pickup.id %}"
+                      enctype="multipart/form-data"
+                      class="delivery-form">{% csrf_token %}{% for field in delivery_form %}<div class="delivery-field {% if field.name != 'recipient_name' %}delivery-field--wide{% endif %}"><label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %}<em>*</em>{% endif %}</label>{{ field }}{% for error in field.errors %}<small class="text-warning d-block mt-2">{{ error }}</small>{% endfor %}</div>{% endfor %}<div class="delivery-form__actions"><button type="submit" class="btn volunteer-btn volunteer-btn--primary"><i class="bi bi-check2-circle"></i> Confirm delivery</button></div></form>
+            {% else %}
+                <div class="pickup-complete">
+                    <span><i class="bi bi-check2-circle"></i></span>
+                    <div>
+                        <p class="volunteer-eyebrow">DELIVERY COMPLETE</p>
+                        <h2>Thank you for making a difference.</h2>
+                        <p>Delivered to {{ pickup.recipient_name }} on {{ pickup.delivered_at|date:"M j, Y, g:i A" }}.</p>
+                    </div>
+                </div>
+            {% endif %}
         </div>
     </section>
 {% endblock %}
