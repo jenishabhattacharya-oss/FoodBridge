@@ -1,2 +1,104 @@
-<h1>Volunteer Dashboard</h1>
-<p>Welcome {{ request.user.get_full_name }}</p>
+{% extends "dashboards/base_dashboard.html" %}
+{% block dashboard_content %}
+    {% include "components/dashboard/welcome_banner.html" %}
+    <section class="dashboard-section">
+        <div class="row g-4">
+            {% for stat in dashboard.stats %}
+                <div class="col-xl-3 col-md-6">{% include "components/dashboard/stat_card.html" %}</div>
+            {% endfor %}
+        </div>
+    </section>
+    <section class="dashboard-section">
+        <div class="row g-4">
+            <!-- Assigned Pickups -->
+            <div class="col-lg-8">
+                <div class="dashboard-card h-100">
+                    <div class="dashboard-card-header">
+                        <h5 class="mb-0">Assigned Pickups</h5>
+                    </div>
+                    <div class="dashboard-card-body">
+                        <div class="table-responsive">
+                            <table class="table table-dark table-borderless align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Donor</th>
+                                        <th>Pickup Time</th>
+                                        <th>Status</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for pickup in assigned_pickups %}
+                                        <tr>
+                                            <td>{{ pickup.donor }}</td>
+                                            <td>{{ pickup.window }}</td>
+                                            <td><span class="badge bg-warning text-dark">{{ pickup.status }}</span></td>
+                                            <td><a href="{% url 'pickup_details' pickup.id %}" class="btn btn-sm btn-outline-light">View</a></td>
+                                        </tr>
+                                    {% empty %}
+                                        <tr><td colspan="4" class="text-muted text-center">No pickups assigned yet.</td></tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Quick Actions -->
+            <div class="col-lg-4">
+                <div class="dashboard-card h-100">
+                    <div class="dashboard-card-header">
+                        <h5 class="mb-0">Quick Actions</h5>
+                    </div>
+                    <div class="dashboard-card-body d-grid gap-3">
+                        <a href="{% url 'available_pickups' %}" class="btn btn-warning">
+                            <i class="bi bi-search me-2"></i>
+                            View Available Pickups
+                        </a>
+                        <a href="{% url 'assigned_pickups' %}" class="btn btn-outline-light">
+                            <i class="bi bi-truck me-2"></i>
+                            Assigned Pickups
+                        </a>
+                        <a href="{% url 'pickup_history' %}" class="btn btn-outline-light">
+                            <i class="bi bi-clock-history me-2"></i>
+                            Pickup History
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="dashboard-section">
+        <div class="dashboard-card">
+            <div class="dashboard-card-header">
+                <h5 class="mb-0">Nearby Pickups</h5>
+            </div>
+            <div class="dashboard-card-body">
+                <div class="table-responsive">
+                    <table class="table table-dark table-borderless align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Donor</th>
+                                <th>Distance</th>
+                                <th>Pickup Window</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                                <tbody>
+                                    {% for pickup in available_pickups %}
+                                        <tr>
+                                            <td>{{ pickup.donor }}</td>
+                                            <td>{{ pickup.distance }}</td>
+                                            <td>{{ pickup.window }}</td>
+                                            <td><a href="{% url 'pickup_details' pickup.id %}" class="btn btn-success btn-sm">View</a></td>
+                                        </tr>
+                                    {% empty %}
+                                        <tr><td colspan="4" class="text-muted text-center">No nearby pickups available.</td></tr>
+                                    {% endfor %}
+                                </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

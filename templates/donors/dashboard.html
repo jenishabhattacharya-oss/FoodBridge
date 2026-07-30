@@ -1,11 +1,96 @@
 {% extends "dashboards/base_dashboard.html" %}
 {% block dashboard_content %}
     {% include "components/dashboard/welcome_banner.html" %}
+    <!-- Stats -->
     <section class="dashboard-section">
         <div class="row g-4">
             {% for stat in dashboard.stats %}
                 <div class="col-xl-3 col-md-6">{% include "components/dashboard/stat_card.html" %}</div>
             {% endfor %}
+        </div>
+    </section>
+    <!-- Bottom Section -->
+    <section class="dashboard-section">
+        <div class="row g-4">
+            <!-- Recent Donations -->
+            <div class="col-lg-8">
+                <div class="dashboard-card h-100">
+                    <div class="dashboard-card-header">
+                        <h5 class="mb-0">Recent Donations</h5>
+                    </div>
+                    <div class="dashboard-card-body">
+                        <div class="table-responsive">
+                            <table class="table table-dark table-borderless align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Food</th>
+                                        <th>NGO</th>
+                                        <th>Status</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Rice Meals</td>
+                                        <td>Hope Foundation</td>
+                                        <td><span class="badge bg-success">Delivered</span></td>
+                                        <td>Today</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Bread</td>
+                                        <td>Helping Hands</td>
+                                        <td><span class="badge bg-warning text-dark">Pickup</span></td>
+                                        <td>Yesterday</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Vegetables</td>
+                                        <td>Food Bank</td>
+                                        <td><span class="badge bg-secondary">Pending</span></td>
+                                        <td>2 days ago</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Quick Actions -->
+            <div class="col-lg-4">
+                <div class="dashboard-card h-100">
+                    <div class="dashboard-card-header">
+                        <h5 class="mb-0">Quick Actions</h5>
+                    </div>
+                    <div class="dashboard-card-body d-grid gap-3">
+                        <a href="{% url 'donate' %}" class="btn btn-warning">
+                            <i class="bi bi-plus-circle me-2"></i>
+                            Donate Food
+                        </a>
+                        <button class="btn btn-outline-light">
+                            <i class="bi bi-clock-history me-2"></i>
+                            Donation History
+                        </button>
+                        <button class="btn btn-outline-light">
+                            <i class="bi bi-person me-2"></i>
+                            Edit Profile
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Activity -->
+    <section class="dashboard-section">
+        <div class="dashboard-card">
+            <div class="dashboard-card-header">
+                <h5 class="mb-0">Recent Activity</h5>
+            </div>
+            <div class="dashboard-card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item bg-transparent text-light">✅ Donation accepted by Hope Foundation</li>
+                    <li class="list-group-item bg-transparent text-light">🚚 Volunteer assigned for pickup</li>
+                    <li class="list-group-item bg-transparent text-light">🎉 Your last donation served 35 meals</li>
+                </ul>
+            </div>
         </div>
     </section>
 {% endblock %}

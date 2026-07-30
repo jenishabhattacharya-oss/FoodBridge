@@ -31,3 +31,37 @@ class DonorRegistrationForm(BaseUserRegistrationForm):
             )
 
         return user
+
+
+class DonorProfileForm(forms.ModelForm):
+    first_name = forms.CharField(max_length=30)
+    last_name = forms.CharField(max_length=20)
+    phone = forms.CharField(max_length=15)
+
+    class Meta:
+        model = DonorProfile
+        fields = ["address"]
+        widgets = {
+            "address": forms.Textarea(attrs={"rows": 4}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user")
+        super().__init__(*args, **kwargs)
+
+        self.fields["first_name"].initial = self.user.first_name
+        self.fields["last_name"].initial = self.user.last_name
+        self.fields["phone"].initial = self.user.phone
+
+    def save(self, commit=True):
+        profile = super().save(commit=False)
+
+        self.user.first_name = self.cleaned_data["first_name"]
+        self.user.last_name = self.cleaned_data["last_name"]
+        self.user.phone = self.cleaned_data["phone"]
+
+        if commit:
+            self.user.save()
+            profile.save()
+
+        return profile

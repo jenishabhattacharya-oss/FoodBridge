@@ -1,0 +1,55 @@
+{% extends "dashboards/base_dashboard.html" %}
+{% block title %}
+    Available Pickups
+{% endblock %}
+{% block dashboard_content %}
+    <div class="dashboard-section">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-bold text-white mb-1">Available Pickups</h2>
+                <p class="text-muted mb-0">Browse donations waiting for a volunteer.</p>
+            </div>
+        </div>
+        <div class="row g-4">
+            {% for pickup in pickups %}
+                <div class="col-lg-6">
+                    <div class="dashboard-card h-100">
+                        <div class="dashboard-card-body">
+                            <h4 class="fw-bold mb-3">{{ pickup.donor }}</h4>
+                            <p>
+                                <i class="bi bi-basket2-fill text-warning me-2"></i>
+                                {{ pickup.food }}
+                            </p>
+                            <p>
+                                <i class="bi bi-box-seam text-warning me-2"></i>
+                                {{ pickup.quantity }}
+                            </p>
+                            <p>
+                                <i class="bi bi-geo-alt-fill text-warning me-2"></i>
+                                {{ pickup.address }}
+                            </p>
+                            <p>
+                                <i class="bi bi-clock-fill text-warning me-2"></i>
+                                {{ pickup.window }}
+                            </p>
+                            <p>
+                                <i class="bi bi-signpost-2-fill text-warning me-2"></i>
+                                {{ pickup.distance }}
+                            </p>
+                            <div class="d-grid mt-4">
+                                <a href="{% url 'pickup_details' pickup.id %}" class="btn btn-warning">
+                                    <i class="bi bi-check-circle me-2"></i>
+                                    View Details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12">
+                    <div class="dashboard-card"><div class="dashboard-card-body text-muted">There are no pickups available right now.</div></div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
