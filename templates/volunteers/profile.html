@@ -1,26 +1,23 @@
 {% extends "dashboards/base_dashboard.html" %}
 {% block title %}My Volunteer Profile{% endblock %}
 {% block dashboard_content %}
-    <section class="dashboard-section">
-        {% if messages %}{% for message in messages %}<div class="alert alert-{{ message.tags|default:'info' }}" role="alert">{{ message }}</div>{% endfor %}{% endif %}
-        <div class="dashboard-card">
-            <div class="dashboard-card-header"><h3 class="mb-0">My Volunteer Profile</h3></div>
-            <div class="dashboard-card-body">
-                <form method="post" class="row g-3">
-                    {% csrf_token %}
-                    {% for field in form %}
-                        <div class="col-md-6 {% if field.name == 'is_available' %}d-flex align-items-end{% endif %}">
-                            {% if field.name == 'is_available' %}
-                                <div class="form-check">{{ field }} <label class="form-check-label" for="{{ field.id_for_label }}">Available to accept pickups</label></div>
-                            {% else %}
-                                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}
-                            {% endif %}
-                            {% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
-                        </div>
-                    {% endfor %}
-                    <div class="col-12"><button class="btn btn-warning" type="submit">Save Profile</button></div>
-                </form>
-            </div>
-        </div>
+    <section class="volunteer-page-header reveal"><div><p class="volunteer-eyebrow">PERSONAL SETTINGS</p><h1>My volunteer profile</h1><p>Keep your details current so the right pickup reaches you.</p></div></section>
+    {% if messages %}{% for message in messages %}<div class="alert alert-{{ message.tags|default:'info' }}" role="alert">{{ message }}</div>{% endfor %}{% endif %}
+    <section class="profile-panel reveal">
+        <div class="profile-panel__intro"><span><i class="bi bi-person-heart"></i></span><div><h2>Your availability</h2><p>These details help coordinate pickups in your area.</p></div></div>
+        <form method="post" class="profile-form">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="profile-field {% if field.name == 'is_available' %}profile-field--toggle{% endif %}">
+                    {% if field.name == 'is_available' %}
+                        <label class="profile-toggle" for="{{ field.id_for_label }}">{{ field }}<span><strong>Available to accept pickups</strong><small>Turn this off whenever you need a break.</small></span></label>
+                    {% else %}
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}
+                    {% endif %}
+                    {% for error in field.errors %}<small class="text-warning d-block mt-2">{{ error }}</small>{% endfor %}
+                </div>
+            {% endfor %}
+            <div class="profile-form__actions"><button class="btn volunteer-btn volunteer-btn--primary" type="submit"><i class="bi bi-check2"></i> Save changes</button></div>
+        </form>
     </section>
 {% endblock %}

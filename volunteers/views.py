@@ -91,6 +91,7 @@ def dashboard(request):
         "dashboard": dashboard_data,
         "available_pickups": available[:5],
         "assigned_pickups": active,
+        "profile": profile,
         "sidebar_items": _sidebar("Dashboard"),
         "page_title": "Volunteer Dashboard",
     })

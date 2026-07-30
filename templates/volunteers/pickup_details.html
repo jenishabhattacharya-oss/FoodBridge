@@ -30,7 +30,6 @@
                     {% if pickup.status == 'OPEN' %}
                         <form method="post" action="{% url 'accept_pickup' pickup.id %}">{% csrf_token %}<button type="submit" class="btn btn-warning">Claim Pickup</button></form>
                     {% elif pickup.status == 'CLAIMED' %}
-                        <form method="post" action="{% url 'collect_pickup' pickup.id %}">{% csrf_token %}<button type="submit" class="btn btn-warning">Mark as Collected</button></form>
                     {% elif pickup.status == 'COLLECTED' %}
                         <h5 class="mb-3">Confirm Delivery</h5>
                         <form method="post"

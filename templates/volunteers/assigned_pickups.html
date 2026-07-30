@@ -1,51 +1,13 @@
 {% extends "dashboards/base_dashboard.html" %}
 {% block title %}Assigned Pickups{% endblock %}
 {% block dashboard_content %}
-    <section class="dashboard-section">
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags|default:'info' }}" role="alert">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-        <div class="dashboard-card">
-            <div class="dashboard-card-header">
-                <h3 class="mb-0">Assigned Pickups</h3>
-            </div>
-            <div class="dashboard-card-body">
-                <div class="table-responsive">
-                    <table class="table table-dark table-borderless align-middle">
-                        <thead>
-                            <tr>
-                                <th>Donor</th>
-                                <th>Food</th>
-                                <th>Quantity</th>
-                                <th>Pickup Window</th>
-                                <th>Status</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for pickup in pickups %}
-                                <tr>
-                                    <td>{{ pickup.donor_name }}</td>
-                                    <td>{{ pickup.food_description }}</td>
-                                    <td>{{ pickup.quantity }}</td>
-                                    <td>{{ pickup.pickup_window_start|date:"M j, g:i A" }}</td>
-                                    <td>
-                                        <span class="badge bg-primary">{{ pickup.get_status_display }}</span>
-                                    </td>
-                                    <td>
-                                        <a href="{% url 'pickup_details' pickup.id %}"
-                                           class="btn btn-sm btn-warning">View</a>
-                                    </td>
-                                </tr>
-                            {% empty %}
-                                <tr><td colspan="6" class="text-muted text-center">You have no assigned pickups.</td></tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+    <section class="volunteer-page-header reveal"><div><p class="volunteer-eyebrow">YOUR CURRENT COMMITMENT</p><h1>Active pickups</h1><p>Complete each step below to keep the handoff clear and reliable.</p></div><a href="{% url 'available_pickups' %}" class="btn volunteer-btn volunteer-btn--ghost"><i class="bi bi-search"></i> Browse pickups</a></section>
+    {% if messages %}{% for message in messages %}<div class="alert alert-{{ message.tags|default:'info' }}" role="alert">{{ message }}</div>{% endfor %}{% endif %}
+    <section class="assigned-pickup-list">
+        {% for pickup in pickups %}
+            <article class="assigned-pickup-card reveal"><div class="assigned-pickup-card__step">{% if pickup.status == 'COLLECTED' %}<i class="bi bi-box2-heart"></i>{% else %}<i class="bi bi-bag-check"></i>{% endif %}</div><div class="assigned-pickup-card__main"><span class="volunteer-status volunteer-status--{{ pickup.status|lower }}">{{ pickup.get_status_display }}</span><h2>{{ pickup.donor_name }}</h2><p><i class="bi bi-basket2"></i> {{ pickup.food_description }} · {{ pickup.quantity }}</p><div><span><i class="bi bi-calendar3"></i> {{ pickup.pickup_window_start|date:"D, M j · g:i A" }}</span><span><i class="bi bi-geo-alt"></i> {{ pickup.pickup_city }}</span></div></div><a href="{% url 'pickup_details' pickup.id %}" class="btn volunteer-btn volunteer-btn--secondary">{% if pickup.status == 'COLLECTED' %}Confirm delivery{% else %}View pickup{% endif %} <i class="bi bi-arrow-right"></i></a></article>
+        {% empty %}
+            <div class="volunteer-empty-state volunteer-panel"><div><i class="bi bi-truck"></i></div><h3>No active pickups</h3><p>You do not have anything assigned right now.</p><a href="{% url 'available_pickups' %}" class="btn volunteer-btn volunteer-btn--primary">Find a pickup</a></div>
+        {% endfor %}
     </section>
 {% endblock %}
