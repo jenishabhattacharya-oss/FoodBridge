@@ -17,9 +17,10 @@ class DonorRegistrationForm(BaseUserRegistrationForm):
             }
         ),
     )
+    city = forms.CharField(max_length=100, widget=forms.TextInput(attrs={"placeholder": "e.g. Bengaluru"}))
 
     class Meta(BaseUserRegistrationForm.Meta):
-        fields = BaseUserRegistrationForm.Meta.fields + ("address",)
+        fields = BaseUserRegistrationForm.Meta.fields + ("address", "city")
 
     def save(self, commit=True):
         user = self._create_user(User.Role.DONOR)
@@ -28,6 +29,7 @@ class DonorRegistrationForm(BaseUserRegistrationForm):
             DonorProfile.objects.create(
                 user=user,
                 address=self.cleaned_data["address"],
+                city=self.cleaned_data["city"],
             )
 
         return user
@@ -40,7 +42,7 @@ class DonorProfileForm(forms.ModelForm):
 
     class Meta:
         model = DonorProfile
-        fields = ["address"]
+        fields = ["address", "city"]
         widgets = {
             "address": forms.Textarea(attrs={"rows": 4}),
         }
@@ -48,6 +50,7 @@ class DonorProfileForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop("user")
         super().__init__(*args, **kwargs)
+        self.fields["city"].required = True
 
         self.fields["first_name"].initial = self.user.first_name
         self.fields["last_name"].initial = self.user.last_name

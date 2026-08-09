@@ -25,6 +25,7 @@ urlpatterns = [
     path("", include("bridge.urls")),
     path("", include("accounts.urls")),
     path("donor/", include("donors.urls")),
+    path("donations/", include("donations.urls")),
     path("volunteer/", include("volunteers.urls")),
     path("ngo/", include("ngos.urls")),
 ]

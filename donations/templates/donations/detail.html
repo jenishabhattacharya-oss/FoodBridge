@@ -1,0 +1,16 @@
+{% extends base_template|default:"base.html" %}
+{% block title %}{{ donation.title }} - FoodBridge{% endblock %}
+{% block content %}
+<section class="donor-workspace donor-detail-workspace"><a href="{% if user.role == 'DONOR' %}{% url 'my_donations' %}{% elif donation.claimed_by_ngo_id == user.id %}{% url 'ngo_managed_donations' %}{% else %}{% url 'ngo_donations' %}{% endif %}" class="volunteer-text-link"><i class="bi bi-arrow-left"></i> Back to donations</a>
+  <div class="profile-panel reveal mt-3"><div class="donor-detail-heading"><div><p class="volunteer-eyebrow">DONATION DETAILS</p><h1>{{ donation.title }}</h1></div><span class="volunteer-status donor-status">{{ donation.effective_status_display }}</span></div><div class="donor-detail-body">
+    <p>{{ donation.description }}</p><hr>
+    <div class="row"><div class="col-md-6"><strong>Food</strong><p>{{ donation.get_food_type_display }} · {{ donation.get_food_condition_display }}<br>{{ donation.quantity }} {{ donation.get_unit_display }}</p></div><div class="col-md-6"><strong>Pickup window</strong><p>{{ donation.pickup_window_start|date:"M j, g:i A" }} – {{ donation.pickup_window_end|date:"M j, g:i A" }}</p></div></div>
+    <p><strong>Prepared:</strong> {{ donation.prepared_at|date:"M j, Y, g:i A" }}</p><p><strong>Storage:</strong> {{ donation.storage_notes|default:"None provided" }}</p><p><strong>Allergens:</strong> {{ donation.allergen_notes|default:"None provided" }}</p>
+    {% if user.role == 'DONOR' %}<p><strong>Pickup address:</strong> {{ donation.pickup_address }}</p>{% endif %}
+    {% if user.role == 'DONOR' and donation.can_be_changed %}<a class="btn btn-outline-light" href="{% url 'donation_edit' donation.id %}">Edit</a><form class="d-inline" method="post" action="{% url 'donation_cancel' donation.id %}">{% csrf_token %}<button class="btn btn-outline-danger">Cancel donation</button></form>{% endif %}
+    {% if can_takeover %}<hr><p>No eligible volunteer is currently available for this city.</p><form method="post" action="{% url 'donation_takeover' donation.id %}">{% csrf_token %}<button class="btn btn-warning">Take responsibility</button></form>{% endif %}
+    {% if receipt_form %}<hr><div class="ngo-detail-action"><div><p class="volunteer-eyebrow">ACCEPTED BY YOUR NGO</p><h2>Confirm receipt</h2><p>Upload proof once the food has arrived at your organization.</p></div><form method="post" enctype="multipart/form-data" action="{% url 'donation_confirm_receipt' donation.id %}">{% csrf_token %}{{ receipt_form.receipt_photo.label_tag }} {{ receipt_form.receipt_photo }}{% for error in receipt_form.receipt_photo.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}<button class="btn volunteer-btn volunteer-btn--primary mt-3">Upload proof and complete</button></form></div>{% endif %}
+    {% if can_reject %}<div class="ngo-reject-action"><div><strong>Unable to receive this donation?</strong><p>Rejecting returns it to the available food queue for another NGO or volunteer.</p></div><form method="post" action="{% url 'donation_reject' donation.id %}" onsubmit="return confirm('Reject this donation and return it to the available food queue?');">{% csrf_token %}<button class="btn btn-outline-danger">Reject donation</button></form></div>{% endif %}
+  </div></div>
+</section>
+{% endblock %}

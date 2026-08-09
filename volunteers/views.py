@@ -2,9 +2,11 @@ from datetime import date
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 from accounts.decorators import role_required
@@ -43,7 +45,10 @@ def _profile(user):
 
 
 def _available_queryset(request, default_city=""):
-    pickups = Pickup.objects.filter(status=Pickup.Status.OPEN)
+    pickups = Pickup.objects.filter(status=Pickup.Status.OPEN).filter(
+        Q(donation__isnull=True)
+        | Q(donation__status="AVAILABLE", donation__pickup_window_end__gt=timezone.now())
+    )
     city = request.GET.get("city", default_city).strip()
     if city:
         pickups = pickups.filter(pickup_city__iexact=city)
@@ -68,7 +73,7 @@ def _visible_pickup_or_404(request, pickup_id):
 @role_required(User.Role.VOLUNTEER)
 def dashboard(request):
     profile = _profile(request.user)
-    available = Pickup.objects.filter(status=Pickup.Status.OPEN)
+    available, _, _ = _available_queryset(request, profile.service_area)
     if profile.service_area:
         available = available.filter(pickup_city__iexact=profile.service_area)
     active = Pickup.objects.filter(

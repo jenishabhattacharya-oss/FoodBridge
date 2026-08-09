@@ -1,0 +1,28 @@
+{% extends "dashboards/base_dashboard.html" %}
+{% block title %}Managed Donations - FoodBridge{% endblock %}
+{% block dashboard_content %}
+    <section class="volunteer-page-header reveal">
+        <div><p class="volunteer-eyebrow">YOUR COLLECTION DESK</p><h1>Managed donations</h1><p>Track food your organization has accepted through receipt confirmation.</p></div>
+        <a href="{% url 'ngo_donations' %}" class="btn volunteer-btn volunteer-btn--primary"><i class="bi bi-search"></i> Browse available food</a>
+    </section>
+
+    <section class="ngo-managed-grid">
+        {% for donation in donations %}
+            <article class="ngo-managed-card reveal">
+                <header><div><p class="volunteer-eyebrow">{{ donation.get_food_type_display }}</p><h2>{{ donation.title }}</h2></div><span class="volunteer-status {% if donation.status == 'DELIVERED' %}ngo-status--delivered{% else %}donor-status{% endif %}">{{ donation.effective_status_display }}</span></header>
+                <div class="ngo-managed-card__facts">
+                    <span><i class="bi bi-basket2-fill"></i>{{ donation.quantity }} {{ donation.get_unit_display }}</span>
+                    <span><i class="bi bi-person"></i>{{ donation.donor.get_full_name|default:donation.donor.email }}</span>
+                    <span><i class="bi bi-geo-alt"></i>{{ donation.pickup_address }}</span>
+                    <span><i class="bi bi-clock"></i>Pickup by {{ donation.pickup_window_end|date:"M j, g:i A" }}</span>
+                </div>
+                <footer>
+                    {% if donation.status == 'NGO_MANAGED' %}<span class="ngo-pending-label"><i class="bi bi-hourglass-split"></i> Awaiting receipt confirmation</span>{% else %}<span class="ngo-pending-label ngo-pending-label--complete"><i class="bi bi-check2-circle"></i> Receipt confirmed</span>{% endif %}
+                    <a href="{% url 'donation_detail' donation.id %}" class="btn volunteer-btn volunteer-btn--ghost">Manage donation <i class="bi bi-arrow-right"></i></a>
+                </footer>
+            </article>
+        {% empty %}
+            <div class="ngo-managed-empty reveal"><span><i class="bi bi-clipboard2-check"></i></span><h2>No donations accepted yet</h2><p>Browse available food to accept a donation your organization can receive.</p><a href="{% url 'ngo_donations' %}" class="btn volunteer-btn volunteer-btn--primary">Browse available food</a></div>
+        {% endfor %}
+    </section>
+{% endblock %}

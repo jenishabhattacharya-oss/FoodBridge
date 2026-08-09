@@ -1,0 +1,12 @@
+{% extends base_template|default:"base.html" %}
+{% block title %}{{ page_title }} - FoodBridge{% endblock %}
+{% block content %}
+<section class="donor-workspace">
+  <div class="volunteer-page-header reveal"><div><p class="volunteer-eyebrow">DONATION ACTIVITY</p><h1>{{ page_title }}</h1><p>Follow each listing from pickup through delivery.</p></div>{% if mine %}<a class="btn volunteer-btn volunteer-btn--primary" href="{% url 'donation_create' %}"><i class="bi bi-plus-circle"></i> Create donation</a>{% endif %}</div>
+  <div class="donor-list-grid">{% for donation in donations %}<article class="donor-donation-card reveal">
+    <div class="d-flex justify-content-between gap-3"><div><p class="volunteer-eyebrow">{{ donation.get_food_type_display }}</p><h2>{{ donation.title }}</h2></div><span class="volunteer-status donor-status">{{ donation.effective_status_display }}</span></div>
+    <p>{{ donation.quantity }} {{ donation.get_unit_display }} · Pickup by {{ donation.pickup_window_end|date:"M j, g:i A" }}</p>
+    <a class="btn volunteer-btn volunteer-btn--ghost" href="{% url 'donation_detail' donation.id %}">View details <i class="bi bi-arrow-right"></i></a>
+  </article>{% empty %}<div class="donor-empty-state reveal"><i class="bi bi-basket2-heart"></i><h2>No donations yet</h2><p>Create your first listing and FoodBridge will help coordinate the pickup.</p>{% if mine %}<a class="btn volunteer-btn volunteer-btn--primary" href="{% url 'donation_create' %}">Create a donation</a>{% endif %}</div>{% endfor %}</div>
+</section>
+{% endblock %}

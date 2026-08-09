@@ -47,6 +47,7 @@ class Pickup(models.Model):
         CLAIMED = "CLAIMED", "Claimed"
         COLLECTED = "COLLECTED", "Collected"
         DELIVERED = "DELIVERED", "Delivered"
+        CANCELLED = "CANCELLED", "Cancelled"
 
     donor_name = models.CharField(max_length=200)
     donor_phone = models.CharField(max_length=15)

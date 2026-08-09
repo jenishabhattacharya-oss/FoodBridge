@@ -1,95 +1,67 @@
 {% extends "dashboards/base_dashboard.html" %}
+{% block title %}Donor Dashboard{% endblock %}
 {% block dashboard_content %}
-    {% include "components/dashboard/welcome_banner.html" %}
-    <!-- Stats -->
-    <section class="dashboard-section">
-        <div class="row g-4">
-            {% for stat in dashboard.stats %}
-                <div class="col-xl-3 col-md-6">{% include "components/dashboard/stat_card.html" %}</div>
-            {% endfor %}
-        </div>
-    </section>
-    <!-- Bottom Section -->
-    <section class="dashboard-section">
-        <div class="row g-4">
-            <!-- Recent Donations -->
-            <div class="col-lg-8">
-                <div class="dashboard-card h-100">
-                    <div class="dashboard-card-header">
-                        <h5 class="mb-0">Recent Donations</h5>
-                    </div>
-                    <div class="dashboard-card-body">
-                        <div class="table-responsive">
-                            <table class="table table-dark table-borderless align-middle mb-0">
-                                <thead>
-                                    <tr>
-                                        <th>Food</th>
-                                        <th>NGO</th>
-                                        <th>Status</th>
-                                        <th>Date</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>Rice Meals</td>
-                                        <td>Hope Foundation</td>
-                                        <td><span class="badge bg-success">Delivered</span></td>
-                                        <td>Today</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Bread</td>
-                                        <td>Helping Hands</td>
-                                        <td><span class="badge bg-warning text-dark">Pickup</span></td>
-                                        <td>Yesterday</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Vegetables</td>
-                                        <td>Food Bank</td>
-                                        <td><span class="badge bg-secondary">Pending</span></td>
-                                        <td>2 days ago</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+    <section class="volunteer-hero reveal donor-hero">
+        <div class="volunteer-hero__content">
+            <p class="volunteer-eyebrow"><i class="bi bi-heart-fill"></i> YOUR DONOR HUB</p>
+            <div class="d-flex flex-column flex-lg-row justify-content-between gap-4 align-items-lg-end">
+                <div>
+                    <h1>Good to see you, {{ user.first_name|default:user.email }}.</h1>
+                    <p>Turn surplus food into nourishing meals for people in your community.</p>
+                </div>
+                <div class="volunteer-hero__actions">
+                    <a href="{% url 'donation_create' %}" class="btn volunteer-btn volunteer-btn--primary"><i class="bi bi-plus-circle"></i> Donate food</a>
+                    <a href="{% url 'donor_profile' %}" class="btn volunteer-btn volunteer-btn--ghost"><i class="bi bi-person-gear"></i> My profile</a>
                 </div>
             </div>
-            <!-- Quick Actions -->
-            <div class="col-lg-4">
-                <div class="dashboard-card h-100">
-                    <div class="dashboard-card-header">
-                        <h5 class="mb-0">Quick Actions</h5>
-                    </div>
-                    <div class="dashboard-card-body d-grid gap-3">
-                        <a href="{% url 'donate' %}" class="btn btn-warning">
-                            <i class="bi bi-plus-circle me-2"></i>
-                            Donate Food
-                        </a>
-                        <button class="btn btn-outline-light">
-                            <i class="bi bi-clock-history me-2"></i>
-                            Donation History
-                        </button>
-                        <button class="btn btn-outline-light">
-                            <i class="bi bi-person me-2"></i>
-                            Edit Profile
-                        </button>
-                    </div>
-                </div>
+            <div class="volunteer-hero__meta">
+                <span class="volunteer-status volunteer-status--available"><i class="bi bi-circle-fill"></i> Ready to donate</span>
+                <span><i class="bi bi-arrow-repeat"></i> Track every handoff</span>
+                <span><i class="bi bi-people"></i> Help your local community</span>
             </div>
         </div>
     </section>
-    <!-- Activity -->
-    <section class="dashboard-section">
-        <div class="dashboard-card">
-            <div class="dashboard-card-header">
-                <h5 class="mb-0">Recent Activity</h5>
+
+    <section class="dashboard-section donor-stats-grid">
+        {% for stat in dashboard.stats %}
+            <article class="volunteer-stat-card reveal">
+                <div class="volunteer-stat-card__icon volunteer-stat-card__icon--{{ stat.color }}"><i class="bi {{ stat.icon }}"></i></div>
+                <div><p>{{ stat.title }}</p><strong>{{ stat.value }}</strong><span>{{ stat.subtitle }}</span></div>
+                <span class="volunteer-stat-card__trend">{{ stat.trend }}</span>
+            </article>
+        {% endfor %}
+    </section>
+
+    <section class="dashboard-section volunteer-progress reveal donor-progress">
+        <div><p class="volunteer-eyebrow mb-2">FROM SURPLUS TO SUPPORT</p><h2>Your donation journey</h2></div>
+        <div class="volunteer-progress__steps">
+            <div class="volunteer-progress__step"><span>1</span><div><strong>List</strong><small>Share what you have</small></div></div>
+            <div class="volunteer-progress__line"></div>
+            <div class="volunteer-progress__step"><span>2</span><div><strong>Collect</strong><small>A volunteer picks it up</small></div></div>
+            <div class="volunteer-progress__line"></div>
+            <div class="volunteer-progress__step"><span>3</span><div><strong>Deliver</strong><small>Food reaches an NGO</small></div></div>
+        </div>
+    </section>
+
+    <section class="dashboard-section row g-4">
+        <div class="col-lg-8">
+            <div class="volunteer-panel h-100 reveal">
+                <div class="volunteer-panel__header"><div><p class="volunteer-eyebrow">YOUR LISTINGS</p><h2>Recent donations</h2></div><a href="{% url 'my_donations' %}" class="volunteer-text-link">View all <i class="bi bi-arrow-right"></i></a></div>
+                <div class="volunteer-panel__body p-0">
+                    <div class="table-responsive volunteer-table-wrap"><table class="table volunteer-table align-middle mb-0"><thead><tr><th>Food</th><th>Pickup deadline</th><th>Status</th><th></th></tr></thead><tbody>
+                    {% for donation in recent_donations %}<tr><td><strong>{{ donation.title }}</strong><small>{{ donation.quantity }} {{ donation.get_unit_display }} · {{ donation.get_food_type_display }}</small></td><td><strong>{{ donation.pickup_window_end|date:"M j" }}</strong><small>{{ donation.pickup_window_end|date:"g:i A" }}</small></td><td><span class="volunteer-status donor-status">{{ donation.effective_status_display }}</span></td><td><a href="{% url 'donation_detail' donation.id %}" class="btn volunteer-icon-btn" aria-label="View {{ donation.title }}"><i class="bi bi-arrow-right"></i></a></td></tr>{% empty %}<tr><td colspan="4"><div class="volunteer-table-empty">Your donation history will appear here once you create a listing.</div></td></tr>{% endfor %}
+                    </tbody></table></div>
+                </div>
             </div>
-            <div class="dashboard-card-body">
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item bg-transparent text-light">✅ Donation accepted by Hope Foundation</li>
-                    <li class="list-group-item bg-transparent text-light">🚚 Volunteer assigned for pickup</li>
-                    <li class="list-group-item bg-transparent text-light">🎉 Your last donation served 35 meals</li>
-                </ul>
+        </div>
+        <div class="col-lg-4">
+            <div class="volunteer-panel volunteer-panel--accent h-100 reveal">
+                <div class="volunteer-panel__header"><div><p class="volunteer-eyebrow">QUICK START</p><h2>What would you like to do?</h2></div></div>
+                <div class="volunteer-panel__body volunteer-action-list">
+                    <a href="{% url 'donation_create' %}" class="volunteer-action"><span><i class="bi bi-basket2-fill"></i></span><div><strong>Create a donation</strong><small>List surplus food for pickup</small></div><i class="bi bi-chevron-right"></i></a>
+                    <a href="{% url 'my_donations' %}" class="volunteer-action"><span><i class="bi bi-clock-history"></i></span><div><strong>Track donations</strong><small>See pickup and delivery progress</small></div><i class="bi bi-chevron-right"></i></a>
+                    <a href="{% url 'donor_profile' %}" class="volunteer-action"><span><i class="bi bi-geo-alt"></i></span><div><strong>Update your profile</strong><small>Keep your pickup details current</small></div><i class="bi bi-chevron-right"></i></a>
+                </div>
             </div>
         </div>
     </section>

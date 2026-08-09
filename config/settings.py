@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "bridge",
     "accounts",
     "donors",
+    "donations",
     "volunteers",
     "ngos",
 ]

@@ -11,6 +11,7 @@ class DonorProfile(models.Model):
         related_name="donor_profile",
     )
     address = models.TextField()
+    city = models.CharField(max_length=100, blank=True, default="")
 
     def __str__(self):
         return f"{self.user.get_full_name()} (Donor)"

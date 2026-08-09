@@ -1,0 +1,13 @@
+{% extends "dashboards/base_dashboard.html" %}
+{% block title %}My Donor Profile{% endblock %}
+{% block dashboard_content %}
+    <section class="volunteer-page-header reveal"><div><p class="volunteer-eyebrow">PERSONAL SETTINGS</p><h1>My donor profile</h1><p>Keep your pickup details current so volunteers can reach you easily.</p></div></section>
+    {% if messages %}{% for message in messages %}<div class="alert alert-{{ message.tags|default:'info' }}" role="alert">{{ message }}</div>{% endfor %}{% endif %}
+    <section class="profile-panel reveal">
+        <div class="profile-panel__intro"><span><i class="bi bi-person-heart"></i></span><div><h2>Your donation details</h2><p>These details are used to coordinate food pickups.</p></div></div>
+        <form method="post" class="profile-form">{% csrf_token %}
+            {% for field in form %}<div class="profile-field {% if field.name == 'address' %}donor-profile-field--wide{% endif %}"><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% for error in field.errors %}<small class="text-warning d-block mt-2">{{ error }}</small>{% endfor %}</div>{% endfor %}
+            <div class="profile-form__actions"><button class="btn volunteer-btn volunteer-btn--primary" type="submit"><i class="bi bi-check2"></i> Save changes</button></div>
+        </form>
+    </section>
+{% endblock %}

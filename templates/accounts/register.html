@@ -96,6 +96,13 @@
                 {{ form.address.errors }}
             </div>
         {% endif %}
+        {% if form.city %}
+            <div class="form-group">
+                {{ form.city.label_tag }}
+                {{ form.city }}
+                {{ form.city.errors }}
+            </div>
+        {% endif %}
         <button class="btn btn-warning w-100 py-3 fw-bold" type="submit">
             Create Account
             <i class="bi bi-arrow-right ms-2"></i>
