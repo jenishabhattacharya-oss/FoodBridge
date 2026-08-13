@@ -212,10 +212,10 @@
                 <div class="d-flex flex-column flex-lg-row justify-content-center gap-3 mb-4">
                     <a href="{% url 'register' %}"
                        class="btn btn-success btn-lg px-5 py-3 fw-semibold">Register as Donor</a>
-                    <a href="{% url 'register' %}" class="btn btn-outline-success btn-lg px-5 py-3 fw-semibold">Become a Volunteer</a>
+                    <a href="{% url 'register' %}?role=VOLUNTEER" class="btn btn-outline-success btn-lg px-5 py-3 fw-semibold">Become a Volunteer</a>
                 </div>
                 <div class="text-center">
-                    <a href="{% url 'register' %}" class="btn btn-warning btn-lg px-5 py-3 fw-semibold">Join as NGO</a>
+                    <a href="{% url 'register' %}?role=NGO" class="btn btn-warning btn-lg px-5 py-3 fw-semibold">Join as NGO</a>
                 </div>
             </div>
         </div>
