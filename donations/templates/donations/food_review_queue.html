@@ -1,0 +1,7 @@
+{% extends "dashboards/base_dashboard.html" %}
+{% block title %}Food safety review{% endblock %}
+{% block dashboard_content %}
+<section class="volunteer-page-header"><div><p class="volunteer-eyebrow">HUMAN REVIEW</p><h1>Food safety review</h1><p>Review items that the visual AI could not assess with confidence.</p></div></section>
+<div class="alert alert-warning">Visual review is not a food-safety certification. Reject anything with unclear or concerning evidence.</div>
+<section class="row g-4">{% for donation in donations %}<article class="col-lg-6"><div class="profile-panel p-3 h-100"><h2 class="h4">{{ donation.title }}</h2><p>{{ donation.verification_summary }}</p><div class="row g-2 mb-3"><div class="col-4"><img class="img-fluid rounded" src="{% url 'donation_photo' donation.id 'overview' %}" alt="Overview"></div><div class="col-4"><img class="img-fluid rounded" src="{% url 'donation_photo' donation.id 'closeup' %}" alt="Close-up"></div><div class="col-4"><img class="img-fluid rounded" src="{% url 'donation_photo' donation.id 'label' %}" alt="Label"></div></div><div class="d-flex gap-2"><form method="post" action="{% url 'review_food' donation.id 'approve' %}">{% csrf_token %}<button class="btn btn-success">Approve</button></form><form method="post" action="{% url 'review_food' donation.id 'reject' %}">{% csrf_token %}<button class="btn btn-outline-danger">Reject</button></form></div></div></article>{% empty %}<p>No donations need human review.</p>{% endfor %}</section>
+{% endblock %}

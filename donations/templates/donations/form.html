@@ -2,14 +2,15 @@
 {% block title %}{{ page_title }} - FoodBridge{% endblock %}
 {% block content %}
 <section class="donor-workspace donor-form-workspace"><div class="volunteer-page-header reveal"><div><p class="volunteer-eyebrow">MAKE AN IMPACT</p><h1>{{ page_title }}</h1><p>Tell us about the food and a volunteer can arrange the collection.</p></div></div>
-  <div class="profile-panel reveal"><form method="post" class="donor-donation-form">{% csrf_token %}
+  <div class="profile-panel reveal"><form method="post" enctype="multipart/form-data" class="donor-donation-form">{% csrf_token %}
     {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
     <div class="row g-3">
-      {% for field in form %}<div class="{% if field.name == 'description' or field.name == 'storage_notes' or field.name == 'allergen_notes' or field.name == 'pickup_address' %}col-12{% else %}col-md-6{% endif %}">
+      {% for field in form %}<div class="{% if field.name == 'description' or field.name == 'storage_notes' or field.name == 'allergen_notes' or field.name == 'pickup_address' or 'photo' in field.name %}col-12{% else %}col-md-6{% endif %}">
         <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}
         {% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
       </div>{% endfor %}
     </div>
+    <div class="alert alert-warning mt-4 mb-0"><strong>Visual screening only:</strong> AI can detect visible warning signs but cannot guarantee freshness, contamination absence, allergens, temperature history, or food safety.</div>
     <div class="mt-4 d-flex gap-2"><button class="btn volunteer-btn volunteer-btn--primary">Save donation</button><a class="btn volunteer-btn volunteer-btn--ghost" href="{% url 'my_donations' %}">Cancel</a></div>
   </form></div>
 </section>

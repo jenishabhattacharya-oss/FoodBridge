@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
-from django.http import Http404
+from django.http import FileResponse, Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_POST
@@ -21,13 +21,15 @@ from .services import (
     create_donation,
     eligible_volunteers,
     release_ngo_donation,
+    review_food_safety,
+    submit_donation_for_verification,
     takeover_donation,
     update_donation,
 )
 
 
 def _active_donations():
-    return Donation.objects.filter(status=Donation.Status.AVAILABLE, pickup_window_end__gt=timezone.now())
+    return Donation.objects.filter(status=Donation.Status.AVAILABLE, verification_status=Donation.VerificationStatus.APPROVED, pickup_window_end__gt=timezone.now())
 
 
 @login_required(login_url="login")
@@ -40,10 +42,15 @@ def create(request):
     if not profile.city:
         messages.info(request, "Add your city to your donor profile before creating a listing.")
         return redirect("donor_profile")
-    form = DonationForm(request.POST or None)
+    form = DonationForm(request.POST or None, request.FILES or None)
     if request.method == "POST" and form.is_valid():
-        donation = create_donation(donor=request.user, cleaned_data=form.cleaned_data)
-        messages.success(request, "Donation listed and sent to the volunteer pickup queue.")
+        donation = submit_donation_for_verification(donor=request.user, cleaned_data=form.cleaned_data)
+        if donation.verification_status == Donation.VerificationStatus.APPROVED:
+            messages.success(request, "Food passed visual screening and is ready for NGO acceptance.")
+        elif donation.verification_status == Donation.VerificationStatus.REJECTED:
+            messages.error(request, donation.verification_summary)
+        else:
+            messages.info(request, donation.verification_summary)
         return redirect("donation_detail", donation_id=donation.id)
     return render(request, "donations/form.html", {
         "form": form,
@@ -111,11 +118,43 @@ def ngo_managed(request):
 
 
 @login_required(login_url="login")
+@role_required(User.Role.NGO)
+def food_review_queue(request):
+    donations = Donation.objects.filter(verification_status=Donation.VerificationStatus.HUMAN_REVIEW).select_related("donor")
+    return render(request, "donations/food_review_queue.html", {"donations": donations, "sidebar_items": ngo_sidebar("Food safety review"), "page_title": "Food safety review"})
+
+
+@login_required(login_url="login")
+@role_required(User.Role.NGO)
+@require_POST
+def review_food(request, donation_id, decision):
+    try:
+        donation = review_food_safety(donation_id=donation_id, reviewer=request.user, approve=decision == "approve")
+    except (Donation.DoesNotExist, ValidationError) as error:
+        messages.error(request, str(error))
+    else:
+        messages.success(request, f"{donation.title} has been {'approved' if decision == 'approve' else 'rejected'}.")
+    return redirect("food_review_queue")
+
+
+@login_required(login_url="login")
+def donation_photo(request, donation_id, kind):
+    field_name = {"overview": "food_photo_overview", "closeup": "food_photo_closeup", "label": "food_photo_label"}.get(kind)
+    donation = get_object_or_404(Donation, pk=donation_id)
+    can_view = request.user.role == User.Role.DONOR and donation.donor_id == request.user.id
+    can_view = can_view or request.user.role == User.Role.NGO
+    if not can_view or not field_name or not getattr(donation, field_name):
+        raise Http404("Photo not found.")
+    photo = getattr(donation, field_name)
+    return FileResponse(photo.open("rb"), content_type="image/*")
+
+
+@login_required(login_url="login")
 def detail(request, donation_id):
     donation = get_object_or_404(Donation.objects.select_related("donor", "pickup", "claimed_by_ngo", "donor__donor_profile"), pk=donation_id)
     if request.user.role == User.Role.DONOR and donation.donor_id != request.user.id:
         raise Http404("Donation not found.")
-    if request.user.role == User.Role.NGO and (donation.effective_status != Donation.Status.AVAILABLE and donation.claimed_by_ngo_id != request.user.id and donation.receiving_ngo_id != request.user.id):
+    if request.user.role == User.Role.NGO and (donation.effective_status != Donation.Status.AVAILABLE and donation.claimed_by_ngo_id != request.user.id and donation.receiving_ngo_id != request.user.id and donation.verification_status != Donation.VerificationStatus.HUMAN_REVIEW):
         raise Http404("Donation not found.")
     if request.user.role not in (User.Role.DONOR, User.Role.NGO):
         raise Http404("Donation not found.")
@@ -126,7 +165,7 @@ def detail(request, donation_id):
     )
     can_takeover = (
         request.user.role == User.Role.NGO and donation.can_be_changed
-        and donation.pickup.status == donation.pickup.Status.OPEN
+        and donation.pickup and donation.pickup.status == donation.pickup.Status.OPEN
         and not eligible_volunteers(donation.donor.donor_profile.city).exists()
     )
     is_managed_by_current_ngo = donation.claimed_by_ngo_id == request.user.id
@@ -142,6 +181,7 @@ def detail(request, donation_id):
         "can_reject": can_reject,
         "receipt_form": receipt_form,
         "can_accept_for_delivery": can_accept_for_delivery,
+        "food_safety_disclaimer": "Visual AI screening cannot guarantee freshness, contamination absence, allergens, temperature history, or food safety.",
     }
     if request.user.role == User.Role.NGO and donation.receiving_ngo_id == request.user.id and donation.status == Donation.Status.AWAITING_NGO_CONFIRMATION:
         context["can_confirm_volunteer_delivery"] = True

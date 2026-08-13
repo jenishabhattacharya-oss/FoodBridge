@@ -18,6 +18,7 @@ media/
 # Environment Variables
 .env
 .env.*
+!.env.example
 
 # Static Files
 staticfiles/

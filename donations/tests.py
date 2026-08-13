@@ -1,5 +1,6 @@
 from datetime import timedelta
 from tempfile import TemporaryDirectory
+from unittest.mock import patch
 
 from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -13,12 +14,14 @@ from volunteers.models import Pickup, VolunteerProfile
 from volunteers.services import claim_pickup, mark_collected, mark_delivered
 
 from .models import Donation
+from .forms import DonationForm
 from .services import (
     confirm_ngo_receipt,
     accept_for_volunteer_delivery,
     create_donation,
     release_ngo_donation,
     takeover_donation,
+    submit_donation_for_verification,
 )
 
 
@@ -112,3 +115,39 @@ class DonationWorkflowTests(TestCase):
         response = self.client.get("/donations/managed/")
 
         self.assertContains(response, "No donations accepted yet")
+
+
+class DonationPhotoVerificationTests(TestCase):
+    def setUp(self):
+        self.donor = User.objects.create_user(email="photo@example.com", password="password", first_name="Photo", last_name="Donor", phone="555", role=User.Role.DONOR)
+        DonorProfile.objects.create(user=self.donor, address="MG Road", city="Bengaluru")
+
+    def _image(self, name):
+        return SimpleUploadedFile(name, b"GIF87a\x01\x00\x01\x00\x80\x00\x00\x00\x00\x00\xff\xff\xff!\xf9\x04\x01\x00\x00\x00\x00,\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02D\x01\x00;", content_type="image/gif")
+
+    def _data(self):
+        start = timezone.now() + timedelta(hours=1)
+        return {"title": "Fresh meals", "description": "Prepared today", "food_type": Donation.FoodType.VEG, "food_condition": Donation.FoodCondition.COOKED, "quantity": 10, "unit": Donation.Unit.PLATES, "prepared_at": timezone.now(), "storage_notes": "", "allergen_notes": "", "pickup_address": "MG Road", "pickup_window_start": start, "pickup_window_end": start + timedelta(hours=1), "food_photo_overview": self._image("overview.gif"), "food_photo_closeup": self._image("closeup.gif"), "food_photo_label": self._image("label.gif")}
+
+    def test_all_three_photos_are_required(self):
+        data = self._data()
+        data.pop("food_photo_label")
+        form = DonationForm(data=data)
+        self.assertFalse(form.is_valid())
+        self.assertIn("food_photo_label", form.errors)
+
+    @patch("donations.services.FoodSafetyVerifier.verify")
+    def test_approved_screening_creates_pickup(self, verify):
+        verify.return_value = {"decision": "approve", "confidence": 90, "summary": "No visible concern.", "risk_flags": []}
+        with TemporaryDirectory() as media_root, override_settings(MEDIA_ROOT=media_root):
+            donation = submit_donation_for_verification(donor=self.donor, cleaned_data=self._data())
+        self.assertEqual(donation.verification_status, Donation.VerificationStatus.APPROVED)
+        self.assertIsNotNone(donation.pickup_id)
+
+    @patch("donations.services.FoodSafetyVerifier.verify")
+    def test_review_result_creates_no_pickup(self, verify):
+        verify.return_value = {"decision": "review", "confidence": 20, "summary": "Photos are unclear.", "risk_flags": ["unclear_image"]}
+        with TemporaryDirectory() as media_root, override_settings(MEDIA_ROOT=media_root):
+            donation = submit_donation_for_verification(donor=self.donor, cleaned_data=self._data())
+        self.assertEqual(donation.verification_status, Donation.VerificationStatus.HUMAN_REVIEW)
+        self.assertIsNone(donation.pickup_id)

@@ -5,6 +5,11 @@ from django.utils import timezone
 
 
 class Donation(models.Model):
+    class VerificationStatus(models.TextChoices):
+        PENDING = "PENDING", "Pending verification"
+        APPROVED = "APPROVED", "Approved"
+        REJECTED = "REJECTED", "Rejected"
+        HUMAN_REVIEW = "HUMAN_REVIEW", "Awaiting human review"
     class FoodType(models.TextChoices):
         VEG = "VEG", "Vegetarian"
         NON_VEG = "NON_VEG", "Non-vegetarian"
@@ -45,6 +50,19 @@ class Donation(models.Model):
     prepared_at = models.DateTimeField()
     storage_notes = models.TextField(blank=True)
     allergen_notes = models.TextField(blank=True)
+    is_unpackaged = models.BooleanField(default=False)
+    food_photo_overview = models.ImageField(upload_to="donation_photos/%Y/%m/", blank=True)
+    food_photo_closeup = models.ImageField(upload_to="donation_photos/%Y/%m/", blank=True)
+    food_photo_label = models.ImageField(upload_to="donation_photos/%Y/%m/", blank=True)
+    verification_status = models.CharField(max_length=20, choices=VerificationStatus.choices, default=VerificationStatus.PENDING, db_index=True)
+    verification_summary = models.TextField(blank=True)
+    verification_confidence = models.PositiveSmallIntegerField(null=True, blank=True)
+    visible_risk_flags = models.JSONField(default=list, blank=True)
+    verification_provider = models.CharField(max_length=40, blank=True)
+    verification_model = models.CharField(max_length=100, blank=True)
+    verified_at = models.DateTimeField(null=True, blank=True)
+    reviewed_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="food_reviews")
+    reviewed_at = models.DateTimeField(null=True, blank=True)
     pickup_address = models.TextField()
     pickup_window_start = models.DateTimeField()
     pickup_window_end = models.DateTimeField()
@@ -80,7 +98,11 @@ class Donation(models.Model):
 
     @property
     def can_be_changed(self):
-        return self.status == self.Status.AVAILABLE and not self.is_expired
+        return (
+            self.status == self.Status.AVAILABLE and not self.is_expired
+        ) or (
+            not self.pickup_id and self.verification_status in (self.VerificationStatus.REJECTED, self.VerificationStatus.HUMAN_REVIEW)
+        )
 
     def clean(self):
         super().clean()

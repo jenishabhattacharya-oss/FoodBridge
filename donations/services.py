@@ -1,10 +1,12 @@
 from django.core.exceptions import ValidationError
+from django.conf import settings
 from django.db import transaction
 from django.utils import timezone
 
 from volunteers.models import Pickup, VolunteerProfile
 
 from .models import Donation
+from .verification import FoodSafetyVerifier
 
 
 def _pickup_values(donation):
@@ -28,7 +30,9 @@ def _pickup_values(donation):
 
 @transaction.atomic
 def create_donation(*, donor, cleaned_data):
-    donation = Donation(donor=donor, **cleaned_data)
+    # Internal/test creation remains a trusted path; donor-facing submissions use
+    # submit_donation_for_verification instead.
+    donation = Donation(donor=donor, verification_status=Donation.VerificationStatus.APPROVED, **cleaned_data)
     donation.full_clean()
     donation.save()
     pickup = Pickup(**_pickup_values(donation))
@@ -36,6 +40,60 @@ def create_donation(*, donor, cleaned_data):
     pickup.save()
     donation.pickup = pickup
     donation.save(update_fields=("pickup", "updated_at"))
+    return donation
+
+
+@transaction.atomic
+def submit_donation_for_verification(*, donor, cleaned_data):
+    """Persist donor photos, then gate pickup creation on the visual-screening result."""
+    donation = Donation(donor=donor, **cleaned_data)
+    donation.full_clean()
+    donation.save()
+    try:
+        result = FoodSafetyVerifier().verify(
+            [donation.food_photo_overview, donation.food_photo_closeup, donation.food_photo_label],
+            is_unpackaged=donation.is_unpackaged,
+        )
+    except Exception:
+        result = {"decision": "review", "confidence": 0, "summary": "AI screening could not be completed. This donation needs human review.", "risk_flags": ["verification_unavailable"]}
+    mapping = {"approve": Donation.VerificationStatus.APPROVED, "reject": Donation.VerificationStatus.REJECTED, "review": Donation.VerificationStatus.HUMAN_REVIEW}
+    donation.verification_status = mapping[result["decision"]]
+    donation.verification_confidence = result["confidence"]
+    donation.verification_summary = result["summary"]
+    donation.visible_risk_flags = result["risk_flags"]
+    donation.verification_provider = "gemini"
+    donation.verification_model = settings.GEMINI_VISION_MODEL
+    donation.verified_at = timezone.now()
+    donation.save()
+    if donation.verification_status == Donation.VerificationStatus.APPROVED:
+        pickup = Pickup(**_pickup_values(donation))
+        pickup.full_clean()
+        pickup.save()
+        donation.pickup = pickup
+        donation.status = Donation.Status.AVAILABLE
+        donation.save(update_fields=("pickup", "status", "updated_at"))
+    return donation
+
+
+@transaction.atomic
+def review_food_safety(*, donation_id, reviewer, approve):
+    donation = Donation.objects.select_for_update().get(pk=donation_id)
+    if donation.verification_status != Donation.VerificationStatus.HUMAN_REVIEW or donation.pickup_id:
+        raise ValidationError("This donation is not awaiting human food-safety review.")
+    donation.reviewed_by = reviewer
+    donation.reviewed_at = timezone.now()
+    if approve:
+        donation.verification_status = Donation.VerificationStatus.APPROVED
+        donation.verification_summary = "Approved by an NGO reviewer after visual review."
+        pickup = Pickup(**_pickup_values(donation))
+        pickup.full_clean()
+        pickup.save()
+        donation.pickup = pickup
+        donation.status = Donation.Status.AVAILABLE
+    else:
+        donation.verification_status = Donation.VerificationStatus.REJECTED
+        donation.verification_summary = "Rejected by an NGO reviewer after visual review."
+    donation.save()
     return donation
 
 
@@ -77,7 +135,7 @@ def eligible_volunteers(city):
 @transaction.atomic
 def accept_for_volunteer_delivery(*, donation_id, ngo):
     donation = Donation.objects.select_for_update().select_related("pickup").get(pk=donation_id)
-    if not donation.can_be_changed or not donation.pickup_id or donation.pickup.status != Pickup.Status.OPEN:
+    if donation.verification_status != Donation.VerificationStatus.APPROVED or not donation.can_be_changed or not donation.pickup_id or donation.pickup.status != Pickup.Status.OPEN:
         raise ValidationError("This donation is no longer available for volunteer delivery.")
     if donation.receiving_ngo_id and donation.receiving_ngo_id != ngo.id:
         raise ValidationError("Another NGO has already accepted this donation.")
@@ -90,7 +148,7 @@ def accept_for_volunteer_delivery(*, donation_id, ngo):
 @transaction.atomic
 def takeover_donation(*, donation_id, ngo):
     donation = Donation.objects.select_for_update().select_related("pickup", "donor__donor_profile").get(pk=donation_id)
-    if not donation.can_be_changed or donation.pickup.status != Pickup.Status.OPEN:
+    if donation.verification_status != Donation.VerificationStatus.APPROVED or not donation.can_be_changed or donation.pickup.status != Pickup.Status.OPEN:
         raise ValidationError("This donation is no longer available for NGO takeover.")
     if eligible_volunteers(donation.donor.donor_profile.city).exists():
         raise ValidationError("An eligible volunteer is available for this pickup.")
