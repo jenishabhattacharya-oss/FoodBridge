@@ -83,6 +83,16 @@ class Pickup(models.Model):
 
     class Meta:
         ordering = ("pickup_window_start", "id")
+        indexes = [
+            models.Index(
+                fields=("status", "pickup_city", "pickup_window_start"),
+                name="pickup_open_city_time_idx",
+            ),
+            models.Index(
+                fields=("assigned_volunteer", "status"),
+                name="pickup_volunteer_status_idx",
+            ),
+        ]
         constraints = [
             models.UniqueConstraint(
                 fields=("assigned_volunteer",),

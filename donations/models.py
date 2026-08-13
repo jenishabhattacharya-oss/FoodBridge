@@ -55,6 +55,10 @@ class Donation(models.Model):
 
     class Meta:
         ordering = ("-created_at", "-id")
+        indexes = [
+            models.Index(fields=("status", "pickup_window_end"), name="donation_active_idx"),
+            models.Index(fields=("claimed_by_ngo", "status"), name="donation_ngo_status_idx"),
+        ]
 
     def __str__(self):
         return f"{self.title} — {self.donor.get_full_name()}"
