@@ -1,5 +1,6 @@
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
+from django.db import connection
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET
 from .location import request_ip_location, search_places
@@ -10,6 +11,15 @@ def donate(request):
     return redirect("donation_create")
 def contact(request):
     return render(request, 'contact.html')
+
+
+@require_GET
+def health(request):
+    try:
+        connection.ensure_connection()
+    except Exception:
+        return JsonResponse({"status": "unhealthy"}, status=503)
+    return JsonResponse({"status": "ok"})
 
 
 @login_required(login_url="login")

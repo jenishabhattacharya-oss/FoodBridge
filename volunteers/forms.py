@@ -1,6 +1,8 @@
 from django import forms
+from django.conf import settings
 
 from accounts.forms import BaseUserRegistrationForm
+from bridge.uploads import validate_image_upload
 from accounts.models import User
 
 from .models import Pickup, VolunteerProfile
@@ -65,4 +67,10 @@ class DeliveryForm(forms.ModelForm):
         for field in ("recipient_name", "recipient_address", "delivery_photo"):
             if not cleaned_data.get(field):
                 self.add_error(field, "This field is required to confirm delivery.")
+        photo = cleaned_data.get("delivery_photo")
+        if photo:
+            try:
+                validate_image_upload(photo, max_size=settings.EVIDENCE_PHOTO_MAX_SIZE_BYTES)
+            except ValueError as error:
+                self.add_error("delivery_photo", str(error))
         return cleaned_data

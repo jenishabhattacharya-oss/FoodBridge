@@ -1,6 +1,9 @@
 {% extends "dashboards/base_dashboard.html" %}
 {% block title %}NGO Dashboard{% endblock %}
 {% block dashboard_content %}
+{% if pending_approval %}
+<section class="profile-panel p-4"><p class="volunteer-eyebrow">ACCOUNT REVIEW</p><h1>Your NGO registration is pending</h1><p>FoodBridge staff will review your organization before you can browse donations, manage deliveries, or use payment features.</p><a class="btn volunteer-btn volunteer-btn--primary" href="{% url 'ngo_profile' %}">Review organization details</a></section>
+{% else %}
     <section class="ngo-hero reveal">
         <div>
             <p class="volunteer-eyebrow"><i class="bi bi-buildings-fill"></i> COMMUNITY FOOD NETWORK</p>
@@ -8,7 +11,7 @@
             <p>See available food, coordinate collections, and keep every handoff visible to your team.</p>
             <div class="ngo-hero__meta"><span><i class="bi bi-geo-alt"></i> {{ profile.address|truncatechars:70 }}</span><span><i class="bi bi-shield-check"></i> Verified FoodBridge partner</span></div>
         </div>
-        <div class="ngo-hero__actions"><a class="btn volunteer-btn volunteer-btn--primary" href="{% url 'ngo_donations' %}"><i class="bi bi-search"></i> Browse available food</a><a class="btn volunteer-btn volunteer-btn--ghost" href="{% url 'connect_razorpay' %}"><i class="bi bi-credit-card"></i> Connect Razorpay</a></div>
+        <div class="ngo-hero__actions"><a class="btn volunteer-btn volunteer-btn--primary" href="{% url 'ngo_donations' %}"><i class="bi bi-search"></i> Browse available food</a>{% if PAYMENTS_ENABLED %}<a class="btn volunteer-btn volunteer-btn--ghost" href="{% url 'connect_razorpay' %}"><i class="bi bi-credit-card"></i> Connect Razorpay</a>{% endif %}</div>
     </section>
 
     <section class="ngo-stat-grid dashboard-section">
@@ -26,4 +29,5 @@
         </div></div></div>
         <div class="col-lg-5"><div class="ngo-collection-panel h-100 reveal"><p class="volunteer-eyebrow">YOUR COLLECTION DESK</p><h2>Stay on top of managed donations</h2><p>Review the handoffs your organization is responsible for and confirm receipt once food arrives.</p><div class="ngo-collection-panel__count"><i class="bi bi-box2-heart"></i><strong>{{ managed_donations|length }}</strong><span>recent managed listings</span></div><a href="{% url 'ngo_managed_donations' %}" class="btn volunteer-btn volunteer-btn--primary">Open collection desk <i class="bi bi-arrow-right"></i></a></div></div>
     </section>
+{% endif %}
 {% endblock %}

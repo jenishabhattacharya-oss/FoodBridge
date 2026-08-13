@@ -91,7 +91,7 @@ class Pickup(models.Model):
     destination_longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
     destination_place_label = models.CharField(max_length=255, blank=True)
     handoff_notes = models.TextField(blank=True)
-    delivery_photo = models.ImageField(upload_to="delivery_proofs/%Y/%m/", blank=True)
+    delivery_photo = models.ImageField(upload_to="private/delivery_proofs/%Y/%m/", blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

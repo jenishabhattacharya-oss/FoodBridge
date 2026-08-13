@@ -7,7 +7,7 @@ from django.utils import timezone
 from datetime import timedelta
 from django.views.decorators.http import require_POST
 
-from accounts.decorators import role_required
+from accounts.decorators import approved_ngo_required, role_required
 from accounts.models import User
 from donors.navigation import sidebar as donor_sidebar
 from donors.models import DonorProfile
@@ -76,6 +76,7 @@ def mine(request):
 
 @login_required(login_url="login")
 @role_required(User.Role.NGO)
+@approved_ngo_required
 def ngo_list(request):
     donations = _active_donations().select_related("donor__donor_profile", "pickup")
     return render(request, "donations/list.html", {
@@ -89,6 +90,7 @@ def ngo_list(request):
 
 @login_required(login_url="login")
 @role_required(User.Role.NGO)
+@approved_ngo_required
 @require_POST
 def accept_for_delivery(request, donation_id):
     try:
@@ -107,6 +109,7 @@ def accept_for_delivery(request, donation_id):
 
 @login_required(login_url="login")
 @role_required(User.Role.NGO)
+@approved_ngo_required
 def ngo_managed(request):
     donations = Donation.objects.filter(claimed_by_ngo=request.user).select_related("donor", "pickup")
     return render(request, "donations/ngo_managed.html", {
@@ -120,6 +123,7 @@ def ngo_managed(request):
 
 @login_required(login_url="login")
 @role_required(User.Role.NGO)
+@approved_ngo_required
 def food_review_queue(request):
     donations = Donation.objects.filter(verification_status=Donation.VerificationStatus.HUMAN_REVIEW).select_related("donor")
     return render(request, "donations/food_review_queue.html", {"donations": donations, "sidebar_items": ngo_sidebar("Food safety review"), "page_title": "Food safety review"})
@@ -127,6 +131,7 @@ def food_review_queue(request):
 
 @login_required(login_url="login")
 @role_required(User.Role.NGO)
+@approved_ngo_required
 @require_POST
 def review_food(request, donation_id, decision):
     try:
@@ -143,11 +148,32 @@ def donation_photo(request, donation_id, kind):
     field_name = {"overview": "food_photo_overview", "closeup": "food_photo_closeup", "label": "food_photo_label"}.get(kind)
     donation = get_object_or_404(Donation, pk=donation_id)
     can_view = request.user.role == User.Role.DONOR and donation.donor_id == request.user.id
-    can_view = can_view or request.user.role == User.Role.NGO
+    can_view = can_view or (
+        request.user.role == User.Role.NGO
+        and getattr(getattr(request.user, "ngo_profile", None), "is_approved", False)
+    )
     if not can_view or not field_name or not getattr(donation, field_name):
         raise Http404("Photo not found.")
     photo = getattr(donation, field_name)
     return FileResponse(photo.open("rb"), content_type="image/*")
+
+
+@login_required(login_url="login")
+def evidence_photo(request, pickup_id, kind):
+    pickup = get_object_or_404(Donation.objects.select_related("pickup", "receiving_ngo", "claimed_by_ngo"), pickup_id=pickup_id).pickup
+    donation = pickup.donation
+    is_donor = request.user.role == User.Role.DONOR and donation.donor_id == request.user.id
+    is_volunteer = request.user.role == User.Role.VOLUNTEER and pickup.assigned_volunteer_id == request.user.id
+    is_approved_ngo = (
+        request.user.role == User.Role.NGO
+        and getattr(getattr(request.user, "ngo_profile", None), "is_approved", False)
+        and request.user.id in {donation.receiving_ngo_id, donation.claimed_by_ngo_id}
+    )
+    field_name = {"delivery": "delivery_photo", "receipt": "receipt_photo"}.get(kind)
+    source = pickup if field_name == "delivery_photo" else donation
+    if not field_name or not (is_donor or is_volunteer or is_approved_ngo) or not getattr(source, field_name):
+        raise Http404("Evidence not found.")
+    return FileResponse(getattr(source, field_name).open("rb"), content_type="image/*")
 
 
 @login_required(login_url="login")
@@ -254,6 +280,7 @@ def cancel(request, donation_id):
 
 @login_required(login_url="login")
 @role_required(User.Role.NGO)
+@approved_ngo_required
 @require_POST
 def takeover(request, donation_id):
     try:
@@ -270,6 +297,7 @@ def takeover(request, donation_id):
 
 @login_required(login_url="login")
 @role_required(User.Role.NGO)
+@approved_ngo_required
 @require_POST
 def reject_ngo_donation(request, donation_id):
     try:
@@ -286,6 +314,7 @@ def reject_ngo_donation(request, donation_id):
 
 @login_required(login_url="login")
 @role_required(User.Role.NGO)
+@approved_ngo_required
 @require_POST
 def confirm_receipt(request, donation_id):
     donation = get_object_or_404(Donation, pk=donation_id, claimed_by_ngo=request.user)

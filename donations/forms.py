@@ -1,6 +1,7 @@
 from django import forms
 from django.conf import settings
 
+from bridge.uploads import validate_image_upload
 from .models import Donation
 
 
@@ -37,6 +38,11 @@ class DonationForm(forms.ModelForm):
                     self.add_error(field, "This photo is required for visual food screening.")
             elif photo.size > max_size:
                 self.add_error(field, f"Photo must be at most {max_size // 1024 // 1024} MB.")
+            else:
+                try:
+                    validate_image_upload(photo, max_size=max_size)
+                except ValueError as error:
+                    self.add_error(field, str(error))
         return cleaned
 
 
@@ -49,4 +55,8 @@ class NGOReceiptForm(forms.ModelForm):
         photo = self.cleaned_data.get("receipt_photo")
         if not photo:
             raise forms.ValidationError("A proof photo is required to confirm receipt.")
+        try:
+            validate_image_upload(photo, max_size=settings.EVIDENCE_PHOTO_MAX_SIZE_BYTES)
+        except ValueError as error:
+            raise forms.ValidationError(str(error))
         return photo

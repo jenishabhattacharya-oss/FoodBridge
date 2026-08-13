@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 import os
+import logging
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -21,12 +22,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-yl8(b@jbz=kl%wroju=glf%rf(523=&uv0y!)htp&n4o5--ae_"
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "django-insecure-local-development-only-change-me-please")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DJANGO_DEBUG", "true").lower() in {"1", "true", "yes", "on"}
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [host.strip() for host in os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1,testserver").split(",") if host.strip()]
+
+if not DEBUG and (not os.environ.get("DJANGO_SECRET_KEY") or SECRET_KEY.startswith("django-insecure-")):
+    raise RuntimeError("DJANGO_SECRET_KEY must be set to a secure value when DJANGO_DEBUG is false.")
 
 
 # Application definition
@@ -83,8 +87,8 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": os.environ.get("DJANGO_DB_ENGINE", "django.db.backends.sqlite3"),
+        "NAME": os.environ.get("DJANGO_DB_NAME", str(BASE_DIR / "db.sqlite3")),
     }
 }
 
@@ -131,9 +135,22 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 # Custom User Model
 AUTH_USER_MODEL = "accounts.User"
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+EMAIL_BACKEND = os.environ.get("DJANGO_EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
 
-DEFAULT_FROM_EMAIL = "noreply@foodbridge.local"
+DEFAULT_FROM_EMAIL = os.environ.get("DJANGO_DEFAULT_FROM_EMAIL", "noreply@foodbridge.local")
+
+# Closed demos keep all financial-provider routes disabled unless explicitly enabled.
+PAYMENTS_ENABLED = os.environ.get("FOODBRIDGE_PAYMENTS_ENABLED", "false").lower() in {"1", "true", "yes", "on"}
+
+# These are safe for local HTTP development and become mandatory for deployed HTTPS.
+SECURE_SSL_REDIRECT = not DEBUG
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
+SECURE_HSTS_SECONDS = 31_536_000 if not DEBUG else 0
+SECURE_HSTS_INCLUDE_SUBDOMAINS = not DEBUG
+SECURE_HSTS_PRELOAD = not DEBUG
+SECURE_REFERRER_POLICY = "same-origin"
+X_FRAME_OPTIONS = "DENY"
 
 # Razorpay credentials are deliberately environment-only. Keep the defaults empty so
 # payments cannot accidentally be attempted without explicit configuration.
@@ -151,6 +168,7 @@ VOLUNTEER_DELIVERY_FEE_PAISE = int(os.environ.get("VOLUNTEER_DELIVERY_FEE_PAISE"
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
 GEMINI_VISION_MODEL = os.environ.get("GEMINI_VISION_MODEL", "gemini-2.0-flash")
 FOOD_PHOTO_MAX_SIZE_BYTES = int(os.environ.get("FOOD_PHOTO_MAX_SIZE_BYTES", str(5 * 1024 * 1024)))
+EVIDENCE_PHOTO_MAX_SIZE_BYTES = int(os.environ.get("EVIDENCE_PHOTO_MAX_SIZE_BYTES", str(5 * 1024 * 1024)))
 FOOD_VERIFICATION_TIMEOUT_SECONDS = int(os.environ.get("FOOD_VERIFICATION_TIMEOUT_SECONDS", "15"))
 MAP_TILE_URL = os.environ.get("MAP_TILE_URL", "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png")
 MAP_TILE_ATTRIBUTION = os.environ.get("MAP_TILE_ATTRIBUTION", "&copy; OpenStreetMap contributors")
@@ -162,3 +180,11 @@ GEOCODING_DEFAULT_COUNTRY = os.environ.get("GEOCODING_DEFAULT_COUNTRY", "India")
 GEOCODING_NEARBY_RADIUS_KM = int(os.environ.get("GEOCODING_NEARBY_RADIUS_KM", "500"))
 IP_GEOLOCATION_URL = os.environ.get("IP_GEOLOCATION_URL", "https://ipapi.co/{ip}/json/")
 IP_GEOLOCATION_TIMEOUT_SECONDS = int(os.environ.get("IP_GEOLOCATION_TIMEOUT_SECONDS", "2"))
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {"structured": {"format": "%(asctime)s %(levelname)s %(name)s %(message)s"}},
+    "handlers": {"console": {"class": "logging.StreamHandler", "formatter": "structured"}},
+    "root": {"handlers": ["console"], "level": os.environ.get("DJANGO_LOG_LEVEL", "INFO")},
+}

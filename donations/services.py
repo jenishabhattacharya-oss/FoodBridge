@@ -2,11 +2,14 @@ from django.core.exceptions import ValidationError
 from django.conf import settings
 from django.db import transaction
 from django.utils import timezone
+import logging
 
 from volunteers.models import Pickup, VolunteerProfile
 
 from .models import Donation
 from .verification import FoodSafetyVerifier
+
+logger = logging.getLogger(__name__)
 
 
 def _pickup_values(donation):
@@ -58,6 +61,7 @@ def submit_donation_for_verification(*, donor, cleaned_data):
             is_unpackaged=donation.is_unpackaged,
         )
     except Exception:
+        logger.exception("Food verification failed for donation %s", donation.pk)
         result = {"decision": "review", "confidence": 0, "summary": "AI screening could not be completed. This donation needs human review.", "risk_flags": ["verification_unavailable"]}
     mapping = {"approve": Donation.VerificationStatus.APPROVED, "reject": Donation.VerificationStatus.REJECTED, "review": Donation.VerificationStatus.HUMAN_REVIEW}
     donation.verification_status = mapping[result["decision"]]

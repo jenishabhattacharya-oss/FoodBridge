@@ -16,6 +16,13 @@ from .forms import NGOProfileForm
 @role_required(User.Role.NGO)
 def dashboard(request):
     profile = request.user.ngo_profile
+    if not profile.is_approved:
+        return render(request, "ngos/dashboard.html", {
+            "profile": profile,
+            "pending_approval": True,
+            "sidebar_items": sidebar("Dashboard"),
+            "page_title": "NGO Dashboard",
+        })
     available = Donation.objects.filter(
         status=Donation.Status.AVAILABLE,
         pickup_window_end__gt=timezone.now(),

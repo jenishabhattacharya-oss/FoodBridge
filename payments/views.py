@@ -1,5 +1,6 @@
 import json
 import secrets
+from functools import wraps
 
 from django.conf import settings
 from django.contrib import messages
@@ -10,7 +11,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
-from accounts.decorators import role_required
+from accounts.decorators import approved_ngo_required, role_required
 from accounts.models import User
 from ngos.navigation import sidebar as ngo_sidebar
 
@@ -21,8 +22,21 @@ from .services import (confirm_delivery, create_checkout_order, exchange_oauth_c
                        release_payout, save_oauth_connection, verify_checkout_signature, verify_webhook)
 
 
+def payments_enabled(view_func):
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        if not settings.PAYMENTS_ENABLED:
+            messages.info(request, "Payments are disabled for this closed demo.")
+            return redirect("home")
+        return view_func(request, *args, **kwargs)
+
+    return wrapper
+
+
 @login_required
 @role_required(User.Role.NGO)
+@approved_ngo_required
+@payments_enabled
 def connect_razorpay(request):
     state = secrets.token_urlsafe(32)
     request.session["razorpay_oauth_state"] = state
@@ -35,6 +49,8 @@ def connect_razorpay(request):
 
 @login_required
 @role_required(User.Role.NGO)
+@approved_ngo_required
+@payments_enabled
 def oauth_callback(request):
     if request.GET.get("state") != request.session.pop("razorpay_oauth_state", None):
         return HttpResponseBadRequest("Invalid Razorpay OAuth state.")
@@ -52,6 +68,7 @@ def oauth_callback(request):
 
 @login_required
 @role_required(User.Role.VOLUNTEER)
+@payments_enabled
 def payout_profile(request):
     profile = getattr(request.user, "payout_profile", None)
     if request.method == "POST":
@@ -74,6 +91,8 @@ def payout_profile(request):
 
 @login_required
 @role_required(User.Role.NGO)
+@approved_ngo_required
+@payments_enabled
 @require_POST
 def confirm_volunteer_delivery(request, pickup_id):
     try:
@@ -87,6 +106,8 @@ def confirm_volunteer_delivery(request, pickup_id):
 
 @login_required
 @role_required(User.Role.NGO)
+@approved_ngo_required
+@payments_enabled
 def volunteer_payment_detail(request, payment_id):
     payment = get_object_or_404(VolunteerPayment.objects.select_related("pickup", "volunteer"), pk=payment_id, ngo=request.user)
     return render(request, "payments/payment_detail.html", {"payment": payment, "razorpay_key_id": settings.RAZORPAY_KEY_ID, "sidebar_items": ngo_sidebar("Managed donations"), "page_title": "Volunteer payment"})
@@ -94,6 +115,8 @@ def volunteer_payment_detail(request, payment_id):
 
 @login_required
 @role_required(User.Role.NGO)
+@approved_ngo_required
+@payments_enabled
 @require_POST
 def create_payment_order(request, payment_id):
     payment = get_object_or_404(VolunteerPayment, pk=payment_id, ngo=request.user)
@@ -106,6 +129,8 @@ def create_payment_order(request, payment_id):
 
 @login_required
 @role_required(User.Role.NGO)
+@approved_ngo_required
+@payments_enabled
 @require_POST
 def verify_payment_callback(request, payment_id):
     payment = get_object_or_404(VolunteerPayment, pk=payment_id, ngo=request.user)
@@ -121,6 +146,8 @@ def verify_payment_callback(request, payment_id):
 
 @login_required
 @role_required(User.Role.NGO)
+@approved_ngo_required
+@payments_enabled
 @require_POST
 def release_volunteer_payout(request, payment_id):
     payment = get_object_or_404(VolunteerPayment, pk=payment_id, ngo=request.user)
@@ -136,6 +163,8 @@ def release_volunteer_payout(request, payment_id):
 @csrf_exempt
 @require_POST
 def razorpay_webhook(request):
+    if not settings.PAYMENTS_ENABLED:
+        return HttpResponseBadRequest("Payments are disabled.")
     if not verify_webhook(body=request.body, signature=request.headers.get("X-Razorpay-Signature")):
         return HttpResponseBadRequest("Invalid webhook signature.")
     try:

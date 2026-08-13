@@ -3,6 +3,7 @@ from math import asin, cos, radians, sin, sqrt
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
 from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -27,14 +28,15 @@ from .services import (
 
 
 def _sidebar(active_label):
-    items = (
+    items = [
         ("Dashboard", "bi-speedometer2", "volunteer_dashboard"),
         ("Available Pickups", "bi-box-seam", "available_pickups"),
         ("Assigned Pickups", "bi-truck", "assigned_pickups"),
         ("Pickup History", "bi-clock-history", "pickup_history"),
         ("My Profile", "bi-person-gear", "volunteer_profile"),
-        ("Payout details", "bi-credit-card", "volunteer_payout_profile"),
-    )
+    ]
+    if settings.PAYMENTS_ENABLED:
+        items.append(("Payout details", "bi-credit-card", "volunteer_payout_profile"))
     return [
         {"label": label, "icon": icon, "url": reverse(url_name), "active": label == active_label}
         for label, icon, url_name in items
@@ -157,7 +159,7 @@ def pickup_details(request, pickup_id):
 @require_POST
 def accept_pickup(request, pickup_id):
     try:
-        if not hasattr(request.user, "payout_profile"):
+        if settings.PAYMENTS_ENABLED and not hasattr(request.user, "payout_profile"):
             raise PickupUnavailable("Add your payout details before claiming a paid pickup.")
         claim_pickup(pickup_id=pickup_id, volunteer=request.user)
     except Pickup.DoesNotExist:
