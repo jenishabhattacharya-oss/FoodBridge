@@ -136,6 +136,19 @@ class DonationPhotoVerificationTests(TestCase):
         self.assertFalse(form.is_valid())
         self.assertIn("food_photo_label", form.errors)
 
+    def test_label_photo_is_optional_for_unpackaged_food(self):
+        data = self._data()
+        files = {
+            "food_photo_overview": data.pop("food_photo_overview"),
+            "food_photo_closeup": data.pop("food_photo_closeup"),
+        }
+        data.pop("food_photo_label")
+        data["is_unpackaged"] = "on"
+
+        form = DonationForm(data=data, files=files)
+
+        self.assertTrue(form.is_valid(), form.errors)
+
     @patch("donations.services.FoodSafetyVerifier.verify")
     def test_approved_screening_creates_pickup(self, verify):
         verify.return_value = {"decision": "approve", "confidence": 90, "summary": "No visible concern.", "risk_flags": []}
@@ -151,3 +164,37 @@ class DonationPhotoVerificationTests(TestCase):
             donation = submit_donation_for_verification(donor=self.donor, cleaned_data=self._data())
         self.assertEqual(donation.verification_status, Donation.VerificationStatus.HUMAN_REVIEW)
         self.assertIsNone(donation.pickup_id)
+
+
+class DonationFormPresentationTests(TestCase):
+    def setUp(self):
+        self.donor = User.objects.create_user(
+            email="form@example.com", password="password", first_name="Form", last_name="Donor",
+            phone="666", role=User.Role.DONOR,
+        )
+        DonorProfile.objects.create(user=self.donor, address="MG Road", city="Bengaluru")
+        self.client.force_login(self.donor)
+
+    def test_create_form_uses_grouped_sections_and_preserves_all_fields(self):
+        response = self.client.get("/donations/new/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Food details")
+        self.assertContains(response, "Safety and photos")
+        self.assertContains(response, "Pickup details")
+        self.assertContains(response, "enctype=\"multipart/form-data\"")
+        for field in DonationForm.Meta.fields:
+            self.assertContains(response, f'name="{field}"')
+
+    def test_missing_photo_errors_render_beside_upload_cards(self):
+        start = timezone.now() + timedelta(hours=1)
+        response = self.client.post("/donations/new/", {
+            "title": "Fresh meals", "description": "Prepared today", "food_type": Donation.FoodType.VEG,
+            "food_condition": Donation.FoodCondition.COOKED, "quantity": 10, "unit": Donation.Unit.PLATES,
+            "prepared_at": start.strftime("%Y-%m-%dT%H:%M"), "storage_notes": "", "allergen_notes": "",
+            "pickup_address": "MG Road", "pickup_window_start": start.strftime("%Y-%m-%dT%H:%M"),
+            "pickup_window_end": (start + timedelta(hours=1)).strftime("%Y-%m-%dT%H:%M"),
+        })
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "This photo is required for visual food screening.", count=3)

@@ -1,17 +1,94 @@
 {% extends base_template|default:"base.html" %}
 {% block title %}{{ page_title }} - FoodBridge{% endblock %}
 {% block content %}
-<section class="donor-workspace donor-form-workspace"><div class="volunteer-page-header reveal"><div><p class="volunteer-eyebrow">MAKE AN IMPACT</p><h1>{{ page_title }}</h1><p>Tell us about the food and a volunteer can arrange the collection.</p></div></div>
-  <div class="profile-panel reveal"><form method="post" enctype="multipart/form-data" class="donor-donation-form">{% csrf_token %}
-    {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
-    <div class="row g-3">
-      {% for field in form %}<div class="{% if field.name == 'description' or field.name == 'storage_notes' or field.name == 'allergen_notes' or field.name == 'pickup_address' or 'photo' in field.name %}col-12{% else %}col-md-6{% endif %}">
-        <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}
-        {% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
-      </div>{% endfor %}
+<section class="donor-workspace donor-form-workspace">
+  <div class="volunteer-page-header reveal">
+    <div>
+      <p class="volunteer-eyebrow">MAKE AN IMPACT</p>
+      <h1>{{ page_title }}</h1>
+      <p>Share a few details and we will help coordinate a safe pickup.</p>
     </div>
-    <div class="alert alert-warning mt-4 mb-0"><strong>Visual screening only:</strong> AI can detect visible warning signs but cannot guarantee freshness, contamination absence, allergens, temperature history, or food safety.</div>
-    <div class="mt-4 d-flex gap-2"><button class="btn volunteer-btn volunteer-btn--primary">Save donation</button><a class="btn volunteer-btn volunteer-btn--ghost" href="{% url 'my_donations' %}">Cancel</a></div>
-  </form></div>
+  </div>
+
+  <form method="post" enctype="multipart/form-data" class="donor-donation-form reveal">
+    {% csrf_token %}
+    {% if form.non_field_errors %}<div class="alert alert-danger" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+
+    <div class="donation-form-intro">
+      <span><i class="bi bi-basket2-heart"></i></span>
+      <div><h2>List your surplus food</h2><p>Fields marked <b>*</b> are required to arrange a pickup.</p></div>
+    </div>
+
+    <section class="donation-form-section" aria-labelledby="food-details-heading">
+      <div class="donation-form-section__heading"><span><i class="bi bi-card-list"></i></span><div><h2 id="food-details-heading">Food details</h2><p>Help local organizations understand what is available.</p></div></div>
+      <div class="donation-field-grid">
+        <div class="donation-field donation-field--wide"><label for="{{ form.title.id_for_label }}">{{ form.title.label }} <em>*</em></label>{{ form.title }}{% for error in form.title.errors %}<div class="donation-field-error">{{ error }}</div>{% endfor %}</div>
+        <div class="donation-field donation-field--wide"><label for="{{ form.description.id_for_label }}">{{ form.description.label }} <em>*</em></label>{{ form.description }}{% for error in form.description.errors %}<div class="donation-field-error">{{ error }}</div>{% endfor %}</div>
+        <div class="donation-field"><label for="{{ form.food_type.id_for_label }}">{{ form.food_type.label }} <em>*</em></label>{{ form.food_type }}{% for error in form.food_type.errors %}<div class="donation-field-error">{{ error }}</div>{% endfor %}</div>
+        <div class="donation-field"><label for="{{ form.food_condition.id_for_label }}">{{ form.food_condition.label }} <em>*</em></label>{{ form.food_condition }}{% for error in form.food_condition.errors %}<div class="donation-field-error">{{ error }}</div>{% endfor %}</div>
+        <div class="donation-field"><label for="{{ form.quantity.id_for_label }}">{{ form.quantity.label }} <em>*</em></label>{{ form.quantity }}{% for error in form.quantity.errors %}<div class="donation-field-error">{{ error }}</div>{% endfor %}</div>
+        <div class="donation-field"><label for="{{ form.unit.id_for_label }}">{{ form.unit.label }} <em>*</em></label>{{ form.unit }}{% for error in form.unit.errors %}<div class="donation-field-error">{{ error }}</div>{% endfor %}</div>
+        <div class="donation-field donation-field--wide"><label for="{{ form.prepared_at.id_for_label }}">{{ form.prepared_at.label }} <em>*</em></label>{{ form.prepared_at }}{% for error in form.prepared_at.errors %}<div class="donation-field-error">{{ error }}</div>{% endfor %}</div>
+      </div>
+    </section>
+
+    <section class="donation-form-section" aria-labelledby="safety-photos-heading">
+      <div class="donation-form-section__heading"><span><i class="bi bi-shield-check"></i></span><div><h2 id="safety-photos-heading">Safety and photos</h2><p>Clear photos help complete the required visual screening.</p></div></div>
+      <div class="donation-field-grid">
+        <div class="donation-field"><label for="{{ form.storage_notes.id_for_label }}">{{ form.storage_notes.label }}</label>{{ form.storage_notes }}{% for error in form.storage_notes.errors %}<div class="donation-field-error">{{ error }}</div>{% endfor %}</div>
+        <div class="donation-field"><label for="{{ form.allergen_notes.id_for_label }}">{{ form.allergen_notes.label }}</label>{{ form.allergen_notes }}{% for error in form.allergen_notes.errors %}<div class="donation-field-error">{{ error }}</div>{% endfor %}</div>
+        <div class="donation-field donation-field--wide">
+          <label class="donation-toggle" for="{{ form.is_unpackaged.id_for_label }}">{{ form.is_unpackaged }}<span><strong>Food is unpackaged</strong><small>Let reviewers know that there is no packaging or product label.</small></span></label>
+          {% for error in form.is_unpackaged.errors %}<div class="donation-field-error">{{ error }}</div>{% endfor %}
+        </div>
+      </div>
+      <div class="donation-photo-grid">
+        <div class="donation-photo-field">
+          <input id="{{ form.food_photo_overview.id_for_label }}" name="{{ form.food_photo_overview.html_name }}" type="file" accept="image/*" class="donation-photo-input" data-photo-input>
+          <label class="donation-upload-card" for="{{ form.food_photo_overview.id_for_label }}"><span class="donation-upload-card__icon"><i class="bi bi-image"></i></span><strong>Food overview <em>*</em></strong><small>Show the full quantity of food.</small><span class="donation-upload-card__file" data-photo-name>Select a photo</span></label>
+          {% for error in form.food_photo_overview.errors %}<div class="donation-field-error">{{ error }}</div>{% endfor %}
+        </div>
+        <div class="donation-photo-field">
+          <input id="{{ form.food_photo_closeup.id_for_label }}" name="{{ form.food_photo_closeup.html_name }}" type="file" accept="image/*" class="donation-photo-input" data-photo-input>
+          <label class="donation-upload-card" for="{{ form.food_photo_closeup.id_for_label }}"><span class="donation-upload-card__icon"><i class="bi bi-zoom-in"></i></span><strong>Food close-up <em>*</em></strong><small>Show freshness and condition clearly.</small><span class="donation-upload-card__file" data-photo-name>Select a photo</span></label>
+          {% for error in form.food_photo_closeup.errors %}<div class="donation-field-error">{{ error }}</div>{% endfor %}
+        </div>
+        <div class="donation-photo-field" data-label-photo-field>
+          <input id="{{ form.food_photo_label.id_for_label }}" name="{{ form.food_photo_label.html_name }}" type="file" accept="image/*" class="donation-photo-input" data-photo-input>
+          <label class="donation-upload-card" for="{{ form.food_photo_label.id_for_label }}"><span class="donation-upload-card__icon"><i class="bi bi-upc-scan"></i></span><strong>Food label <em>*</em></strong><small>Required for packaged food only.</small><span class="donation-upload-card__file" data-photo-name>Select a photo</span></label>
+          {% for error in form.food_photo_label.errors %}<div class="donation-field-error">{{ error }}</div>{% endfor %}
+        </div>
+      </div>
+    </section>
+
+    <section class="donation-form-section" aria-labelledby="pickup-details-heading">
+      <div class="donation-form-section__heading"><span><i class="bi bi-geo-alt"></i></span><div><h2 id="pickup-details-heading">Pickup details</h2><p>Choose an address and time window that works for you.</p></div></div>
+      <div class="donation-field-grid">
+        <div class="donation-field donation-field--wide"><label for="{{ form.pickup_address.id_for_label }}">{{ form.pickup_address.label }} <em>*</em></label>{{ form.pickup_address }}{% for error in form.pickup_address.errors %}<div class="donation-field-error">{{ error }}</div>{% endfor %}</div>
+        <div class="donation-field"><label for="{{ form.pickup_window_start.id_for_label }}">{{ form.pickup_window_start.label }} <em>*</em></label>{{ form.pickup_window_start }}{% for error in form.pickup_window_start.errors %}<div class="donation-field-error">{{ error }}</div>{% endfor %}</div>
+        <div class="donation-field"><label for="{{ form.pickup_window_end.id_for_label }}">{{ form.pickup_window_end.label }} <em>*</em></label>{{ form.pickup_window_end }}{% for error in form.pickup_window_end.errors %}<div class="donation-field-error">{{ error }}</div>{% endfor %}</div>
+      </div>
+    </section>
+
+    <div class="donation-screening-note"><i class="bi bi-info-circle"></i><p><strong>Visual screening only.</strong> Photo checks can flag visible warning signs but cannot guarantee freshness, allergens, contamination, or food safety.</p></div>
+    <div class="donation-form-actions"><a class="btn volunteer-btn volunteer-btn--ghost" href="{% url 'my_donations' %}">Cancel</a><button class="btn volunteer-btn volunteer-btn--primary" type="submit"><i class="bi bi-check2-circle"></i> Save donation</button></div>
+  </form>
 </section>
+{% endblock %}
+{% block extra_js %}
+<script>
+  document.querySelectorAll('[data-photo-input]').forEach((input) => {
+    input.addEventListener('change', () => {
+      const name = input.closest('.donation-photo-field').querySelector('[data-photo-name]');
+      name.textContent = input.files.length ? input.files[0].name : 'Select a photo';
+    });
+  });
+  const unpackagedInput = document.querySelector('#{{ form.is_unpackaged.id_for_label }}');
+  const labelPhotoField = document.querySelector('[data-label-photo-field]');
+  const updateLabelPhotoVisibility = () => {
+    labelPhotoField.hidden = unpackagedInput.checked;
+  };
+  unpackagedInput.addEventListener('change', updateLabelPhotoVisibility);
+  updateLabelPhotoVisibility();
+</script>
 {% endblock %}
