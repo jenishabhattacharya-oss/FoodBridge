@@ -28,6 +28,7 @@ urlpatterns = [
     path("donations/", include("donations.urls")),
     path("volunteer/", include("volunteers.urls")),
     path("ngo/", include("ngos.urls")),
+    path("payments/", include("payments.urls")),
 ]
 
 if settings.DEBUG:

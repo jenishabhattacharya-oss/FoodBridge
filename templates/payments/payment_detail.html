@@ -1,0 +1,11 @@
+{% extends "dashboards/base_dashboard.html" %}
+{% block title %}Volunteer payment{% endblock %}
+{% block dashboard_content %}
+<section class="volunteer-page-header"><div><p class="volunteer-eyebrow">VOLUNTEER DELIVERY PAYMENT</p><h1>Pay {{ payment.volunteer.get_full_name }}</h1><p>Delivery from {{ payment.pickup.donor_name }} · ₹500</p></div></section>
+{% if messages %}{% for message in messages %}<div class="alert alert-{{ message.tags|default:'info' }}">{{ message }}</div>{% endfor %}{% endif %}
+<section class="profile-panel p-4"><p><strong>Status:</strong> {{ payment.get_status_display }}</p>{% if payment.failure_reason %}<p class="text-danger">{{ payment.failure_reason }}</p>{% endif %}
+{% if payment.status == 'AWAITING_NGO_PAYMENT' or payment.status == 'PAYMENT_FAILED' %}<button id="pay-button" class="btn volunteer-btn volunteer-btn--primary">Pay ₹500 with Razorpay</button>{% endif %}
+{% if payment.status == 'PAYMENT_PENDING' %}<p>Payment submitted. This page will update when Razorpay confirms capture.</p>{% endif %}
+{% if payment.status == 'PAYOUT_READY' or payment.status == 'PAYOUT_FAILED' %}<form method="post" action="{% url 'release_volunteer_payout' payment.id %}">{% csrf_token %}<button class="btn volunteer-btn volunteer-btn--primary">Release ₹500 payout</button></form>{% endif %}</section>
+{% if payment.status == 'AWAITING_NGO_PAYMENT' or payment.status == 'PAYMENT_FAILED' %}<script src="https://checkout.razorpay.com/v1/checkout.js"></script><script>document.getElementById('pay-button').addEventListener('click',async()=>{const o=await fetch('{% url "create_payment_order" payment.id %}',{method:'POST',headers:{'X-CSRFToken':'{{ csrf_token }}'}}).then(r=>r.json());if(o.error){alert(o.error);return}new Razorpay({key:'{{ razorpay_key_id }}',amount:o.amount,currency:o.currency,order_id:o.order_id,name:'FoodBridge',handler:async r=>{await fetch('{% url "verify_payment_callback" payment.id %}',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded','X-CSRFToken':'{{ csrf_token }}'},body:new URLSearchParams(r)});location.reload()}}).open()})</script>{% endif %}
+{% endblock %}

@@ -15,6 +15,7 @@ from ngos.navigation import sidebar as ngo_sidebar
 from .forms import DonationForm, NGOReceiptForm
 from .models import Donation
 from .services import (
+    accept_for_volunteer_delivery,
     cancel_donation,
     confirm_ngo_receipt,
     create_donation,
@@ -80,6 +81,24 @@ def ngo_list(request):
 
 @login_required(login_url="login")
 @role_required(User.Role.NGO)
+@require_POST
+def accept_for_delivery(request, donation_id):
+    try:
+        if not request.user.payment_connection.is_active:
+            raise ValidationError("Connect Razorpay and RazorpayX before accepting a delivery.")
+        donation = accept_for_volunteer_delivery(donation_id=donation_id, ngo=request.user)
+    except (Donation.DoesNotExist, AttributeError):
+        messages.error(request, "Connect Razorpay before accepting a delivery.")
+    except ValidationError as error:
+        messages.error(request, error.messages[0])
+    else:
+        messages.success(request, "Donation accepted. A volunteer can now claim its pickup.")
+        return redirect("donation_detail", donation_id=donation.id)
+    return redirect("ngo_donations")
+
+
+@login_required(login_url="login")
+@role_required(User.Role.NGO)
 def ngo_managed(request):
     donations = Donation.objects.filter(claimed_by_ngo=request.user).select_related("donor", "pickup")
     return render(request, "donations/ngo_managed.html", {
@@ -96,10 +115,15 @@ def detail(request, donation_id):
     donation = get_object_or_404(Donation.objects.select_related("donor", "pickup", "claimed_by_ngo", "donor__donor_profile"), pk=donation_id)
     if request.user.role == User.Role.DONOR and donation.donor_id != request.user.id:
         raise Http404("Donation not found.")
-    if request.user.role == User.Role.NGO and (donation.effective_status != Donation.Status.AVAILABLE and donation.claimed_by_ngo_id != request.user.id):
+    if request.user.role == User.Role.NGO and (donation.effective_status != Donation.Status.AVAILABLE and donation.claimed_by_ngo_id != request.user.id and donation.receiving_ngo_id != request.user.id):
         raise Http404("Donation not found.")
     if request.user.role not in (User.Role.DONOR, User.Role.NGO):
         raise Http404("Donation not found.")
+    can_accept_for_delivery = (
+        request.user.role == User.Role.NGO and donation.can_be_changed
+        and donation.pickup and donation.pickup.status == donation.pickup.Status.OPEN
+        and not donation.receiving_ngo_id
+    )
     can_takeover = (
         request.user.role == User.Role.NGO and donation.can_be_changed
         and donation.pickup.status == donation.pickup.Status.OPEN
@@ -117,7 +141,10 @@ def detail(request, donation_id):
         "can_takeover": can_takeover,
         "can_reject": can_reject,
         "receipt_form": receipt_form,
+        "can_accept_for_delivery": can_accept_for_delivery,
     }
+    if request.user.role == User.Role.NGO and donation.receiving_ngo_id == request.user.id and donation.status == Donation.Status.AWAITING_NGO_CONFIRMATION:
+        context["can_confirm_volunteer_delivery"] = True
     if request.user.role == User.Role.DONOR:
         context.update({
             "base_template": "dashboards/base_dashboard.html",

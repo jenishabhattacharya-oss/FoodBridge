@@ -95,7 +95,7 @@ class VolunteerPickupTests(TestCase):
         pickup.refresh_from_db()
         self.assertEqual(pickup.status, Pickup.Status.OPEN)
 
-    def test_available_pickups_default_to_profile_city_and_support_date_filter(self):
+    def test_unassigned_pickups_are_not_listed_for_paid_volunteer_delivery(self):
         today = self.create_pickup()
         other_city = self.create_pickup(donor_name="Delhi Cafe", pickup_city="Delhi")
         tomorrow = self.create_pickup(
@@ -105,9 +105,9 @@ class VolunteerPickupTests(TestCase):
         )
 
         response = self.client.get(reverse("available_pickups"))
-        self.assertContains(response, today.donor_name)
+        self.assertNotContains(response, today.donor_name)
         response = self.client.get(reverse("available_pickups"), {"city": "Bengaluru", "date": today.pickup_window_start.date().isoformat()})
-        self.assertContains(response, today.donor_name)
+        self.assertNotContains(response, today.donor_name)
         self.assertNotContains(response, other_city.donor_name)
         self.assertNotContains(response, tomorrow.donor_name)
 

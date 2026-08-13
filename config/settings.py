@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -43,6 +44,7 @@ INSTALLED_APPS = [
     "donations",
     "volunteers",
     "ngos",
+    "payments",
 ]
 
 MIDDLEWARE = [
@@ -131,3 +133,16 @@ AUTH_USER_MODEL = "accounts.User"
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 DEFAULT_FROM_EMAIL = "noreply@foodbridge.local"
+
+# Razorpay credentials are deliberately environment-only. Keep the defaults empty so
+# payments cannot accidentally be attempted without explicit configuration.
+RAZORPAY_MODE = os.environ.get("RAZORPAY_MODE", "test")
+RAZORPAY_KEY_ID = os.environ.get("RAZORPAY_KEY_ID", "")
+RAZORPAY_KEY_SECRET = os.environ.get("RAZORPAY_KEY_SECRET", "")
+RAZORPAY_OAUTH_CLIENT_ID = os.environ.get("RAZORPAY_OAUTH_CLIENT_ID", "")
+RAZORPAY_OAUTH_CLIENT_SECRET = os.environ.get("RAZORPAY_OAUTH_CLIENT_SECRET", "")
+RAZORPAY_OAUTH_REDIRECT_URI = os.environ.get("RAZORPAY_OAUTH_REDIRECT_URI", "")
+RAZORPAY_WEBHOOK_SECRET = os.environ.get("RAZORPAY_WEBHOOK_SECRET", "")
+RAZORPAYX_ACCOUNT_NUMBER = os.environ.get("RAZORPAYX_ACCOUNT_NUMBER", "")
+PAYMENT_ENCRYPTION_KEY = os.environ.get("PAYMENT_ENCRYPTION_KEY", "")
+VOLUNTEER_DELIVERY_FEE_PAISE = int(os.environ.get("VOLUNTEER_DELIVERY_FEE_PAISE", "50000"))

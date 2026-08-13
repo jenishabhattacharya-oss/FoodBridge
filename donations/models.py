@@ -26,8 +26,10 @@ class Donation(models.Model):
 
     class Status(models.TextChoices):
         AVAILABLE = "AVAILABLE", "Available"
+        NGO_ACCEPTED = "NGO_ACCEPTED", "NGO accepted"
         VOLUNTEER_CLAIMED = "VOLUNTEER_CLAIMED", "Volunteer claimed"
         IN_TRANSIT = "IN_TRANSIT", "In transit"
+        AWAITING_NGO_CONFIRMATION = "AWAITING_NGO_CONFIRMATION", "Awaiting NGO confirmation"
         DELIVERED = "DELIVERED", "Delivered"
         NGO_MANAGED = "NGO_MANAGED", "NGO managed"
         EXPIRED = "EXPIRED", "Expired"
@@ -46,9 +48,10 @@ class Donation(models.Model):
     pickup_address = models.TextField()
     pickup_window_start = models.DateTimeField()
     pickup_window_end = models.DateTimeField()
-    status = models.CharField(max_length=24, choices=Status.choices, default=Status.AVAILABLE, db_index=True)
+    status = models.CharField(max_length=32, choices=Status.choices, default=Status.AVAILABLE, db_index=True)
     pickup = models.OneToOneField("volunteers.Pickup", on_delete=models.SET_NULL, null=True, blank=True, related_name="donation")
     claimed_by_ngo = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="managed_donations")
+    receiving_ngo = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="volunteer_deliveries", limit_choices_to={"role": "NGO"})
     receipt_photo = models.ImageField(upload_to="ngo_receipts/%Y/%m/", blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

@@ -15,6 +15,7 @@ from volunteers.services import claim_pickup, mark_collected, mark_delivered
 from .models import Donation
 from .services import (
     confirm_ngo_receipt,
+    accept_for_volunteer_delivery,
     create_donation,
     release_ngo_donation,
     takeover_donation,
@@ -43,6 +44,7 @@ class DonationWorkflowTests(TestCase):
         donation = create_donation(donor=self.donor, cleaned_data=self.donation_data())
         self.assertEqual(donation.pickup.status, Pickup.Status.OPEN)
         self.assertEqual(donation.pickup.pickup_city, "Bengaluru")
+        accept_for_volunteer_delivery(donation_id=donation.id, ngo=self.ngo)
         claim_pickup(pickup_id=donation.pickup_id, volunteer=self.volunteer)
         donation.refresh_from_db()
         self.assertEqual(donation.status, Donation.Status.VOLUNTEER_CLAIMED)
@@ -53,7 +55,7 @@ class DonationWorkflowTests(TestCase):
         with TemporaryDirectory() as media_root, override_settings(MEDIA_ROOT=media_root):
             mark_delivered(pickup_id=donation.pickup_id, volunteer=self.volunteer, recipient_name="Hope", recipient_address="Indiranagar", handoff_notes="Received", delivery_photo=image)
         donation.refresh_from_db()
-        self.assertEqual(donation.status, Donation.Status.DELIVERED)
+        self.assertEqual(donation.status, Donation.Status.AWAITING_NGO_CONFIRMATION)
 
     def test_ngo_can_take_over_only_when_no_eligible_volunteer_exists_and_must_upload_proof(self):
         donation = create_donation(donor=self.donor, cleaned_data=self.donation_data())

@@ -8,7 +8,7 @@
             <p>See available food, coordinate collections, and keep every handoff visible to your team.</p>
             <div class="ngo-hero__meta"><span><i class="bi bi-geo-alt"></i> {{ profile.address|truncatechars:70 }}</span><span><i class="bi bi-shield-check"></i> Verified FoodBridge partner</span></div>
         </div>
-        <div class="ngo-hero__actions"><a class="btn volunteer-btn volunteer-btn--primary" href="{% url 'ngo_donations' %}"><i class="bi bi-search"></i> Browse available food</a><a class="btn volunteer-btn volunteer-btn--ghost" href="{% url 'ngo_managed_donations' %}"><i class="bi bi-clipboard2-check"></i> Managed donations</a></div>
+        <div class="ngo-hero__actions"><a class="btn volunteer-btn volunteer-btn--primary" href="{% url 'ngo_donations' %}"><i class="bi bi-search"></i> Browse available food</a><a class="btn volunteer-btn volunteer-btn--ghost" href="{% url 'connect_razorpay' %}"><i class="bi bi-credit-card"></i> Connect Razorpay</a></div>
     </section>
 
     <section class="ngo-stat-grid dashboard-section">

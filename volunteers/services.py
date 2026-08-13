@@ -58,8 +58,11 @@ def claim_pickup(*, pickup_id, volunteer):
     if pickup.status != Pickup.Status.OPEN:
         raise PickupUnavailable("This pickup is no longer available.")
     donation = _donation_for(pickup)
-    if donation and donation.is_expired:
-        raise PickupUnavailable("This donation has expired.")
+    if donation:
+        if donation.is_expired:
+            raise PickupUnavailable("This donation has expired.")
+        if donation.status != donation.Status.NGO_ACCEPTED or not donation.receiving_ngo_id:
+            raise PickupUnavailable("An NGO must accept this donation before a volunteer can claim it.")
     profile, _ = VolunteerProfile.objects.get_or_create(user=volunteer)
     if not profile.is_available:
         raise PickupUnavailable("Set your availability to available before claiming a pickup.")
@@ -111,5 +114,5 @@ def mark_delivered(*, pickup_id, volunteer, recipient_name, recipient_address, h
     pickup.save()
     donation = _donation_for(pickup)
     if donation:
-        _sync_donation(pickup, donation.Status.DELIVERED)
+        _sync_donation(pickup, donation.Status.AWAITING_NGO_CONFIRMATION)
     return pickup

@@ -2,7 +2,6 @@ from datetime import date
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -32,6 +31,7 @@ def _sidebar(active_label):
         ("Assigned Pickups", "bi-truck", "assigned_pickups"),
         ("Pickup History", "bi-clock-history", "pickup_history"),
         ("My Profile", "bi-person-gear", "volunteer_profile"),
+        ("Payout details", "bi-credit-card", "volunteer_payout_profile"),
     )
     return [
         {"label": label, "icon": icon, "url": reverse(url_name), "active": label == active_label}
@@ -45,10 +45,12 @@ def _profile(user):
 
 
 def _available_queryset(request, default_city=""):
-    pickups = Pickup.objects.filter(status=Pickup.Status.OPEN).filter(
-        Q(donation__isnull=True)
-        | Q(donation__status="AVAILABLE", donation__pickup_window_end__gt=timezone.now())
-    )
+    pickups = Pickup.objects.filter(
+        status=Pickup.Status.OPEN,
+        donation__status="NGO_ACCEPTED",
+        donation__receiving_ngo__isnull=False,
+        donation__pickup_window_end__gt=timezone.now(),
+    ).select_related("donation__receiving_ngo")
     city = request.GET.get("city", default_city).strip()
     if city:
         pickups = pickups.filter(pickup_city__iexact=city)
@@ -133,6 +135,8 @@ def pickup_details(request, pickup_id):
 @require_POST
 def accept_pickup(request, pickup_id):
     try:
+        if not hasattr(request.user, "payout_profile"):
+            raise PickupUnavailable("Add your payout details before claiming a paid pickup.")
         claim_pickup(pickup_id=pickup_id, volunteer=request.user)
     except Pickup.DoesNotExist:
         raise Http404("Pickup not found.")

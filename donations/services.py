@@ -75,6 +75,19 @@ def eligible_volunteers(city):
 
 
 @transaction.atomic
+def accept_for_volunteer_delivery(*, donation_id, ngo):
+    donation = Donation.objects.select_for_update().select_related("pickup").get(pk=donation_id)
+    if not donation.can_be_changed or not donation.pickup_id or donation.pickup.status != Pickup.Status.OPEN:
+        raise ValidationError("This donation is no longer available for volunteer delivery.")
+    if donation.receiving_ngo_id and donation.receiving_ngo_id != ngo.id:
+        raise ValidationError("Another NGO has already accepted this donation.")
+    donation.receiving_ngo = ngo
+    donation.status = Donation.Status.NGO_ACCEPTED
+    donation.save(update_fields=("receiving_ngo", "status", "updated_at"))
+    return donation
+
+
+@transaction.atomic
 def takeover_donation(*, donation_id, ngo):
     donation = Donation.objects.select_for_update().select_related("pickup", "donor__donor_profile").get(pk=donation_id)
     if not donation.can_be_changed or donation.pickup.status != Pickup.Status.OPEN:

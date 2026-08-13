@@ -1,0 +1,8 @@
+{% extends "dashboards/base_dashboard.html" %}
+{% block title %}Payout details{% endblock %}
+{% block dashboard_content %}
+<section class="volunteer-page-header"><div><p class="volunteer-eyebrow">GET PAID</p><h1>Volunteer payout details</h1><p>Add a UPI ID or bank account to receive ₹500 after each NGO-confirmed delivery.</p></div></section>
+{% if messages %}{% for message in messages %}<div class="alert alert-{{ message.tags|default:'info' }}">{{ message }}</div>{% endfor %}{% endif %}
+{% if profile %}<div class="alert alert-success">Current payout destination: {{ profile.get_destination_display }} {{ profile.masked_destination }}</div>{% endif %}
+<form method="post" class="profile-panel p-4">{% csrf_token %}{% for field in form %}<div class="mb-3"><label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}</div>{% endfor %}<button class="btn volunteer-btn volunteer-btn--primary">Save payout details</button></form>
+{% endblock %}
