@@ -6,6 +6,18 @@ from accounts.models import User
 from .models import NGOProfile
 
 
+class NGOProfileForm(forms.ModelForm):
+    class Meta:
+        model = NGOProfile
+        fields = ("organization_name", "address", "latitude", "longitude", "place_label")
+        widgets = {
+            "address": forms.Textarea(attrs={"rows": 3}),
+            "latitude": forms.HiddenInput(),
+            "longitude": forms.HiddenInput(),
+            "place_label": forms.HiddenInput(),
+        }
+
+
 class NGORegistrationForm(BaseUserRegistrationForm):
     organization_name = forms.CharField(
         max_length=200,

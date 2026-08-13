@@ -19,5 +19,6 @@
             {% endfor %}
             <div class="profile-form__actions"><button class="btn volunteer-btn volunteer-btn--primary" type="submit"><i class="bi bi-check2"></i> Save changes</button></div>
         </form>
+        {% if form.instance.is_available and form.instance.location_sharing_consent %}<div class="tracking-card" data-volunteer-tracking data-url="{% url 'volunteer_location' %}"><i class="bi bi-broadcast-pin"></i><div><strong>Live location sharing</strong><p data-tracking-status>FoodBridge will share your latest location while you are available. No route history is stored.</p></div></div>{% else %}<div class="tracking-card tracking-card--muted"><i class="bi bi-shield-lock"></i><div><strong>Location sharing is off</strong><p>Enable it and mark yourself available to share your current position with donors and receiving NGOs during active handoffs.</p></div></div>{% endif %}
     </section>
 {% endblock %}

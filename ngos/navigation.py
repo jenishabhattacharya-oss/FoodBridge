@@ -7,6 +7,7 @@ def sidebar(active_label):
         ("Available food", "bi-basket2-fill", "ngo_donations"),
         ("Managed donations", "bi-clipboard2-check", "ngo_managed_donations"),
         ("Food safety review", "bi-shield-check", "food_review_queue"),
+        ("Location settings", "bi-geo-alt", "ngo_profile"),
     )
     return [
         {"label": label, "icon": icon, "url": reverse(url_name), "active": label == active_label}

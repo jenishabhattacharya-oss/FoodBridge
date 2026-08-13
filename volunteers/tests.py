@@ -185,6 +185,27 @@ class VolunteerPickupTests(TestCase):
         self.assertEqual(self.profile.service_area, "Mysuru")
         self.assertFalse(self.profile.is_available)
 
+    def test_location_heartbeat_stores_only_the_latest_position(self):
+        self.profile.location_sharing_consent = True
+        self.profile.save()
+        response = self.client.post(reverse("volunteer_location"), {"latitude": "12.971600", "longitude": "77.594600"})
+        self.assertEqual(response.status_code, 200)
+        self.profile.refresh_from_db()
+        self.assertEqual(str(self.profile.current_latitude), "12.971600")
+        self.assertIsNotNone(self.profile.location_updated_at)
+
+        response = self.client.post(reverse("volunteer_location"), {"latitude": "95", "longitude": "77"})
+        self.assertEqual(response.status_code, 400)
+
+    def test_location_heartbeat_requires_consent_and_availability(self):
+        response = self.client.post(reverse("volunteer_location"), {"latitude": "12.9", "longitude": "77.5"})
+        self.assertEqual(response.status_code, 409)
+        self.profile.location_sharing_consent = True
+        self.profile.is_available = False
+        self.profile.save()
+        response = self.client.post(reverse("volunteer_location"), {"latitude": "12.9", "longitude": "77.5"})
+        self.assertEqual(response.status_code, 409)
+
     def test_accepting_pickup_requires_post_and_non_volunteers_are_redirected(self):
         pickup = self.create_pickup()
         self.assertEqual(self.client.get(reverse("accept_pickup", args=[pickup.id])).status_code, 405)

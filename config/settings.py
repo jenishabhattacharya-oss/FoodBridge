@@ -69,6 +69,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "config.context_processors.map_settings",
             ],
         },
     },
@@ -151,3 +152,13 @@ GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
 GEMINI_VISION_MODEL = os.environ.get("GEMINI_VISION_MODEL", "gemini-2.0-flash")
 FOOD_PHOTO_MAX_SIZE_BYTES = int(os.environ.get("FOOD_PHOTO_MAX_SIZE_BYTES", str(5 * 1024 * 1024)))
 FOOD_VERIFICATION_TIMEOUT_SECONDS = int(os.environ.get("FOOD_VERIFICATION_TIMEOUT_SECONDS", "15"))
+MAP_TILE_URL = os.environ.get("MAP_TILE_URL", "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png")
+MAP_TILE_ATTRIBUTION = os.environ.get("MAP_TILE_ATTRIBUTION", "&copy; OpenStreetMap contributors")
+GEOCODING_PROVIDER = os.environ.get("GEOCODING_PROVIDER", "photon").lower()
+GEOCODING_URL = os.environ.get("GEOCODING_URL", "https://photon.komoot.io/api/")
+GEOCODING_USER_AGENT = os.environ.get("GEOCODING_USER_AGENT", "FoodBridge/1.0 contact@example.com")
+GEOCODING_TIMEOUT_SECONDS = int(os.environ.get("GEOCODING_TIMEOUT_SECONDS", "5"))
+GEOCODING_DEFAULT_COUNTRY = os.environ.get("GEOCODING_DEFAULT_COUNTRY", "India")
+GEOCODING_NEARBY_RADIUS_KM = int(os.environ.get("GEOCODING_NEARBY_RADIUS_KM", "500"))
+IP_GEOLOCATION_URL = os.environ.get("IP_GEOLOCATION_URL", "https://ipapi.co/{ip}/json/")
+IP_GEOLOCATION_TIMEOUT_SECONDS = int(os.environ.get("IP_GEOLOCATION_TIMEOUT_SECONDS", "2"))

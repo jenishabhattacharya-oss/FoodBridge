@@ -3,11 +3,13 @@ from django.contrib.auth.decorators import login_required
 from accounts.decorators import role_required
 from accounts.models import User
 
-from django.shortcuts import render
+from django.contrib import messages
+from django.shortcuts import redirect, render
 from django.utils import timezone
 
 from donations.models import Donation
 from .navigation import sidebar
+from .forms import NGOProfileForm
 
 
 @login_required
@@ -31,4 +33,18 @@ def dashboard(request):
         ),
         "sidebar_items": sidebar("Dashboard"),
         "page_title": "NGO Dashboard",
+    })
+
+
+@login_required
+@role_required(User.Role.NGO)
+def profile(request):
+    profile = request.user.ngo_profile
+    form = NGOProfileForm(request.POST or None, instance=profile)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Your organization location has been updated.")
+        return redirect("ngo_profile")
+    return render(request, "ngos/profile.html", {
+        "form": form, "profile": profile, "sidebar_items": sidebar("Location settings"), "page_title": "Organization location",
     })

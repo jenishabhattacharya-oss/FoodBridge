@@ -11,13 +11,16 @@ class DonationForm(forms.ModelForm):
             "title", "description", "food_type", "food_condition", "quantity", "unit",
             "prepared_at", "storage_notes", "allergen_notes", "is_unpackaged",
             "food_photo_overview", "food_photo_closeup", "food_photo_label", "pickup_address",
-            "pickup_window_start", "pickup_window_end",
+            "pickup_latitude", "pickup_longitude", "pickup_place_label", "pickup_window_start", "pickup_window_end",
         )
         widgets = {
             "description": forms.Textarea(attrs={"rows": 3}),
             "storage_notes": forms.Textarea(attrs={"rows": 2}),
             "allergen_notes": forms.Textarea(attrs={"rows": 2}),
             "pickup_address": forms.Textarea(attrs={"rows": 3}),
+            "pickup_latitude": forms.HiddenInput(),
+            "pickup_longitude": forms.HiddenInput(),
+            "pickup_place_label": forms.HiddenInput(),
             "prepared_at": forms.DateTimeInput(attrs={"type": "datetime-local"}),
             "pickup_window_start": forms.DateTimeInput(attrs={"type": "datetime-local"}),
             "pickup_window_end": forms.DateTimeInput(attrs={"type": "datetime-local"}),

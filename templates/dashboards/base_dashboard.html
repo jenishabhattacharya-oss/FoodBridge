@@ -10,6 +10,7 @@
               rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
               rel="stylesheet">
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
         <title>
             {% block title %}
                 Dashboard
@@ -19,8 +20,9 @@
         <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
         {% block extra_css %}{% endblock %}
     </head>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <body class="dashboard-body dashboard-body--{{ user.role|lower }}">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+    <body class="dashboard-body dashboard-body--{{ user.role|lower }}" data-map-tile="{{ MAP_TILE_URL|default:'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png' }}" data-map-attribution="{{ MAP_TILE_ATTRIBUTION|default:'&copy; OpenStreetMap contributors' }}">
         <div class="dashboard-layout">
             {% include "components/dashboard/sidebar.html" %}
             <div class="dashboard-main">
@@ -38,7 +40,9 @@
                 </main>
             </div>
         </div>
+        {% if user.role == 'VOLUNTEER' and user.volunteer_profile.is_available and user.volunteer_profile.location_sharing_consent %}<div hidden data-volunteer-tracking data-url="{% url 'volunteer_location' %}" data-global-tracking></div>{% endif %}
         <script src="{% static 'js/main.js' %}"></script>
+        <script src="{% static 'js/location.js' %}"></script>
         {% block extra_js %}{% endblock %}
     </body>
 </html>

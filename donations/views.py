@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 from django.http import FileResponse, Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
+from datetime import timedelta
 from django.views.decorators.http import require_POST
 
 from accounts.decorators import role_required
@@ -151,7 +152,7 @@ def donation_photo(request, donation_id, kind):
 
 @login_required(login_url="login")
 def detail(request, donation_id):
-    donation = get_object_or_404(Donation.objects.select_related("donor", "pickup", "claimed_by_ngo", "donor__donor_profile"), pk=donation_id)
+    donation = get_object_or_404(Donation.objects.select_related("donor", "pickup", "pickup__assigned_volunteer__volunteer_profile", "claimed_by_ngo", "receiving_ngo", "donor__donor_profile"), pk=donation_id)
     if request.user.role == User.Role.DONOR and donation.donor_id != request.user.id:
         raise Http404("Donation not found.")
     if request.user.role == User.Role.NGO and (donation.effective_status != Donation.Status.AVAILABLE and donation.claimed_by_ngo_id != request.user.id and donation.receiving_ngo_id != request.user.id and donation.verification_status != Donation.VerificationStatus.HUMAN_REVIEW):
@@ -183,6 +184,18 @@ def detail(request, donation_id):
         "can_accept_for_delivery": can_accept_for_delivery,
         "food_safety_disclaimer": "Visual AI screening cannot guarantee freshness, contamination absence, allergens, temperature history, or food safety.",
     }
+    active_pickup = donation.pickup and donation.pickup.status in (donation.pickup.Status.CLAIMED, donation.pickup.Status.COLLECTED)
+    can_see_location = active_pickup and (donation.donor_id == request.user.id or donation.receiving_ngo_id == request.user.id)
+    if can_see_location and hasattr(donation.pickup.assigned_volunteer, "volunteer_profile"):
+        volunteer_profile = donation.pickup.assigned_volunteer.volunteer_profile
+        fresh = volunteer_profile.location_updated_at and timezone.now() - volunteer_profile.location_updated_at <= timedelta(minutes=5)
+        context["live_location"] = {
+            "state": "available" if fresh and volunteer_profile.current_latitude is not None else ("stale" if volunteer_profile.location_updated_at else "not-sharing"),
+            "latitude": volunteer_profile.current_latitude if fresh else None,
+            "longitude": volunteer_profile.current_longitude if fresh else None,
+            "updated_at": volunteer_profile.location_updated_at,
+            "volunteer_name": donation.pickup.assigned_volunteer.get_full_name(),
+        }
     if request.user.role == User.Role.NGO and donation.receiving_ngo_id == request.user.id and donation.status == Donation.Status.AWAITING_NGO_CONFIRMATION:
         context["can_confirm_volunteer_delivery"] = True
     if request.user.role == User.Role.DONOR:

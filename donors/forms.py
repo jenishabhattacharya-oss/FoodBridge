@@ -42,9 +42,12 @@ class DonorProfileForm(forms.ModelForm):
 
     class Meta:
         model = DonorProfile
-        fields = ["address", "city"]
+        fields = ["address", "city", "latitude", "longitude", "place_label"]
         widgets = {
             "address": forms.Textarea(attrs={"rows": 4}),
+            "latitude": forms.HiddenInput(),
+            "longitude": forms.HiddenInput(),
+            "place_label": forms.HiddenInput(),
         }
 
     def __init__(self, *args, **kwargs):

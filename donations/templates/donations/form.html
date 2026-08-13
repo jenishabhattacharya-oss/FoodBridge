@@ -64,7 +64,7 @@
     <section class="donation-form-section" aria-labelledby="pickup-details-heading">
       <div class="donation-form-section__heading"><span><i class="bi bi-geo-alt"></i></span><div><h2 id="pickup-details-heading">Pickup details</h2><p>Choose an address and time window that works for you.</p></div></div>
       <div class="donation-field-grid">
-        <div class="donation-field donation-field--wide"><label for="{{ form.pickup_address.id_for_label }}">{{ form.pickup_address.label }} <em>*</em></label>{{ form.pickup_address }}{% for error in form.pickup_address.errors %}<div class="donation-field-error">{{ error }}</div>{% endfor %}</div>
+        {% include "components/location_picker.html" with address_field=form.pickup_address latitude_field=form.pickup_latitude longitude_field=form.pickup_longitude label_field=form.pickup_place_label %}
         <div class="donation-field"><label for="{{ form.pickup_window_start.id_for_label }}">{{ form.pickup_window_start.label }} <em>*</em></label>{{ form.pickup_window_start }}{% for error in form.pickup_window_start.errors %}<div class="donation-field-error">{{ error }}</div>{% endfor %}</div>
         <div class="donation-field"><label for="{{ form.pickup_window_end.id_for_label }}">{{ form.pickup_window_end.label }} <em>*</em></label>{{ form.pickup_window_end }}{% for error in form.pickup_window_end.errors %}<div class="donation-field-error">{{ error }}</div>{% endfor %}</div>
       </div>

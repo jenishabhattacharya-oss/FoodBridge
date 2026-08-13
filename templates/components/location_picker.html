@@ -1,0 +1,9 @@
+<div class="location-picker donor-profile-field--wide" data-location-picker data-geocode-url="{% url 'location_geocode' %}">
+  <div class="location-picker__heading"><span><i class="bi bi-geo-alt"></i></span><div><label for="{{ address_field.id_for_label }}">{{ address_field.label }}</label><p>Searches prioritize places within 500 km of your selected location.</p></div></div>
+  <div class="location-picker__search"><i class="bi bi-search"></i><input type="search" placeholder="Search address or landmark" data-location-search autocomplete="off" aria-label="Search address or landmark"><button type="button" class="btn volunteer-btn volunteer-btn--ghost" data-use-location><i class="bi bi-crosshair"></i><span>Use my location</span></button></div>
+  <div class="location-picker__results" data-location-results aria-live="polite"></div>
+  {{ address_field }}{{ latitude_field }}{{ longitude_field }}{{ label_field }}
+  <p class="location-picker__hint"><i class="bi bi-hand-index-thumb"></i> You can also type your address manually below.</p>
+  <div class="location-picker__map" data-location-map aria-label="Location picker map"></div>
+  <div class="location-picker__confirmation" data-location-confirmation hidden><i class="bi bi-check-circle"></i><span></span></div>
+</div>

@@ -40,4 +40,5 @@ urlpatterns = [
         name="pickup_history",
     ),
     path("profile/", views.volunteer_profile, name="volunteer_profile"),
+    path("location/", views.update_location, name="volunteer_location"),
 ]

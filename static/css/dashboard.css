@@ -237,6 +237,35 @@
 }
 
 /* ==========================================================
+   LOCATION AND NAVIGATION
+========================================================== */
+
+.location-picker { grid-column: 1 / -1; display: grid; gap: .75rem; padding: 1.05rem; border: 1px solid rgba(255,255,255,.1); border-radius: 16px; background: rgba(4,30,17,.2); }
+.location-picker__heading { display: flex; align-items: center; gap: .7rem; }.location-picker__heading > span { display: grid; width: 34px; height: 34px; place-items: center; border-radius: 10px; color: var(--amber); background: rgba(240,173,78,.12); }.location-picker__heading label { display: block; margin: 0; color: #fff; font-size: .92rem; font-weight: 700; }.location-picker__heading p { margin: .08rem 0 0; color: rgba(255,255,255,.58); font-size: .76rem; }
+.location-picker__search { position: relative; display: flex; gap: .55rem; align-items: center; }.location-picker__search > i { position: absolute; left: .85rem; z-index: 1; color: rgba(255,255,255,.48); }.location-picker__search input, .location-picker textarea { width: 100%; min-height: 44px; padding: .65rem .8rem; border: 1px solid rgba(255,255,255,.17); border-radius: 10px; outline: 0; color: #f4faf4; background: rgba(4,30,17,.4); transition: border-color .2s ease, box-shadow .2s ease, background .2s ease; }.location-picker__search input { padding-left: 2.45rem; }.location-picker textarea { min-height: 76px; resize: vertical; }.location-picker__search input:focus, .location-picker textarea:focus { border-color: var(--amber); background: rgba(4,30,17,.58); box-shadow: 0 0 0 3px rgba(240,173,78,.13); }.location-picker__search input::placeholder, .location-picker textarea::placeholder { color: rgba(235,247,238,.34); }
+.location-picker__map { height: 290px; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,.16); background: #172018; }
+.pickup-map-panel { margin: 1.5rem 0; padding: 1.25rem; border-radius: 20px; border: 1px solid rgba(255,255,255,.12); background: rgba(11,37,28,.58); }
+.pickup-map-panel h2 { font-size: 1.3rem; margin: .25rem 0 1rem; }
+.pickup-map { height: 330px; border-radius: 14px; overflow: hidden; }
+.location-picker__results { display: grid; gap: .35rem; max-height: 185px; overflow: auto; color: rgba(255,255,255,.65); font-size: .83rem; }.location-picker__result { display: flex; gap: .55rem; align-items: flex-start; text-align: left; border: 1px solid rgba(255,255,255,.1); border-radius: 10px; padding: .65rem .75rem; background: rgba(255,255,255,.045); color: rgba(255,255,255,.86); }.location-picker__result i { color: var(--amber); }.location-picker__result:hover { border-color: rgba(240,173,78,.45); background: rgba(240,173,78,.1); }
+.location-picker__result span { display: grid; gap: .14rem; }.location-picker__result small { color: rgba(255,255,255,.56); font-size: .72rem; }
+.location-picker__hint { margin: 0; color: rgba(255,255,255,.58); font-size: .78rem; }.location-picker__hint i { color: var(--amber); }.location-picker__confirmation { display: flex; gap: .5rem; padding: .55rem .7rem; border-radius: 9px; color: #b8edc5; background: rgba(66,185,93,.1); font-size: .82rem; }
+.navigation-panel, .live-location-card, .tracking-card { margin-top: 1.5rem; padding: 1.25rem; border: 1px solid rgba(255,255,255,.12); border-radius: 18px; background: rgba(11, 37, 28, .58); }
+.navigation-panel h2, .live-location-card h2 { font-size: 1.25rem; margin: .3rem 0; }
+.navigation-panel__destinations { display: grid; gap: .75rem; margin-top: 1rem; }
+.navigation-panel__destinations article { display: grid; grid-template-columns: auto 1fr; gap: .75rem; align-items: center; padding: .85rem; border-radius: 12px; background: rgba(255,255,255,.055); }
+.navigation-panel__destinations article > i { color: var(--amber); font-size: 1.25rem; }
+.navigation-panel__destinations small { display: block; color: rgba(255,255,255,.68); }
+.navigation-links { grid-column: 2; display: flex; gap: .75rem; flex-wrap: wrap; }
+.navigation-links a { color: var(--amber); font-weight: 700; font-size: .87rem; }
+.live-location-card, .tracking-card { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.tracking-card > i { font-size: 1.7rem; color: var(--amber); }
+.tracking-card p { margin: .25rem 0 0; color: rgba(255,255,255,.7); }
+.tracking-card--muted { opacity: .82; }
+@media (max-width: 576px) { .location-picker__search { flex-direction: column; } .location-picker__map { height: 230px; } .live-location-card { align-items: flex-start; flex-direction: column; } }
+@media (prefers-reduced-motion: reduce) { .leaflet-marker-icon, .location-picker__result { transition: none !important; } }
+
+/* ==========================================================
    VOLUNTEER WORKSPACE
 ========================================================== */
 

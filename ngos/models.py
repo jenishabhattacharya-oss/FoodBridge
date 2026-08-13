@@ -12,6 +12,9 @@ class NGOProfile(models.Model):
 
     organization_name = models.CharField(max_length=200)
     address = models.TextField()
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    place_label = models.CharField(max_length=255, blank=True)
 
     def clean(self):
         if self.user.role != self.user.Role.NGO:

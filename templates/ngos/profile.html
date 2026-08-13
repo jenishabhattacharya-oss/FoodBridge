@@ -1,0 +1,10 @@
+{% extends "dashboards/base_dashboard.html" %}
+{% block title %}Organization location{% endblock %}
+{% block dashboard_content %}
+<section class="volunteer-page-header reveal"><div><p class="volunteer-eyebrow">LOCATION SETTINGS</p><h1>Organization location</h1><p>Set a precise destination so volunteers can navigate to your team.</p></div></section>
+<section class="profile-panel reveal"><form method="post" class="profile-form">{% csrf_token %}
+  <div class="profile-field"><label for="{{ form.organization_name.id_for_label }}">{{ form.organization_name.label }}</label>{{ form.organization_name }}</div>
+  {% include "components/location_picker.html" with address_field=form.address latitude_field=form.latitude longitude_field=form.longitude label_field=form.place_label %}
+  <div class="profile-form__actions"><button class="btn volunteer-btn volunteer-btn--primary">Save location</button></div>
+</form></section>
+{% endblock %}

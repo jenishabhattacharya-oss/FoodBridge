@@ -48,6 +48,13 @@
                 </div>
             </article>
         </div>
+        <section class="navigation-panel">
+            <div><p class="volunteer-eyebrow">GPS NAVIGATION</p><h2>Navigate your handoff</h2><p>Open your preferred map app for turn-by-turn guidance.</p></div>
+            <div class="navigation-panel__destinations">
+                <article><i class="bi bi-shop"></i><div><strong>Pickup: {{ pickup.donor_name }}</strong><small>{{ pickup.pickup_address }}</small></div><div class="navigation-links"><a target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination={% if pickup.pickup_latitude %}{{ pickup.pickup_latitude }},{{ pickup.pickup_longitude }}{% else %}{{ pickup.pickup_address|urlencode }}{% endif %}">Google Maps</a><a target="_blank" rel="noopener" href="https://waze.com/ul?ll={{ pickup.pickup_latitude|default:'' }}%2C{{ pickup.pickup_longitude|default:'' }}&navigate=yes">Waze</a></div></article>
+                {% if pickup.destination_latitude %}<article><i class="bi bi-building"></i><div><strong>Deliver to: {{ destination_name }}</strong><small>Receiving NGO destination</small></div><div class="navigation-links"><a target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination={{ pickup.destination_latitude }},{{ pickup.destination_longitude }}">Google Maps</a><a target="_blank" rel="noopener" href="https://maps.apple.com/?daddr={{ pickup.destination_latitude }},{{ pickup.destination_longitude }}">Apple Maps</a><a target="_blank" rel="noopener" href="https://waze.com/ul?ll={{ pickup.destination_latitude }}%2C{{ pickup.destination_longitude }}&navigate=yes">Waze</a></div></article>{% endif %}
+            </div>
+        </section>
         {% if pickup.instructions %}<div class="pickup-note"><span><i class="bi bi-lightbulb"></i></span><div><strong>Pickup note</strong><p>{{ pickup.instructions }}</p></div></div>{% endif %}
         <div class="pickup-action-area">
             {% if pickup.status == 'OPEN' %}

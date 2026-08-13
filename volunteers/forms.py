@@ -28,7 +28,7 @@ class VolunteerProfileForm(forms.ModelForm):
 
     class Meta:
         model = VolunteerProfile
-        fields = ("service_area", "transport_mode", "is_available")
+        fields = ("service_area", "transport_mode", "is_available", "location_sharing_consent")
         widgets = {
             "service_area": forms.TextInput(attrs={"placeholder": "e.g. Bengaluru"}),
         }

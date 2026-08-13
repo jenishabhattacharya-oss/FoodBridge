@@ -6,7 +6,8 @@
     <section class="profile-panel reveal">
         <div class="profile-panel__intro"><span><i class="bi bi-person-heart"></i></span><div><h2>Your donation details</h2><p>These details are used to coordinate food pickups.</p></div></div>
         <form method="post" class="profile-form">{% csrf_token %}
-            {% for field in form %}<div class="profile-field {% if field.name == 'address' %}donor-profile-field--wide{% endif %}"><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% for error in field.errors %}<small class="text-warning d-block mt-2">{{ error }}</small>{% endfor %}</div>{% endfor %}
+            <div class="profile-field"><label for="{{ form.first_name.id_for_label }}">{{ form.first_name.label }}</label>{{ form.first_name }}</div><div class="profile-field"><label for="{{ form.last_name.id_for_label }}">{{ form.last_name.label }}</label>{{ form.last_name }}</div><div class="profile-field"><label for="{{ form.phone.id_for_label }}">{{ form.phone.label }}</label>{{ form.phone }}</div><div class="profile-field"><label for="{{ form.city.id_for_label }}">{{ form.city.label }}</label>{{ form.city }}</div>
+            {% include "components/location_picker.html" with address_field=form.address latitude_field=form.latitude longitude_field=form.longitude label_field=form.place_label %}
             <div class="profile-form__actions"><button class="btn volunteer-btn volunteer-btn--primary" type="submit"><i class="bi bi-check2"></i> Save changes</button></div>
         </form>
     </section>

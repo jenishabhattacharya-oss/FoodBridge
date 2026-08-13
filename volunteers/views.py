@@ -1,12 +1,14 @@
-from datetime import date
+from datetime import date, timedelta
+from math import asin, cos, radians, sin, sqrt
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import Http404
+from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST
+from decimal import Decimal, InvalidOperation
 
 from accounts.decorators import role_required
 from accounts.models import User
@@ -64,6 +66,18 @@ def _available_queryset(request, default_city=""):
     return pickups, city, pickup_date
 
 
+def _distance_km(latitude, longitude, pickup):
+    if latitude is None or longitude is None or pickup.pickup_latitude is None or pickup.pickup_longitude is None:
+        return None
+    lat1, lon1, lat2, lon2 = map(radians, (float(latitude), float(longitude), float(pickup.pickup_latitude), float(pickup.pickup_longitude)))
+    return round(6371 * 2 * asin(sqrt(sin((lat2-lat1)/2) ** 2 + cos(lat1) * cos(lat2) * sin((lon2-lon1)/2) ** 2)), 1)
+
+
+def _distance_metres(latitude, longitude, other_latitude, other_longitude):
+    lat1, lon1, lat2, lon2 = map(radians, (float(latitude), float(longitude), float(other_latitude), float(other_longitude)))
+    return 6371000 * 2 * asin(sqrt(sin((lat2-lat1)/2) ** 2 + cos(lat1) * cos(lat2) * sin((lon2-lon1)/2) ** 2))
+
+
 def _visible_pickup_or_404(request, pickup_id):
     pickup = get_object_or_404(Pickup, pk=pickup_id)
     if pickup.status != Pickup.Status.OPEN and pickup.assigned_volunteer_id != request.user.id:
@@ -109,12 +123,19 @@ def dashboard(request):
 def available_pickups(request):
     profile = _profile(request.user)
     pickups, city, pickup_date = _available_queryset(request, profile.service_area)
+    fresh_location = profile.location_updated_at and timezone.now() - profile.location_updated_at <= timedelta(minutes=5)
+    pickups = list(pickups)
+    for pickup in pickups:
+        pickup.distance_km = _distance_km(profile.current_latitude, profile.current_longitude, pickup) if fresh_location else None
+    if fresh_location:
+        pickups.sort(key=lambda pickup: pickup.distance_km is None)
     return render(request, "volunteers/available_pickups.html", {
         "pickups": pickups,
         "city": city,
         "pickup_date": pickup_date,
         "sidebar_items": _sidebar("Available Pickups"),
         "page_title": "Available Pickups",
+        "has_fresh_location": fresh_location,
     })
 
 
@@ -127,6 +148,7 @@ def pickup_details(request, pickup_id):
         "delivery_form": DeliveryForm(instance=pickup),
         "sidebar_items": _sidebar("Assigned Pickups" if pickup.assigned_volunteer_id else "Available Pickups"),
         "page_title": "Pickup Details",
+        "destination_name": pickup.destination_place_label or "Receiving NGO",
     })
 
 
@@ -234,3 +256,29 @@ def volunteer_profile(request):
         "sidebar_items": _sidebar("My Profile"),
         "page_title": "My Volunteer Profile",
     })
+
+
+@login_required(login_url="login")
+@role_required(User.Role.VOLUNTEER)
+@require_POST
+def update_location(request):
+    profile = _profile(request.user)
+    if not profile.is_available or not profile.location_sharing_consent:
+        return JsonResponse({"detail": "Location sharing is not enabled."}, status=409)
+    try:
+        latitude = Decimal(request.POST["latitude"])
+        longitude = Decimal(request.POST["longitude"])
+    except (KeyError, InvalidOperation):
+        return JsonResponse({"detail": "Valid coordinates are required."}, status=400)
+    if not (-90 <= latitude <= 90 and -180 <= longitude <= 180):
+        return JsonResponse({"detail": "Coordinates are outside valid bounds."}, status=400)
+    now = timezone.now()
+    seconds_since_update = (now - profile.location_updated_at).total_seconds() if profile.location_updated_at else None
+    moved_metres = _distance_metres(latitude, longitude, profile.current_latitude, profile.current_longitude) if profile.current_latitude is not None else 0
+    if seconds_since_update is not None and seconds_since_update < 30 and moved_metres < 50:
+        return JsonResponse({"detail": "Location received recently."}, status=429)
+    profile.current_latitude = latitude
+    profile.current_longitude = longitude
+    profile.location_updated_at = now
+    profile.save(update_fields=("current_latitude", "current_longitude", "location_updated_at"))
+    return JsonResponse({"status": "updated", "updated_at": now.isoformat()})

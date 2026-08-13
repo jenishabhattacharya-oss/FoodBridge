@@ -24,6 +24,10 @@ class VolunteerProfile(models.Model):
         default=TransportMode.WALKING,
     )
     is_available = models.BooleanField(default=True)
+    location_sharing_consent = models.BooleanField(default=False)
+    current_latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    current_longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    location_updated_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.user.get_full_name()} (Volunteer)"
@@ -37,6 +41,10 @@ class VolunteerProfile(models.Model):
             )
 
     def save(self, *args, **kwargs):
+        if not self.is_available:
+            self.current_latitude = None
+            self.current_longitude = None
+            self.location_updated_at = None
         self.full_clean()
         super().save(*args, **kwargs)
 
@@ -53,6 +61,9 @@ class Pickup(models.Model):
     donor_phone = models.CharField(max_length=15)
     pickup_address = models.TextField()
     pickup_city = models.CharField(max_length=100)
+    pickup_latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    pickup_longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    pickup_place_label = models.CharField(max_length=255, blank=True)
     food_description = models.CharField(max_length=255)
     quantity = models.CharField(max_length=100)
     pickup_window_start = models.DateTimeField()
@@ -76,6 +87,9 @@ class Pickup(models.Model):
     delivered_at = models.DateTimeField(null=True, blank=True)
     recipient_name = models.CharField(max_length=200, blank=True)
     recipient_address = models.TextField(blank=True)
+    destination_latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    destination_longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    destination_place_label = models.CharField(max_length=255, blank=True)
     handoff_notes = models.TextField(blank=True)
     delivery_photo = models.ImageField(upload_to="delivery_proofs/%Y/%m/", blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

@@ -15,6 +15,9 @@ def _pickup_values(donation):
         "donor_phone": donation.donor.phone,
         "pickup_address": donation.pickup_address,
         "pickup_city": donation.donor.donor_profile.city,
+        "pickup_latitude": donation.pickup_latitude,
+        "pickup_longitude": donation.pickup_longitude,
+        "pickup_place_label": donation.pickup_place_label,
         "food_description": f"{donation.title}: {donation.description}",
         "quantity": f"{donation.quantity} {donation.get_unit_display()}",
         "pickup_window_start": donation.pickup_window_start,
@@ -140,6 +143,12 @@ def accept_for_volunteer_delivery(*, donation_id, ngo):
     if donation.receiving_ngo_id and donation.receiving_ngo_id != ngo.id:
         raise ValidationError("Another NGO has already accepted this donation.")
     donation.receiving_ngo = ngo
+    pickup = donation.pickup
+    profile = ngo.ngo_profile
+    pickup.destination_latitude = profile.latitude
+    pickup.destination_longitude = profile.longitude
+    pickup.destination_place_label = profile.place_label or profile.organization_name
+    pickup.save(update_fields=("destination_latitude", "destination_longitude", "destination_place_label", "updated_at"))
     donation.status = Donation.Status.NGO_ACCEPTED
     donation.save(update_fields=("receiving_ngo", "status", "updated_at"))
     return donation
