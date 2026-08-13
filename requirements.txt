@@ -5,3 +5,6 @@ razorpay==2.0.1
 cryptography==50.0.0
 sqlparse==0.5.5
 tzdata==2026.2
+gunicorn>=23,<24
+psycopg[binary]>=3.2,<4
+whitenoise[brotli]>=6.8,<7

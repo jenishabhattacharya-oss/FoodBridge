@@ -32,7 +32,13 @@ class DonationWorkflowTests(TestCase):
         self.volunteer = User.objects.create_user(email="volunteer@example.com", password="password", first_name="Volunteer", last_name="One", phone="222", role=User.Role.VOLUNTEER)
         VolunteerProfile.objects.create(user=self.volunteer, service_area="Bengaluru")
         self.ngo = User.objects.create_user(email="ngo@example.com", password="password", first_name="NGO", last_name="One", phone="333", role=User.Role.NGO)
-        NGOProfile.objects.create(user=self.ngo, organization_name="Hope", address="Indiranagar")
+        NGOProfile.objects.create(
+            user=self.ngo,
+            organization_name="Hope",
+            address="Indiranagar",
+            approval_status=NGOProfile.ApprovalStatus.APPROVED,
+            approved_at=timezone.now(),
+        )
 
     def donation_data(self):
         start = timezone.now() + timedelta(hours=1)

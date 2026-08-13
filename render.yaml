@@ -1,0 +1,43 @@
+services:
+  - type: web
+    name: foodbridge-mvp
+    runtime: docker
+    plan: starter
+    region: singapore
+    healthCheckPath: /health/
+    dockerfilePath: ./Dockerfile
+    disk:
+      name: foodbridge-media
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: config.settings_production
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: PAYMENT_ENCRYPTION_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: foodbridge-db
+          property: connectionString
+      - key: DJANGO_MEDIA_ROOT
+        value: /var/data/media
+      - key: FOODBRIDGE_PAYMENTS_ENABLED
+        value: "false"
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: DJANGO_EMAIL_HOST
+        sync: false
+      - key: DJANGO_EMAIL_HOST_USER
+        sync: false
+      - key: DJANGO_EMAIL_HOST_PASSWORD
+        sync: false
+      - key: DJANGO_DEFAULT_FROM_EMAIL
+        sync: false
+databases:
+  - name: foodbridge-db
+    plan: basic-256mb
+    region: singapore
+    databaseName: foodbridge
+    user: foodbridge
