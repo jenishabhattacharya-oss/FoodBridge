@@ -8,31 +8,52 @@
 ========================================================== */
 
 .auth-page {
+    position: relative;
+    overflow: hidden;
     min-height: 100vh;
     display: flex;
     align-items: center;
-    padding: 6rem 0;
+    padding: 4.5rem 0 5rem;
+    background: radial-gradient(circle at 17% 25%, rgba(40, 167, 69, .48), transparent 18%), radial-gradient(circle at 81% 18%, rgba(26, 60, 46, .5), transparent 22%), radial-gradient(circle at 72% 81%, rgba(240, 173, 78, .34), transparent 25%), radial-gradient(circle at 29% 78%, rgba(40, 167, 69, .32), transparent 23%), linear-gradient(135deg, #0a1f12 0%, #122b1a 48%, #1a3c2e 100%);
 }
 
+.auth-page::before {
+    position: absolute;
+    inset: 0;
+    content: "";
+    opacity: .86;
+    background: radial-gradient(ellipse at 48% 43%, transparent 20%, rgba(1, 10, 18, .24) 75%, rgba(1, 10, 18, .58) 100%);
+}
+
+.auth-page .container { position: relative; z-index: 1; }
+
+.auth-orb { position: absolute; z-index: 0; border: 1px solid rgba(230, 255, 242, .18); border-radius: 50%; filter: blur(3px); pointer-events: none; }
+.auth-orb--one { top: 9%; left: 5%; width: 19rem; height: 19rem; background: radial-gradient(circle at 37% 33%, rgba(171,255,219,.7), rgba(37,190,137,.39) 32%, rgba(11,93,66,.08) 68%); box-shadow: inset 15px 12px 28px rgba(255,255,255,.18), inset -22px -23px 40px rgba(0,46,30,.22), 0 0 95px 42px rgba(35,178,129,.45); }
+.auth-orb--two { right: 6%; bottom: 4%; width: 22rem; height: 22rem; border-color: rgba(255,228,166,.2); background: radial-gradient(circle at 36% 30%, rgba(255,239,190,.7), rgba(247,183,75,.37) 33%, rgba(185,119,31,.07) 70%); box-shadow: inset 16px 13px 30px rgba(255,255,255,.2), inset -22px -25px 42px rgba(83,48,8,.2), 0 0 105px 44px rgba(240,173,78,.35); }
+
 .auth-wrapper {
+    position: relative;
     display: grid;
-    grid-template-columns: 1fr 1.2fr;
+    grid-template-columns: .92fr 1.08fr;
 
     overflow: hidden;
 
-    border-radius: 28px;
+    border-radius: 30px;
 
-    background: rgba(255, 255, 255, 0.08);
+    background: linear-gradient(135deg, rgba(255,255,255,.16), rgba(225,241,229,.07) 30%, rgba(10,31,18,.38) 100%);
 
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
+    backdrop-filter: blur(34px) saturate(145%);
+    -webkit-backdrop-filter: blur(34px) saturate(145%);
 
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(238, 250, 243, 0.32);
 
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+    box-shadow: 0 32px 85px rgba(0, 12, 6, 0.46), inset 0 1px 0 rgba(255,255,255,.24);
 
     animation: authFade 0.5s ease;
 }
+
+.auth-wrapper::before { position: absolute; z-index: 0; inset: 0; content: ""; pointer-events: none; background: linear-gradient(115deg, rgba(255,255,255,.17), transparent 25%, transparent 70%, rgba(255,207,104,.08)); }
+.auth-wrapper > * { position: relative; z-index: 1; }
 
 @keyframes authFade {
     from {
@@ -53,13 +74,13 @@
 .auth-brand {
     position: relative;
 
-    padding: 4rem;
+    padding: clamp(2.5rem, 5vw, 4.5rem);
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    background: linear-gradient(155deg, rgba(40, 167, 69, 0.25), rgba(18, 43, 26, 0.95));
+    background: linear-gradient(150deg, rgba(26, 60, 46, .68), rgba(10, 31, 18, .62));
 }
 
 .auth-brand::before {
@@ -68,7 +89,7 @@
     position: absolute;
     inset: 0;
 
-    background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.15), transparent 45%);
+    background: radial-gradient(circle at 18% 8%, rgba(255,255,255,.2), transparent 32%), radial-gradient(circle at 90% 95%, rgba(241,181,75,.17), transparent 30%);
 
     pointer-events: none;
 }
@@ -79,8 +100,8 @@
 }
 
 .brand-logo {
-    width: 90px;
-    height: 90px;
+    width: 92px;
+    height: 92px;
 
     display: flex;
     align-items: center;
@@ -88,17 +109,25 @@
 
     border-radius: 50%;
 
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, .08);
 
     border: 1px solid rgba(255, 255, 255, 0.18);
 
-    font-size: 2.7rem;
+    color: var(--amber);
+    box-shadow: none;
+    font-size: 2.45rem;
 
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
 }
 
+.brand-logo i { display: block; color: var(--amber); line-height: 1; text-shadow: none; }
+
+.auth-overline { margin: 0 0 .6rem; color: var(--amber); font-size: .7rem; font-weight: 800; letter-spacing: .15em; }
+
 .auth-brand h1 {
-    margin-bottom: 1rem;
+    margin-bottom: .7rem;
+    font-family: "EB Garamond", serif;
+    font-size: clamp(2.7rem, 4vw, 4rem);
 }
 
 .auth-brand .lead {
@@ -139,17 +168,20 @@
 ========================================================== */
 
 .auth-form-container {
-    padding: 4rem;
+    padding: clamp(2.2rem, 5vw, 4.5rem);
 
     display: flex;
     flex-direction: column;
     justify-content: center;
+    background: rgba(10, 31, 18, .22);
 }
 
 .auth-header {
     text-align: center;
     margin-bottom: 2rem;
 }
+
+.auth-header h2 { font-family: "EB Garamond", serif; font-size: clamp(2.25rem, 4vw, 3.2rem); }
 
 .auth-header p {
     color: rgba(255, 255, 255, 0.65);
@@ -183,11 +215,13 @@
 
     gap: 0.45rem;
 
-    padding: 1.2rem;
+    min-height: 100%;
+    padding: 1rem .7rem;
 
     border-radius: 18px;
 
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.075);
+    backdrop-filter: blur(12px);
 
     border: 1px solid rgba(255, 255, 255, 0.12);
 
@@ -255,6 +289,13 @@
     color: rgba(255, 255, 255, 0.45);
 }
 
+.auth-form-container .form-control,
+.auth-form-container .form-select {
+    border-color: rgba(221, 244, 238, .25) !important;
+    background: rgba(255, 255, 255, .1) !important;
+    backdrop-filter: blur(15px);
+}
+
 /* ==========================================================
    PASSWORD
 ========================================================== */
@@ -299,12 +340,18 @@
 
     margin-top: 1rem;
 
-    border-radius: 999px;
+    border-radius: 14px;
 
     font-size: 1rem;
 
-    font-weight: 700;
+    font-weight: 800;
+    border: 1px solid rgba(255, 226, 157, .7);
+    background: linear-gradient(100deg, #f0ad4e 0%, #ffc107 48%, #e69500 100%);
+    color: #0a1f12;
+    box-shadow: 0 12px 22px rgba(240, 173, 78, .16);
 }
+
+.auth-form-container .btn-warning:hover { border-color: #ffd879; background: linear-gradient(100deg, #ffc107 0%, #f0ad4e 52%, #dd8d00 100%); color: #0a1f12; }
 
 /* ==========================================================
    FOOTER

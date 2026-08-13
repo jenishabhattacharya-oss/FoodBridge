@@ -1,18 +1,21 @@
 {% extends "base.html" %}
 {% load static %}
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}?v=glass-v2">
 {% endblock %}
 {% block content %}
     <section class="auth-page">
+        <div class="auth-orb auth-orb--one"></div>
+        <div class="auth-orb auth-orb--two"></div>
         <div class="container">
             <div class="auth-wrapper glass">
                 <!-- Left Side -->
                 <div class="auth-brand">
                     <div class="auth-brand-content">
-                        <div class="brand-logo">🌱</div>
+                        <div class="brand-logo" aria-label="FoodBridge"><i class="bi bi-basket2-fill"></i></div>
+                        <p class="auth-overline">COMMUNITY FOOD NETWORK</p>
                         <h1>FoodBridge</h1>
-                        <p class="lead">Connecting surplus food with people who need it.</p>
+                        <p class="lead">Turning surplus into shared meals, one thoughtful handoff at a time.</p>
                         <div class="brand-features">
                             <div class="feature">
                                 <i class="bi bi-check-circle-fill"></i>
@@ -32,7 +35,7 @@
                             </div>
                         </div>
                         <blockquote>
-                            “Every meal shared is hope delivered.”
+                            Every meal shared is hope delivered.
                         </blockquote>
                     </div>
                 </div>
