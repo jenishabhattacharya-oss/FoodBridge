@@ -25,6 +25,10 @@ services:
         value: /var/data/media
       - key: FOODBRIDGE_PAYMENTS_ENABLED
         value: "false"
+      # Seeds the demo workflow automatically on a new deployment. Set to
+      # "false" after the first deployment if this is becoming production.
+      - key: SEED_DEMO_DATA
+        value: "true"
       - key: GEMINI_API_KEY
         sync: false
       - key: DJANGO_EMAIL_HOST

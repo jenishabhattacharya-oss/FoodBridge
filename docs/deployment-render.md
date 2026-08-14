@@ -18,6 +18,18 @@ This deployment uses a Docker web service, managed PostgreSQL, and a one-gigabyt
 4. Create the Blueprint and wait for the `/health/` health check to pass.
 5. Open the generated `onrender.com` URL. It is automatically accepted as an allowed host and trusted CSRF origin by `config.settings_production`.
 
+### Load demo data without a Render Shell
+
+If your Render plan does not include an interactive Shell, add this environment variable to the web service in Render:
+
+```text
+SEED_DEMO_DATA=true
+```
+
+Redeploy the service. The container runs `python manage.py seed_demo` after migrations on its first startup. It checks for the existing `demo.` users first, so later restarts do not recreate or reset the demo records. The command and the bundled food photographs are part of the Docker image, while uploaded images are written to the configured media directory.
+
+After the first successful deployment, you can remove `SEED_DEMO_DATA` or set it to `false`; the seeded records remain in PostgreSQL.
+
 ## First release checks
 
 1. Register a non-demo account for each role and verify role-based access.
