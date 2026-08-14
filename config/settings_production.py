@@ -61,6 +61,12 @@ DATABASES = {"default": _postgres_database(DATABASE_URL)}
 STATIC_ROOT = os.environ.get("DJANGO_STATIC_ROOT", str(BASE_DIR / "staticfiles"))  # noqa: F405
 MEDIA_ROOT = os.environ.get("DJANGO_MEDIA_ROOT", "/var/data/media")
 STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "OPTIONS": {
+            "location": MEDIA_ROOT,
+        },
+    },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
