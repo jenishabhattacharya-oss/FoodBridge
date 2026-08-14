@@ -171,6 +171,19 @@ class DonationPhotoVerificationTests(TestCase):
         self.assertEqual(donation.verification_status, Donation.VerificationStatus.HUMAN_REVIEW)
         self.assertIsNone(donation.pickup_id)
 
+    def test_detail_displays_each_uploaded_food_photo_without_missing_optional_label(self):
+        with TemporaryDirectory() as media_root, override_settings(MEDIA_ROOT=media_root):
+            donation = create_donation(donor=self.donor, cleaned_data=self._data())
+            donation.food_photo_label.delete(save=True)
+
+            self.client.force_login(self.donor)
+            response = self.client.get(f"/donations/{donation.id}/")
+
+        self.assertContains(response, "Food photos")
+        self.assertContains(response, f'/donations/{donation.id}/photos/overview/')
+        self.assertContains(response, f'/donations/{donation.id}/photos/closeup/')
+        self.assertNotContains(response, f'/donations/{donation.id}/photos/label/')
+
 
 class DonationFormPresentationTests(TestCase):
     def setUp(self):

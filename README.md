@@ -1,55 +1,80 @@
 # FoodBridge
 
-> A role-based platform for coordinating safe surplus-food redistribution between donors, volunteers, and NGOs.
+FoodBridge is a role-based Django platform that helps donors, volunteers, and NGOs coordinate the safe collection and delivery of surplus food.
 
-FoodBridge gives each participant a focused workspace for moving surplus food from a donor to a receiving NGO. It combines food-listing verification, pickup coordination, live volunteer location sharing, proof of delivery, and an optional payment workflow in one Django application.
+## Overview
 
-## The flow
+The platform guides a food donation from submission through safety verification, collection, delivery, and confirmation. It gives each participant a focused workspace while maintaining clear handoff states, delivery evidence, and access controls.
+
+| Role | What they can do |
+| --- | --- |
+| Donors | Create food listings, provide pickup details, track donation status, and manage eligible listings. |
+| Volunteers | Find eligible pickups, share availability and location, collect food, and record delivery evidence. |
+| NGOs | Review food safety, accept food for volunteer delivery, manage direct takeovers, and confirm receipt or delivery. |
+
+## Key features
+
+- Role-specific registration, authentication, profiles, dashboards, and permissions
+- Food listings with quantity, food condition, preparation time, pickup windows, location, and photos
+- Optional visual food-screening workflow with Gemini, plus NGO human review when screening is unavailable or inconclusive
+- Controlled donation lifecycle from available food to NGO acceptance, volunteer collection, delivery, and confirmation
+- NGO takeover workflow for situations where no eligible volunteer is available
+- Pickup assignment rules that prevent volunteers from holding multiple active pickups
+- Location search, mapped pickup and destination details, and volunteer location-sharing controls
+- Required delivery proof and NGO receipt uploads for completed handoffs
+- Optional Razorpay-based payment and volunteer payout workflow, disabled by default
+- Safe, repeatable demo data through a dedicated management command
+
+## Donation flow
 
 ```text
-Donor lists food
-      |
+Donor submits food listing
+        |
+        v
 Visual screening or NGO review
-      |
-Approved NGO accepts delivery
-      |
-Volunteer claims, collects, and delivers
-      |
-NGO confirms receipt and delivery
+        |
+        v
+Approved listing becomes available
+        |
+        +--> NGO accepts -> Volunteer claims -> Collects -> Delivers -> NGO confirms
+        |
+        +--> No eligible volunteer -> NGO takeover -> NGO uploads receipt
 ```
 
-## Highlights
+## Technology
 
-- Role-specific registration, authentication, profiles, and dashboards
-- Food listings with photos, pickup windows, location details, storage notes, and allergen notes
-- Visual food-screening workflow with approved, rejected, and human-review outcomes
-- NGO approval gates for managing food listings and food-safety reviews
-- Volunteer availability, service areas, location-sharing consent, and active-pickup protection
-- Pickup lifecycle tracking: open, claimed, collected, delivered, cancelled
-- Delivery and NGO receipt evidence uploads with access controls
-- NGO takeover and release-to-queue paths when volunteer delivery is unavailable
-- Optional Razorpay-oriented payment and volunteer payout models, disabled by default
-- Docker, managed PostgreSQL, persistent uploads, health checks, and production security settings
+- Python 3.13
+- Django 6
+- SQLite for local development; PostgreSQL supported for deployment
+- Pillow for image uploads
+- Gemini Vision for optional food-photo screening
+- Razorpay for optional payment and payout integration
+- WhiteNoise and Gunicorn for production serving
+- Docker and Render deployment configuration
 
-## Built with
+## Getting started
 
-| Layer | Technology |
-| --- | --- |
-| Application | Django 6, Python |
-| Database | SQLite for local development, PostgreSQL for production |
-| Media | Pillow image validation and persistent media storage |
-| Serving | Gunicorn and WhiteNoise |
-| Deployment | Docker and Render Blueprint |
+### Prerequisites
 
-## Run locally
+- Python 3.13 or later
+- `pip`
 
-### 1. Create an environment and install dependencies
+### Local setup
 
 ```bash
+git clone <your-repository-url>
+cd FoodBridge
+
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+
+cp .env.example .env
+python manage.py migrate
+python manage.py runserver
 ```
+
+Open `http://127.0.0.1:8000/` in your browser.
 
 On Windows PowerShell, activate the environment with:
 
@@ -57,64 +82,40 @@ On Windows PowerShell, activate the environment with:
 .venv\Scripts\Activate.ps1
 ```
 
-### 2. Configure local environment variables
+### Configuration
 
-```bash
-cp .env.example .env
-```
+Copy `.env.example` to `.env` and set only the services you plan to use. The default configuration uses SQLite and a console email backend, so neither a database server nor email provider is required for initial local development.
 
-Local development uses SQLite by default. The application runs without payment credentials; leave `FOODBRIDGE_PAYMENTS_ENABLED=false` until a complete Razorpay integration has been configured and tested.
+| Variable | Purpose |
+| --- | --- |
+| `DJANGO_SECRET_KEY` | Required secure application secret outside local development. |
+| `DJANGO_DEBUG` | Enables development mode when set to `true`. |
+| `DJANGO_ALLOWED_HOSTS` | Comma-separated hosts accepted by Django. |
+| `GEMINI_API_KEY` | Enables visual food screening. Without it, unavailable screening safely routes listings to human review. |
+| `FOODBRIDGE_PAYMENTS_ENABLED` | Enables payment-related pages and actions; defaults to `false`. |
+| `PAYMENT_ENCRYPTION_KEY` | Required before storing encrypted payout or provider credentials. |
+| `DATABASE_URL` | PostgreSQL connection URL for production settings. |
+| SMTP variables | Enable password-reset emails in production. |
 
-### 3. Migrate and start the application
+Never commit `.env`, payment credentials, or real payout details.
+
+## Demo data
+
+Load the safe demonstration dataset to explore each role and major handoff state:
 
 ```bash
 python manage.py migrate
+python manage.py seed_demo
 python manage.py runserver
 ```
 
-Open <http://127.0.0.1:8000>.
+The command prints the demo-account password and refreshes only data associated with the `demo.` email prefix. It does not remove normal user records or call external payment, mapping, geocoding, or Gemini services.
 
-## Demonstration data
+See [docs/demo-presentation.md](docs/demo-presentation.md) for the account list and a guided walkthrough.
 
-Load an isolated, repeatable demonstration dataset:
+## Testing and quality checks
 
-```bash
-python manage.py seed_demo
-```
-
-The command creates or refreshes only accounts whose e-mail begins with `demo.` and their linked records. Existing non-demo data remains unchanged.
-
-| Role | E-mail |
-| --- | --- |
-| Donor | `demo.donor@foodbridge.local` |
-| Volunteer | `demo.volunteer@foodbridge.local` |
-| Approved NGO | `demo.ngo@foodbridge.local` |
-| Pending NGO | `demo.pending-ngo@foodbridge.local` |
-
-The command prints the shared local demo password and direct links to featured records. See the complete [manual demonstration guide](docs/demo-presentation.md).
-
-## Production deployment
-
-FoodBridge includes a minimal production configuration for Render:
-
-- `Dockerfile` builds a non-root Gunicorn image.
-- `config.settings_production` requires a secure secret, PostgreSQL, allowed hosts, HTTPS cookies, HSTS, and static-file compression.
-- `render.yaml` provisions a web service, managed PostgreSQL, a persistent media disk, and the `/health/` health check.
-
-For the full setup and release checklist, see [Deploy FoodBridge MVP on Render](docs/deployment-render.md).
-
-### Required production variables
-
-```text
-DJANGO_SETTINGS_MODULE=config.settings_production
-DJANGO_SECRET_KEY=<long random secret>
-DATABASE_URL=<managed PostgreSQL internal URL>
-DJANGO_ALLOWED_HOSTS=<your public hostname>
-```
-
-Add `DJANGO_CSRF_TRUSTED_ORIGINS=https://your-domain.example` when using a custom domain. Keep payment features disabled until the external payment provider is fully configured.
-
-## Quality checks
+Run the project checks, confirm no model migrations are missing, and execute the test suite:
 
 ```bash
 python manage.py check
@@ -122,22 +123,41 @@ python manage.py makemigrations --check --dry-run
 python manage.py test -v 2
 ```
 
-## Project layout
+## Deployment
+
+The repository includes a Dockerfile and a Render Blueprint (`render.yaml`) that provision a Docker web service, PostgreSQL database, and persistent media disk. Production settings are in `config.settings_production`.
+
+For deployment steps, environment requirements, and a local production-container smoke test, see [docs/deployment-render.md](docs/deployment-render.md).
+
+## Project structure
 
 ```text
-accounts/     Authentication, roles, registration, and access control
-donors/       Donor profiles and dashboard
-donations/    Food listings, screening, NGO management, and receipts
-volunteers/   Pickup assignment, delivery workflow, and location sharing
-ngos/         NGO profile approval and dashboard
-payments/     Optional payment and payout workflow
-bridge/       Public pages, health endpoint, utilities, and demo command
-config/       Django and production settings
+accounts/       Custom user model, authentication, and role registration
+donors/         Donor profiles and dashboard
+donations/      Food listings, verification, lifecycle, and NGO workflows
+volunteers/     Volunteer profiles, pickup assignment, and delivery tracking
+ngos/           NGO profiles, approval, and dashboards
+payments/       Optional payment connections and volunteer payout records
+bridge/         Public pages, health check, and location endpoints
+templates/      Shared, public, authentication, and role-specific templates
+static/         Stylesheets, JavaScript, and image assets
+docs/           Demonstration and deployment guides
 ```
 
-## Safety notes
+## Health check
 
-- FoodBridge’s visual screening is an assistance mechanism, not a food-safety guarantee.
-- Uploaded food, delivery, and receipt evidence should be treated as private data.
-- Do not commit `.env`, payment secrets, SMTP credentials, or production database URLs.
-- Do not enable real payments before completing provider setup, webhook validation, and end-to-end testing.
+The application exposes `GET /health/`, which returns an `ok` status when the database connection is available. The Render configuration uses this endpoint to monitor the deployed service.
+
+## Security notes
+
+- Keep `DJANGO_DEBUG=false` in production and provide a strong `DJANGO_SECRET_KEY`.
+- Configure `DJANGO_ALLOWED_HOSTS` and `DJANGO_CSRF_TRUSTED_ORIGINS` for every production domain.
+- Keep payment functionality disabled until Razorpay credentials, webhook handling, and the full payment flow have been tested.
+- Treat uploaded food photos, receipts, delivery evidence, and payout information as sensitive data.
+
+## Contributing
+
+1. Create a focused branch for your change.
+2. Keep role permissions and donation-state transitions consistent with existing workflows.
+3. Run the quality checks before opening a pull request.
+4. Describe the user workflow covered by the change and include relevant test results.

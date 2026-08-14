@@ -1,4 +1,5 @@
 from datetime import timedelta
+from pathlib import Path
 
 from django.core.files.base import ContentFile
 from django.core.management.base import BaseCommand
@@ -20,11 +21,12 @@ DEMO_PREFIX = "[DEMO] "
 DEMO_EMAIL_PREFIX = "demo."
 DEMO_PASSWORD = "FoodBridgeDemo123!"
 
-# A valid, tiny PNG keeps the demo self-contained without requiring external files.
-DEMO_IMAGE = (
-    b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01"
-    b"\x08\x02\x00\x00\x00\x90wS\xde\x00\x00\x00\x0cIDAT\x08\xd7c\xf8\xcf\xc0\x00\x00\x03\x01\x01\x00\x18\xdd\x8d\xb1"
-    b"\x00\x00\x00\x00IEND\xaeB`\x82"
+DEMO_ASSET_DIRECTORY = Path(__file__).resolve().parent.parent / "demo_assets"
+DEMO_FOOD_IMAGES = (
+    "meal-plated.jpg",
+    "salad-fresh.jpg",
+    "produce-bowl.jpg",
+    "vegetables.jpg",
 )
 
 
@@ -119,11 +121,15 @@ class Command(BaseCommand):
         )
         return {"donor": donor, "volunteer": volunteer, "ngo": ngo, "pending_ngo": pending_ngo}
 
-    def _image(self, name):
-        return ContentFile(DEMO_IMAGE, name=name)
+    def _image(self, asset_index, name):
+        """Return a bundled real-food photo without relying on network access at seed time."""
+        asset_path = DEMO_ASSET_DIRECTORY / DEMO_FOOD_IMAGES[asset_index % len(DEMO_FOOD_IMAGES)]
+        return ContentFile(asset_path.read_bytes(), name=name)
 
     def _donation(self, *, title, donor, verification_status, status, hours=1, pickup=True, **extra):
         now = timezone.now()
+        photo_start = getattr(self, "_next_photo_index", 0)
+        self._next_photo_index = photo_start + 1
         donation = Donation.objects.create(
             donor=donor,
             title=f"{DEMO_PREFIX}{title}",
@@ -135,9 +141,9 @@ class Command(BaseCommand):
             prepared_at=now - timedelta(minutes=30),
             storage_notes="Kept covered and ready for collection.",
             allergen_notes="Contains gluten.",
-            food_photo_overview=self._image("overview.png"),
-            food_photo_closeup=self._image("closeup.png"),
-            food_photo_label=self._image("label.png"),
+            food_photo_overview=self._image(photo_start, "food-overview.jpg"),
+            food_photo_closeup=self._image(photo_start + 1, "food-closeup.jpg"),
+            food_photo_label=self._image(photo_start + 2, "food-label.jpg"),
             verification_status=verification_status,
             verification_summary=extra.pop("verification_summary", "Demo visual-screening result."),
             verification_confidence=extra.pop("verification_confidence", 92),
@@ -220,7 +226,7 @@ class Command(BaseCommand):
         completed.pickup.destination_longitude = ngo.ngo_profile.longitude
         completed.pickup.destination_place_label = ngo.ngo_profile.organization_name
         completed.pickup.handoff_notes = "Delivered to the NGO demonstration coordinator."
-        completed.pickup.delivery_photo = self._image("delivery-proof.png")
+        completed.pickup.delivery_photo = self._image(3, "delivery-proof.jpg")
         completed.pickup.save()
         VolunteerPayment.objects.create(
             pickup=completed.pickup, ngo=ngo, volunteer=volunteer, amount_paise=50000,
@@ -266,7 +272,7 @@ class Command(BaseCommand):
         )
         receipt.pickup.status = Pickup.Status.CANCELLED
         receipt.pickup.save(update_fields=("status", "updated_at"))
-        receipt.receipt_photo = self._image("ngo-receipt.png")
+        receipt.receipt_photo = self._image(3, "ngo-receipt.jpg")
         receipt.save(update_fields=("receipt_photo", "updated_at"))
         donations["receipt"] = receipt
 

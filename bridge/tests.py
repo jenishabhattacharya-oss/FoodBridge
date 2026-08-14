@@ -3,6 +3,7 @@ from tempfile import TemporaryDirectory
 
 from django.core.management import call_command
 from django.test import TestCase, override_settings
+from PIL import Image
 
 from accounts.models import User
 from donations.models import Donation
@@ -39,6 +40,10 @@ class DemoSeedCommandTests(TestCase):
             self.assertEqual(completed.status, Donation.Status.DELIVERED)
             self.assertEqual(completed.pickup.status, Pickup.Status.DELIVERED)
             self.assertTrue(completed.pickup.delivery_photo.name)
+            with completed.food_photo_overview.open("rb") as photo:
+                self.assertGreater(Image.open(photo).width, 1)
+            with completed.pickup.delivery_photo.open("rb") as photo:
+                self.assertGreater(Image.open(photo).height, 1)
             self.assertEqual(completed.pickup.volunteer_payment.status, VolunteerPayment.Status.PAYOUT_PROCESSED)
             self.assertEqual(review.verification_status, Donation.VerificationStatus.HUMAN_REVIEW)
             self.assertIsNone(review.pickup_id)
