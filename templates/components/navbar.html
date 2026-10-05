@@ -1,87 +1,53 @@
-<nav class="navbar navbar-expand-lg navbar-dark sticky-top" id="mainNav">
-    <div class="container">
-        <a class="navbar-brand fw-bold" href="{% url 'home' %}">
-            <i class="bi bi-basket2-fill me-2 text-warning"></i>FoodBridge
+<header class="wn-nav-shell" id="mainNav">
+    <nav class="wn-nav" aria-label="Primary">
+        <a class="wn-brand" href="{% url 'home' %}" aria-label="FoodBridge home">
+            <span class="wn-brand__mark">{% include "components/brand_mark.html" %}</span>
+            <span class="wn-brand__text">Food<span>Bridge</span></span>
         </a>
-        <button
-            class="navbar-toggler border-0"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navMenu"
-            aria-label="Toggle navigation"
-        >
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navMenu">
-            <ul class="navbar-nav ms-auto align-items-lg-center">
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'home' %}#home">Home</a>
-                </li>
 
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'home' %}#how">How It Works</a>
-                </li>
+        <ul class="wn-nav__links" id="wnNavLinks">
+            <li><a class="nav-link" href="{% url 'home' %}#mission">Mission</a></li>
+            <li><a class="nav-link" href="{% url 'home' %}#programs">Programs</a></li>
+            <li><a class="nav-link" href="{% url 'home' %}#how">How It Works</a></li>
+            <li><a class="nav-link" href="{% url 'home' %}#impact">Impact</a></li>
+            <li><a class="nav-link" href="{% url 'home' %}#faq">FAQ</a></li>
+            <li>
+                <a class="nav-link{% if request.resolver_match.url_name == 'contact' %} active{% endif %}"
+                   href="{% url 'contact' %}"
+                   {% if request.resolver_match.url_name == 'contact' %}aria-current="page"{% endif %}>Contact</a>
+            </li>
+        </ul>
 
-                <li class="nav-item dropdown">
-                    <a
-                        class="nav-link dropdown-toggle"
-                        href="#"
-                        id="featuresDropdown"
-                        data-bs-toggle="dropdown"
-                    >
-                        Features
-                    </a>
-
-                    <ul class="dropdown-menu dropdown-menu-dark">
-                        <li>
-                            <a class="dropdown-item" href="{% url 'home' %}#features">GPS Routing</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="{% url 'home' %}#features">AI Safety Check</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="{% url 'home' %}#features">Volunteer Dispatch</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="{% url 'home' %}#features">ESG Reports</a>
-                        </li>
-                    </ul>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'home' %}#stats">Impact</a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'contact' %}">Contact</a>
-                </li>
-            </ul>
-
-            <div class="d-flex align-items-center mt-3 mt-lg-0 ms-lg-3">
-                {% if user.is_authenticated %}
-                    {% if user.role == 'DONOR' %}
-                        <a href="{% url 'donor_dashboard' %}" class="btn-cyber-primary py-2 px-3 small">
-                            <i class="bi bi-speedometer2"></i> Dashboard
-                        </a>
-                    {% elif user.role == 'VOLUNTEER' %}
-                        <a href="{% url 'volunteer_dashboard' %}" class="btn-cyber-primary py-2 px-3 small">
-                            <i class="bi bi-speedometer2"></i> Dashboard
-                        </a>
-                    {% elif user.role == 'NGO' %}
-                        <a href="{% url 'ngo_dashboard' %}" class="btn-cyber-primary py-2 px-3 small">
-                            <i class="bi bi-speedometer2"></i> Dashboard
-                        </a>
-                    {% else %}
-                        <a href="{% url 'home' %}" class="btn-cyber-primary py-2 px-3 small">
-                            <i class="bi bi-speedometer2"></i> Dashboard
-                        </a>
-                    {% endif %}
+        <div class="wn-nav__actions">
+            {% if user.is_authenticated %}
+                {% if user.role == 'DONOR' %}
+                    {% url 'donor_dashboard' as dashboard_url %}
+                {% elif user.role == 'VOLUNTEER' %}
+                    {% url 'volunteer_dashboard' as dashboard_url %}
+                {% elif user.role == 'NGO' %}
+                    {% url 'ngo_dashboard' as dashboard_url %}
                 {% else %}
-                    <a href="{% url 'login' %}" class="btn-cyber-primary py-2 px-4 small">
-                        <i class="bi bi-box-arrow-in-right"></i> Sign In
-                    </a>
+                    {% url 'home' as dashboard_url %}
                 {% endif %}
-            </div>
+                <a href="{{ dashboard_url }}" class="btn btn-sm btn-wanantara-primary" data-magnetic>
+                    <i class="bi bi-grid-1x2-fill" aria-hidden="true"></i>
+                    <span class="wn-nav__cta-label">Dashboard</span>
+                </a>
+            {% else %}
+                <a href="{% url 'register' %}" class="btn btn-sm btn-wanantara-glass d-none d-md-inline-flex">Join</a>
+                <a href="{% url 'login' %}" class="btn btn-sm btn-wanantara-primary" data-magnetic>
+                    <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i>
+                    <span class="wn-nav__cta-label">Sign In</span>
+                </a>
+            {% endif %}
+            <button class="wn-nav__toggle"
+                    type="button"
+                    aria-controls="wnNavLinks"
+                    aria-expanded="false"
+                    aria-label="Open menu">
+                <span></span>
+                <span></span>
+            </button>
         </div>
-    </div>
-</nav>
+    </nav>
+</header>
