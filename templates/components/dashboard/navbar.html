@@ -1,34 +1,25 @@
-<div class="dashboard-topbar">
-    <div class="glass-card px-4 py-3">
-        <div class="d-flex justify-content-between align-items-center">
-            <!-- Left: Title & Breadcrumbs -->
-            <div>
-                <h4 class="fw-bold mb-0 text-white" style="font-family: var(--font-heading);">{{ page_title|default:"Dashboard" }}</h4>
-                {% include "components/dashboard/breadcrumb.html" %}
-            </div>
-            <!-- Right: Notifications & User Profile Chip -->
-            <div class="d-flex align-items-center gap-3">
-                <button class="btn btn-outline-light position-relative p-2 rounded-circle" style="width: 40px; height: 40px;" aria-label="Notifications">
-                    <i class="bi bi-bell"></i>
-                    {% if notification_count %}
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark">
-                            {{ notification_count }}
-                        </span>
-                    {% endif %}
-                </button>
-                <div class="d-flex align-items-center">
-                    <div class="text-end me-3 d-none d-sm-block">
-                        <div class="fw-semibold text-white small">{{ user.get_full_name|default:user.email }}</div>
-                        <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill py-0 px-2" style="font-size: 0.7rem;">
-                            {{ user.role }}
-                        </span>
-                    </div>
-                    <div class="rounded-circle d-flex align-items-center justify-content-center avatar-circle text-white fw-bold shadow-sm"
-                         style="width: 42px; height: 42px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: 2px solid rgba(255, 255, 255, 0.2);">
-                        <i class="bi bi-person-fill"></i>
-                    </div>
-                </div>
+<header class="dashboard-topbar">
+    <div class="glass-card dashboard-topbar__bar">
+        <div class="dashboard-topbar__title">
+            <p class="dashboard-topbar__heading">{{ page_title|default:"Dashboard" }}</p>
+            {% include "components/dashboard/breadcrumb.html" %}
+        </div>
+        <div class="dashboard-topbar__actions">
+            <button type="button"
+                    class="dashboard-topbar__icon-btn"
+                    aria-label="Notifications{% if notification_count %} ({{ notification_count }} new){% endif %}">
+                <i class="bi bi-bell" aria-hidden="true"></i>
+                {% if notification_count %}
+                    <span class="dashboard-topbar__count">{{ notification_count }}</span>
+                {% endif %}
+            </button>
+            <div class="dashboard-identity">
+                <span class="dashboard-identity__avatar" aria-hidden="true">{{ user.first_name|default:user.email|first|upper }}</span>
+                <span class="dashboard-identity__meta d-none d-sm-flex">
+                    <strong>{{ user.get_full_name|default:user.email }}</strong>
+                    <small>{{ user.get_role_display|default:user.role }}</small>
+                </span>
             </div>
         </div>
     </div>
-</div>
+</header>

@@ -1,45 +1,71 @@
-<footer id="contact" class="footer-section pt-5 pb-4">
+<footer class="wn-footer" id="site-footer">
     <div class="container">
-        <div class="row g-4">
-            <div class="col-md-4">
-                <h5 class="fw-bold mb-2 text-white" style="font-family: var(--font-heading); letter-spacing: -0.03em;">
-                    <i class="bi bi-basket2-fill me-2 text-warning"></i>FoodBridge
-                </h5>
-                <p class="small text-secondary mb-3">
-                    3D-coordinated real-time surplus food redistribution fighting urban hunger, one event at a time.
-                </p>
-                <div class="d-flex align-items-center gap-2">
-                    <span class="badge-modern-pill py-1 px-3 small" style="font-size: 0.72rem;">
-                        <span class="pulse-dot"></span> PWA Installable
-                    </span>
-                </div>
+        <div class="wn-footer__statement reveal">
+            <div>
+                <span class="wn-tag">Our Promise</span>
+                <p class="wn-footer__headline">Every surplus meal deserves <em>a second table.</em></p>
             </div>
-            <div class="col-md-4">
-                <h6 class="fw-semibold mb-3 text-white" style="font-family: var(--font-heading);">Navigation</h6>
-                <ul class="list-unstyled small">
-                    <li class="mb-1"><a href="{% url 'home' %}#home" class="footer-link">Home</a></li>
-                    <li class="mb-1"><a href="{% url 'home' %}#how" class="footer-link">How It Works</a></li>
-                    <li class="mb-1"><a href="{% url 'home' %}#features" class="footer-link">Smart Features</a></li>
-                    <li class="mb-1"><a href="{% url 'home' %}#stats" class="footer-link">Impact Metrics</a></li>
+            <a href="{% url 'register' %}" class="btn btn-lg btn-wanantara-primary" data-magnetic>
+                Join FoodBridge <i class="bi bi-arrow-up-right" aria-hidden="true"></i>
+            </a>
+        </div>
+
+        <hr class="wn-divider">
+
+        <div class="wn-footer__grid">
+            <div class="wn-footer__brand">
+                <a class="wn-brand" href="{% url 'home' %}" aria-label="FoodBridge home">
+                    <span class="wn-brand__mark">{% include "components/brand_mark.html" %}</span>
+                    <span class="wn-brand__text">Food<span>Bridge</span></span>
+                </a>
+                <p>A non-profit food recovery network rescuing surplus meals from events, kitchens and campuses, and routing them to verified shelters across the city.</p>
+                <ul class="wn-footer__creds">
+                    <li><i class="bi bi-shield-check" aria-hidden="true"></i> AI-assisted food safety screening</li>
+                    <li><i class="bi bi-patch-check-fill" aria-hidden="true"></i> Verified NGO partners</li>
+                    <li><i class="bi bi-camera" aria-hidden="true"></i> Photo-proof handoffs</li>
                 </ul>
             </div>
-            <div class="col-md-4">
-                <h6 class="fw-semibold mb-3 text-white" style="font-family: var(--font-heading);">Network Hub</h6>
-                <p class="small text-secondary mb-1">
-                    <i class="bi bi-envelope text-warning me-2"></i>contact@foodbridge.org
-                </p>
-                <p class="small text-secondary mb-1">
-                    <i class="bi bi-shield-check text-success me-2"></i>Gemini AI Food Certified
-                </p>
-                <p class="small text-secondary">
-                    <i class="bi bi-geo-alt text-warning me-2"></i>Kolkata, West Bengal, India
-                </p>
+
+            <nav class="wn-footer__col" aria-label="Explore">
+                <h2 class="wn-footer__title">Explore</h2>
+                <ul>
+                    <li><a href="{% url 'home' %}#mission">Our Mission</a></li>
+                    <li><a href="{% url 'home' %}#programs">Programs</a></li>
+                    <li><a href="{% url 'home' %}#how">How It Works</a></li>
+                    <li><a href="{% url 'home' %}#impact">Impact</a></li>
+                    <li><a href="{% url 'home' %}#faq">FAQ</a></li>
+                </ul>
+            </nav>
+
+            <nav class="wn-footer__col" aria-label="Get involved">
+                <h2 class="wn-footer__title">Get Involved</h2>
+                <ul>
+                    <li><a href="{% url 'register' %}">Donate surplus food</a></li>
+                    <li><a href="{% url 'register' %}?role=VOLUNTEER">Become a volunteer</a></li>
+                    <li><a href="{% url 'register' %}?role=NGO">Partner as an NGO</a></li>
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url 'logout' %}">Sign out</a></li>
+                    {% else %}
+                        <li><a href="{% url 'login' %}">Sign in</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+
+            <div class="wn-footer__col">
+                <h2 class="wn-footer__title">Contact</h2>
+                <div class="wn-footer__contact">
+                    <a href="mailto:contact@foodbridge.org"><i class="bi bi-envelope" aria-hidden="true"></i>contact@foodbridge.org</a>
+                    <a href="{% url 'contact' %}"><i class="bi bi-chat-dots" aria-hidden="true"></i>Send us a message</a>
+                    <span><i class="bi bi-geo-alt" aria-hidden="true"></i>Kolkata, West Bengal, India</span>
+                    <span class="wn-footer__status"><span class="wn-pulse" aria-hidden="true"></span>Team typically replies within 24 hours</span>
+                </div>
             </div>
         </div>
-        <hr class="border-secondary mt-4 opacity-25" />
-        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2 text-secondary small">
-            <span>© 2026 FoodBridge. All rights reserved.</span>
-            <span>Where Innovation Meets Compassion</span>
+
+        <div class="wn-footer__bottom">
+            <span>&copy; {% now "Y" %} FoodBridge. All rights reserved.</span>
+            <span>Where innovation meets compassion.</span>
         </div>
     </div>
+    <div class="wn-footer__wordmark" aria-hidden="true">FoodBridge</div>
 </footer>
