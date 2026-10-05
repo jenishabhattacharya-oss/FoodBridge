@@ -1,457 +1,220 @@
-/* ==========================================================
-   AUTHENTICATION
-   FoodBridge Authentication Pages
-========================================================== */
+/* ==========================================================================
+   FOODBRIDGE AUTH · Wanantara onboarding shell
+   Used by login, register and the password reset flow (auth_layout.html).
+   ========================================================================== */
 
-/* ==========================================================
-   LAYOUT
-========================================================== */
-
+/* ── Layout ── */
 .auth-page {
     position: relative;
-    overflow: hidden;
-    min-height: 100vh;
+    isolation: isolate;
     display: flex;
     align-items: center;
-    padding: 4.5rem 0 5rem;
-    background: radial-gradient(circle at 17% 25%, rgba(40, 167, 69, .48), transparent 18%), radial-gradient(circle at 81% 18%, rgba(26, 60, 46, .5), transparent 22%), radial-gradient(circle at 72% 81%, rgba(240, 173, 78, .34), transparent 25%), radial-gradient(circle at 29% 78%, rgba(40, 167, 69, .32), transparent 23%), linear-gradient(135deg, #0a1f12 0%, #122b1a 48%, #1a3c2e 100%);
+    min-height: calc(100vh - var(--nav-offset, 96px));
+    padding: 2rem 0 5rem;
+    overflow: hidden;
 }
-
-.auth-page::before {
-    position: absolute;
-    inset: 0;
-    content: "";
-    opacity: .86;
-    background: radial-gradient(ellipse at 48% 43%, transparent 20%, rgba(1, 10, 18, .24) 75%, rgba(1, 10, 18, .58) 100%);
-}
-
 .auth-page .container { position: relative; z-index: 1; }
 
-.auth-orb { position: absolute; z-index: 0; border: 1px solid rgba(230, 255, 242, .18); border-radius: 50%; filter: blur(3px); pointer-events: none; }
-.auth-orb--one { top: 9%; left: 5%; width: 19rem; height: 19rem; background: radial-gradient(circle at 37% 33%, rgba(171,255,219,.7), rgba(37,190,137,.39) 32%, rgba(11,93,66,.08) 68%); box-shadow: inset 15px 12px 28px rgba(255,255,255,.18), inset -22px -23px 40px rgba(0,46,30,.22), 0 0 95px 42px rgba(35,178,129,.45); }
-.auth-orb--two { right: 6%; bottom: 4%; width: 22rem; height: 22rem; border-color: rgba(255,228,166,.2); background: radial-gradient(circle at 36% 30%, rgba(255,239,190,.7), rgba(247,183,75,.37) 33%, rgba(185,119,31,.07) 70%); box-shadow: inset 16px 13px 30px rgba(255,255,255,.2), inset -22px -25px 42px rgba(83,48,8,.2), 0 0 105px 44px rgba(240,173,78,.35); }
+.auth-orb { position: absolute; z-index: -1; border-radius: 50%; filter: blur(90px); opacity: 0.55; pointer-events: none; animation: wn-float 22s ease-in-out infinite alternate; }
+.auth-orb--one { top: -10%; left: -8%; width: 34rem; height: 34rem; background: radial-gradient(circle, rgba(16, 185, 129, 0.5), transparent 65%); }
+.auth-orb--two { right: -10%; bottom: -14%; width: 38rem; height: 38rem; background: radial-gradient(circle, rgba(229, 192, 91, 0.42), transparent 65%); animation-delay: -9s; }
 
 .auth-wrapper {
     position: relative;
     display: grid;
-    grid-template-columns: .92fr 1.08fr;
-
+    grid-template-columns: 0.95fr 1.05fr;
+    max-width: 1120px;
+    margin: 0 auto;
     overflow: hidden;
-
-    border-radius: 30px;
-
-    background: linear-gradient(135deg, rgba(255,255,255,.16), rgba(225,241,229,.07) 30%, rgba(10,31,18,.38) 100%);
-
-    backdrop-filter: blur(34px) saturate(145%);
-    -webkit-backdrop-filter: blur(34px) saturate(145%);
-
-    border: 1px solid rgba(238, 250, 243, 0.32);
-
-    box-shadow: 0 32px 85px rgba(0, 12, 6, 0.46), inset 0 1px 0 rgba(255,255,255,.24);
-
-    animation: authFade 0.5s ease;
+    background: linear-gradient(160deg, rgba(19, 47, 29, 0.5), rgba(7, 18, 10, 0.78));
+    border: 1px solid var(--border-gold);
+    border-radius: 32px;
+    -webkit-backdrop-filter: blur(26px) saturate(150%);
+    backdrop-filter: blur(26px) saturate(150%);
+    box-shadow: 0 40px 100px -30px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    animation: authFade 0.9s var(--ease-framer) both;
 }
+@keyframes authFade { from { opacity: 0; transform: translateY(24px) scale(0.985); } to { opacity: 1; transform: none; } }
 
-.auth-wrapper::before { position: absolute; z-index: 0; inset: 0; content: ""; pointer-events: none; background: linear-gradient(115deg, rgba(255,255,255,.17), transparent 25%, transparent 70%, rgba(255,207,104,.08)); }
-.auth-wrapper > * { position: relative; z-index: 1; }
-
-@keyframes authFade {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* ==========================================================
-   LEFT PANEL
-========================================================== */
-
+/* ── Left: mission panel ── */
 .auth-brand {
     position: relative;
-
-    padding: clamp(2.5rem, 5vw, 4.5rem);
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    background: linear-gradient(150deg, rgba(26, 60, 46, .68), rgba(10, 31, 18, .62));
-}
-
-.auth-brand::before {
-    content: '';
-
-    position: absolute;
-    inset: 0;
-
-    background: radial-gradient(circle at 18% 8%, rgba(255,255,255,.2), transparent 32%), radial-gradient(circle at 90% 95%, rgba(241,181,75,.17), transparent 30%);
-
-    pointer-events: none;
-}
-
-.auth-brand-content {
-    position: relative;
-    z-index: 2;
-}
-
-.brand-logo {
-    width: 92px;
-    height: 92px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 50%;
-
-    background: rgba(255, 255, 255, .08);
-
-    border: 1px solid rgba(255, 255, 255, 0.18);
-
-    color: var(--amber);
-    box-shadow: none;
-    font-size: 2.45rem;
-
-    margin-bottom: 1.5rem;
-}
-
-.brand-logo i { display: block; color: var(--amber); line-height: 1; text-shadow: none; }
-
-.auth-overline { margin: 0 0 .6rem; color: var(--amber); font-size: .7rem; font-weight: 800; letter-spacing: .15em; }
-
-.auth-brand h1 {
-    margin-bottom: .7rem;
-    font-family: "EB Garamond", serif;
-    font-size: clamp(2.7rem, 4vw, 4rem);
-}
-
-.auth-brand .lead {
-    color: rgba(255, 255, 255, 0.75);
-    margin-bottom: 2.5rem;
-}
-
-.brand-features {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    justify-content: space-between;
+    gap: 2.5rem;
+    padding: clamp(2.25rem, 4.5vw, 3.75rem);
+    overflow: hidden;
+    background:
+        radial-gradient(ellipse 80% 60% at 0% 0%, rgba(16, 185, 129, 0.18), transparent 60%),
+        radial-gradient(ellipse 70% 60% at 100% 100%, rgba(229, 192, 91, 0.16), transparent 60%),
+        rgba(9, 22, 13, 0.55);
+    border-right: 1px solid var(--border-glass);
 }
+.auth-brand::after {
+    position: absolute;
+    top: -140px;
+    right: -140px;
+    width: 360px;
+    height: 360px;
+    content: '';
+    border: 1px solid rgba(229, 192, 91, 0.14);
+    border-radius: 50%;
+    box-shadow: 0 0 0 40px rgba(229, 192, 91, 0.03), 0 0 0 80px rgba(229, 192, 91, 0.02);
+    pointer-events: none;
+}
+.auth-brand-content, .auth-brand-footer { position: relative; z-index: 1; }
 
+.brand-logo {
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    margin-bottom: 1.75rem;
+    background: radial-gradient(circle at 30% 30%, rgba(255, 219, 115, 0.28), rgba(229, 192, 91, 0.06));
+    border: 1px solid var(--border-gold-strong);
+    border-radius: 20px;
+    box-shadow: 0 0 40px -6px rgba(229, 192, 91, 0.45);
+}
+.brand-logo .wn-brandmark { width: 34px; height: 34px; }
+
+.auth-overline { margin: 0 0 0.6rem; color: var(--accent-gold); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; }
+.auth-brand h1 { margin: 1rem 0; font-size: clamp(2.1rem, 3.6vw, 3.1rem); line-height: 1.02; letter-spacing: -0.05em; }
+.auth-brand h1 em { font-family: var(--font-body); font-style: italic; font-weight: 300; color: var(--accent-gold); }
+.auth-brand .lead { max-width: 420px; margin-bottom: 2rem; font-size: 1.02rem; }
+
+.brand-features { display: grid; gap: 0.6rem; }
 .brand-features .feature {
     display: flex;
     align-items: center;
-    gap: 0.8rem;
+    gap: 0.85rem;
+    padding: 0.7rem 0.95rem;
+    color: rgba(243, 247, 239, 0.88);
+    font-size: 0.92rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-md);
+    transition: border-color 0.4s ease, transform 0.5s var(--ease-framer);
 }
+.brand-features .feature:hover { border-color: var(--border-gold); transform: translateX(4px); }
+.brand-features i { display: grid; flex-shrink: 0; place-items: center; width: 32px; height: 32px; color: var(--accent-gold); background: rgba(229, 192, 91, 0.1); border-radius: 10px; }
 
-.brand-features i {
-    color: var(--amber);
-}
+.auth-impact { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.6rem; margin-bottom: 1rem; }
+.auth-impact div { padding: 0.8rem; text-align: center; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-glass); border-radius: var(--radius-md); }
+.auth-impact strong { display: block; font-family: var(--font-heading); font-size: 1.25rem; letter-spacing: -0.04em; }
+.auth-impact small { color: var(--text-muted); font-size: 0.7rem; letter-spacing: 0.04em; }
 
 .auth-brand blockquote {
-    margin-top: 3rem;
-
-    padding-left: 1rem;
-
-    border-left: 3px solid var(--amber);
-
-    color: rgba(255, 255, 255, 0.65);
-
+    margin: 0;
+    padding: 1.15rem 1.25rem;
+    color: rgba(243, 247, 239, 0.86);
+    font-size: 1.02rem;
     font-style: italic;
+    line-height: 1.55;
+    background: rgba(229, 192, 91, 0.05);
+    border: 1px solid var(--border-gold);
+    border-radius: var(--radius-md);
 }
+.auth-brand blockquote cite { display: block; margin-top: 0.6rem; color: var(--accent-gold); font-size: 0.72rem; font-style: normal; letter-spacing: 0.16em; text-transform: uppercase; }
 
-/* ==========================================================
-   RIGHT PANEL
-========================================================== */
+/* ── Right: form ── */
+.auth-form-container { display: flex; flex-direction: column; justify-content: center; padding: clamp(2rem, 4.5vw, 3.75rem); }
+.auth-header { margin-bottom: 2rem; text-align: center; }
+.auth-header::before { display: inline-block; margin-bottom: 0.9rem; content: '( FoodBridge )'; color: var(--accent-gold); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; }
+.auth-header h2 { margin-bottom: 0.5rem; font-size: clamp(1.9rem, 3vw, 2.5rem); letter-spacing: -0.045em; }
+.auth-header p { margin: 0; color: var(--text-secondary); }
 
-.auth-form-container {
-    padding: clamp(2.2rem, 5vw, 4.5rem);
-
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    background: rgba(10, 31, 18, .22);
-}
-
-.auth-header {
-    text-align: center;
-    margin-bottom: 2rem;
-}
-
-.auth-header h2 { font-family: "EB Garamond", serif; font-size: clamp(2.25rem, 4vw, 3.2rem); }
-
-.auth-header p {
-    color: rgba(255, 255, 255, 0.65);
-}
-
-/* ==========================================================
-   ROLE SELECTOR
-========================================================== */
-
-.role-selector {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-
-    gap: 1rem;
-
-    margin-bottom: 2rem;
-}
-
-.role-card {
-    cursor: pointer;
-}
-
-.role-card input {
-    display: none;
-}
-
+/* ── Role selector ── */
+.role-selector { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.75rem; margin-bottom: 1.75rem; }
+.role-card { position: relative; display: block; margin: 0; cursor: pointer; }
+.role-card input { position: absolute; opacity: 0; pointer-events: none; }
 .role-card span {
+    position: relative;
     display: flex;
     flex-direction: column;
-    align-items: center;
-
-    gap: 0.45rem;
-
-    min-height: 100%;
-    padding: 1rem .7rem;
-
+    align-items: flex-start;
+    gap: 0.3rem;
+    height: 100%;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid var(--border-glass);
     border-radius: 18px;
-
-    background: rgba(255, 255, 255, 0.075);
-    backdrop-filter: blur(12px);
-
-    border: 1px solid rgba(255, 255, 255, 0.12);
-
-    transition: all 0.25s ease;
+    transition: transform 0.45s var(--ease-framer), border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
 }
-
-.role-card:hover span {
-    transform: translateY(-5px);
-
-    background: rgba(255, 255, 255, 0.08);
-
-    border-color: var(--amber);
-}
-
+.role-card span::after { position: absolute; top: 0.85rem; right: 0.85rem; width: 16px; height: 16px; content: ''; border: 1.5px solid rgba(255, 255, 255, 0.25); border-radius: 50%; transition: border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease; }
+.role-card:hover span { border-color: var(--border-gold); transform: translateY(-3px); }
 .role-card input:checked + span,
 .role-card.selected span {
-    background: rgba(240, 173, 78, 0.12);
-
-    border-color: var(--amber);
-
-    box-shadow: 0 0 20px rgba(240, 173, 78, 0.15);
+    background: linear-gradient(160deg, rgba(229, 192, 91, 0.14), rgba(229, 192, 91, 0.03));
+    border-color: var(--accent-gold);
+    box-shadow: 0 0 0 1px rgba(229, 192, 91, 0.25), 0 16px 36px -14px rgba(229, 192, 91, 0.4);
 }
+.role-card input:checked + span::after,
+.role-card.selected span::after { background: var(--accent-gold); border-color: var(--accent-gold); box-shadow: inset 0 0 0 3px #13200f; }
+.role-card input:focus-visible + span { outline: 2px solid var(--accent-gold); outline-offset: 3px; }
+.role-card strong { padding-right: 1.4rem; color: #fff; font-family: var(--font-heading); font-size: 0.95rem; }
+.role-card small { color: var(--text-muted); font-size: 0.76rem; line-height: 1.4; }
+.role-card i { font-size: 1.5rem; color: var(--accent-gold); }
 
-.role-card i {
-    font-size: 2rem;
-    color: var(--amber);
-}
+/* ── Fields ── */
+.form-group { margin-bottom: 1.15rem; transition: transform 0.35s var(--ease-framer); }
+.form-group.focused { transform: translateY(-1px); }
+.form-group > label { display: block; margin-bottom: 0.45rem; color: rgba(243, 247, 239, 0.85); font-size: 0.84rem; font-weight: 600; transition: color 0.25s ease; }
+.form-group.focused > label { color: var(--accent-gold); }
+.auth-form-container .form-control, .auth-form-container .form-select { min-height: 50px; }
 
-.role-card strong {
-    color: white;
-}
-
-.role-card small {
-    color: rgba(255, 255, 255, 0.6);
-}
-
-/* ==========================================================
-   FORM
-========================================================== */
-
-.form-group {
-    margin-bottom: 1.3rem;
-
-    transition: transform 0.25s ease;
-}
-
-.form-group.focused {
-    transform: translateY(-2px);
-}
-
-.form-group label {
-    margin-bottom: 0.5rem;
-
-    color: white;
-
-    font-weight: 500;
-}
-
-.form-control,
-.form-select {
-    width: 100%;
-}
-
-.form-control::placeholder {
-    color: rgba(255, 255, 255, 0.45);
-}
-
-.auth-form-container .form-control,
-.auth-form-container .form-select {
-    border-color: rgba(221, 244, 238, .25) !important;
-    background: rgba(255, 255, 255, .1) !important;
-    backdrop-filter: blur(15px);
-}
-
-/* ==========================================================
-   PASSWORD
-========================================================== */
-
-.password-wrapper {
-    position: relative;
-}
-
-.password-wrapper .form-control {
-    padding-right: 50px;
-}
-
+.password-wrapper { position: relative; }
+.password-wrapper .form-control { padding-right: 3.25rem; }
 .password-toggle {
     position: absolute;
-
-    right: 15px;
     top: 50%;
-
-    transform: translateY(-50%);
-
+    right: 0.45rem;
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    color: var(--text-muted);
     background: transparent;
-    border: none;
-
-    color: rgba(255, 255, 255, 0.6);
-
-    transition: color 0.25s;
+    border: 0;
+    border-radius: 50%;
+    transform: translateY(-50%);
+    transition: color 0.25s ease, background 0.25s ease;
 }
+.password-toggle:hover, .password-toggle:focus-visible { color: var(--accent-gold); background: rgba(229, 192, 91, 0.1); }
 
-.password-toggle:hover {
-    color: var(--amber);
+/* ── Primary CTA ── */
+.auth-btn, .auth-form-container .btn-warning { position: relative; width: 100%; min-height: 52px; margin-top: 0.75rem; overflow: hidden; font-size: 1rem; font-weight: 700; }
+.auth-form-container .btn-warning::after {
+    position: absolute;
+    inset: 0;
+    content: '';
+    background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.45) 50%, transparent 70%);
+    transform: translateX(-120%);
+    transition: transform 0.9s var(--ease-framer);
+    pointer-events: none;
 }
+.auth-form-container .btn-warning:hover::after { transform: translateX(120%); }
 
-/* ==========================================================
-   BUTTON
-========================================================== */
+/* ── Links & footer ── */
+.auth-footer { margin-top: 1.75rem; color: var(--text-secondary); font-size: 0.92rem; text-align: center; }
+.auth-footer a { color: var(--accent-gold); font-weight: 600; background-image: linear-gradient(currentColor, currentColor); background-position: 0 100%; background-repeat: no-repeat; background-size: 0 1px; transition: background-size 0.45s var(--ease-framer); }
+.auth-footer a:hover { background-size: 100% 1px; }
+.forgot-link { color: var(--accent-gold); font-size: 0.88rem; font-weight: 500; }
+.forgot-link:hover { color: var(--accent-gold-bright); }
 
-.auth-btn,
-.auth-form-container .btn-warning {
-    width: 100%;
+/* ── Errors & loading ── */
+.errorlist { margin: 0.45rem 0 0; padding: 0; color: #fca5a5; font-size: 0.82rem; list-style: none; }
+.alert .errorlist { margin: 0; color: inherit; }
+.spinner-border-sm { vertical-align: -0.15em; }
 
-    padding: 0.95rem;
-
-    margin-top: 1rem;
-
-    border-radius: 14px;
-
-    font-size: 1rem;
-
-    font-weight: 800;
-    border: 1px solid rgba(255, 226, 157, .7);
-    background: linear-gradient(100deg, #f0ad4e 0%, #ffc107 48%, #e69500 100%);
-    color: #0a1f12;
-    box-shadow: 0 12px 22px rgba(240, 173, 78, .16);
+/* ── Responsive ── */
+@media (max-width: 991.98px) {
+    .auth-wrapper { grid-template-columns: 1fr; max-width: 620px; }
+    .auth-brand { display: none; }
 }
-
-.auth-form-container .btn-warning:hover { border-color: #ffd879; background: linear-gradient(100deg, #ffc107 0%, #f0ad4e 52%, #dd8d00 100%); color: #0a1f12; }
-
-/* ==========================================================
-   FOOTER
-========================================================== */
-
-.auth-footer {
-    margin-top: 2rem;
-
-    text-align: center;
-
-    color: rgba(255, 255, 255, 0.65);
-}
-
-.auth-footer a {
-    color: var(--amber);
-
-    text-decoration: none;
-}
-
-.auth-footer a:hover {
-    text-decoration: underline;
-}
-
-.forgot-link {
-    color: var(--amber);
-
-    text-decoration: none;
-
-    transition: 0.25s;
-}
-
-.forgot-link:hover {
-    color: white;
-}
-
-/* ==========================================================
-   CHECKBOX
-========================================================== */
-
-.form-check-label {
-    color: rgba(255, 255, 255, 0.7);
-}
-
-.form-check-input:checked {
-    background: var(--amber);
-    border-color: var(--amber);
-}
-
-/* ==========================================================
-   ERRORS
-========================================================== */
-
-.errorlist {
-    margin-top: 0.5rem;
-
-    padding: 0;
-
-    list-style: none;
-
-    color: #ffbcbc;
-
-    font-size: 0.9rem;
-}
-
-/* ==========================================================
-   LOADING
-========================================================== */
-
-.spinner-border-sm {
-    vertical-align: middle;
-}
-
-/* ==========================================================
-   RESPONSIVE
-========================================================== */
-
-@media (max-width: 992px) {
-    .auth-wrapper {
-        grid-template-columns: 1fr;
-    }
-
-    .auth-brand {
-        display: none;
-    }
-
-    .auth-form-container {
-        padding: 2.5rem;
-    }
-
-    .role-selector {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 576px) {
-    .auth-page {
-        padding: 4rem 1rem;
-    }
-
-    .auth-form-container {
-        padding: 2rem 1.5rem;
-    }
+@media (max-width: 575.98px) {
+    .auth-page { padding: 1rem 0 6rem; }
+    .auth-wrapper { border-radius: 24px; }
+    .auth-form-container { padding: 1.75rem 1.25rem; }
+    .role-selector { grid-template-columns: 1fr; }
 }
