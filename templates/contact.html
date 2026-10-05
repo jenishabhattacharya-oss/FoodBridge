@@ -1,53 +1,160 @@
 {% extends "base.html" %}
-{% block title %}Contact Us - FoodBridge{% endblock %}
+{% block title %}Contact · FoodBridge{% endblock %}
 {% block content %}
-<section class="contact-hub">
-    <div class="contact-hub__glow contact-hub__glow--one"></div>
-    <div class="contact-hub__glow contact-hub__glow--two"></div>
-    <div class="container position-relative">
-        <section class="contact-hero reveal">
-            <div class="contact-hero__eyebrow"><i class="bi bi-stars"></i> LET’S MAKE A DIFFERENCE</div>
-            <h1>Every good connection<br><em>starts with hello.</em></h1>
-            <p>Need help with a donation, pickup, or partnership? Tell us what you need and the FoodBridge team will guide you from there.</p>
-            <div class="contact-hero__meta">
-                <span><i class="bi bi-clock-history"></i> Usually replies within 24 hours</span>
-                <span><i class="bi bi-shield-check"></i> Your details stay private</span>
+<section class="wn-contact">
+    <div class="container">
+        <header class="wn-contact__hero">
+            <span class="wn-tag wn-tag--pill wn-fade-up"><span class="wn-pulse" aria-hidden="true"></span>Connect with Us</span>
+            <h1 class="wn-heading wn-fade-up" style="--d: 120ms">Every good connection<br><em>starts with hello.</em></h1>
+            <p class="wn-subheading wn-fade-up" style="--d: 240ms">Questions about a donation, a pickup run or an NGO partnership? Reach the right FoodBridge coordinator directly, or send us a note below.</p>
+            <div class="wn-contact__meta wn-fade-up" style="--d: 360ms">
+                <span class="glass-pill"><i class="bi bi-clock-history" aria-hidden="true"></i> Usually replies within 24 hours</span>
+                <span class="glass-pill"><i class="bi bi-shield-lock" aria-hidden="true"></i> Your details stay private</span>
+                <span class="glass-pill"><i class="bi bi-geo-alt" aria-hidden="true"></i> Kolkata, West Bengal</span>
             </div>
-        </section>
+        </header>
 
-        <section class="contact-grid reveal">
-            <aside class="contact-side-card">
-                <p class="contact-kicker">THE RIGHT WAY IN</p>
-                <h2>Choose your path.</h2>
-                <p>Whether you are giving food, moving it, or receiving it, we are here to keep the handoff simple.</p>
-                <div class="contact-quick-links">
-                    <a href="mailto:support@foodbridge.org"><span><i class="bi bi-chat-dots"></i></span><div><strong>General support</strong><small>support@foodbridge.org</small></div><i class="bi bi-arrow-up-right"></i></a>
-                    <a href="mailto:donors@foodbridge.org"><span><i class="bi bi-headset"></i></span><div><strong>Donor assistance</strong><small>donors@foodbridge.org</small></div><i class="bi bi-arrow-up-right"></i></a>
-                    <a href="mailto:partners@foodbridge.org"><span><i class="bi bi-buildings"></i></span><div><strong>NGO partnerships</strong><small>partners@foodbridge.org</small></div><i class="bi bi-arrow-up-right"></i></a>
+        <div class="wn-contact__channels" data-reveal-stagger="110">
+            <a class="wn-card wn-channel wn-spotlight reveal" href="mailto:donors@foodbridge.org">
+                <span class="wn-icon wn-icon--gold"><i class="bi bi-box2-heart" aria-hidden="true"></i></span>
+                <span class="wn-tag">Donor Relations</span>
+                <h2>Giving surplus food</h2>
+                <p>List surplus, fix a listing, or ask about pickup windows and AI screening.</p>
+                <span class="wn-channel__email">donors@foodbridge.org <i class="bi bi-arrow-up-right" aria-hidden="true"></i></span>
+            </a>
+            <a class="wn-card wn-channel wn-spotlight reveal" href="mailto:partners@foodbridge.org">
+                <span class="wn-icon"><i class="bi bi-buildings" aria-hidden="true"></i></span>
+                <span class="wn-tag wn-tag--emerald">NGO Partnerships</span>
+                <h2>Receiving food</h2>
+                <p>Verification, receiving capacity and delivery confirmations for shelters and community kitchens.</p>
+                <span class="wn-channel__email">partners@foodbridge.org <i class="bi bi-arrow-up-right" aria-hidden="true"></i></span>
+            </a>
+            <a class="wn-card wn-channel wn-spotlight reveal" href="mailto:support@foodbridge.org">
+                <span class="wn-icon wn-icon--gold"><i class="bi bi-bicycle" aria-hidden="true"></i></span>
+                <span class="wn-tag">Volunteer Coordination</span>
+                <h2>Moving food</h2>
+                <p>Pickup runs, live location sharing, handoff proofs and delivery payouts.</p>
+                <span class="wn-channel__email">support@foodbridge.org <i class="bi bi-arrow-up-right" aria-hidden="true"></i></span>
+            </a>
+        </div>
+
+        <div class="wn-contact__grid">
+            <aside class="wn-card wn-contact__aside reveal reveal--left">
+                <div>
+                    <span class="wn-tag">Local Impact</span>
+                    <h2>Small messages, <em class="wn-serif-em">big local impact.</em></h2>
                 </div>
-                <div class="contact-side-card__footer"><i class="bi bi-heart-fill"></i> Better food systems begin with better conversations.</div>
+                <div class="wn-impact-mini">
+                    <span class="wn-icon wn-icon--sm wn-icon--gold"><i class="bi bi-basket2-fill" aria-hidden="true"></i></span>
+                    <div><strong class="wn-gradient-gold">500+</strong><small>Meals redirected through community requests</small></div>
+                </div>
+                <div class="wn-impact-mini">
+                    <span class="wn-icon wn-icon--sm"><i class="bi bi-clock-history" aria-hidden="true"></i></span>
+                    <div><strong class="wn-gradient-emerald">24h</strong><small>Typical response time</small></div>
+                </div>
+                <div class="wn-impact-mini">
+                    <span class="wn-icon wn-icon--sm wn-icon--gold"><i class="bi bi-heart-fill" aria-hidden="true"></i></span>
+                    <div><strong class="wn-gradient-gold">1 goal</strong><small>Less waste, more care</small></div>
+                </div>
+                <blockquote class="wn-contact__quote">Better food systems begin with better conversations.</blockquote>
             </aside>
 
-            <section class="contact-form-card">
-                <div class="contact-form-card__heading"><div><p class="contact-kicker">SEND A MESSAGE</p><h2>How can we help?</h2></div><span><i class="bi bi-send"></i></span></div>
-                <form class="contact-form" onsubmit="return false;">
-                    <div class="row g-3">
-                        <div class="col-md-6"><label for="contact-name">Your name</label><input id="contact-name" type="text" placeholder="e.g. Aisha Sharma" required></div>
-                        <div class="col-md-6"><label for="contact-email">Email address</label><input id="contact-email" type="email" placeholder="you@example.com" required></div>
-                        <div class="col-12"><label for="contact-role">I’m reaching out as</label><select id="contact-role" required><option value="" selected disabled>Select your role</option><option>Food donor</option><option>NGO or shelter</option><option>Volunteer</option><option>Community member</option></select></div>
-                        <div class="col-12"><label for="contact-subject">What is this about?</label><input id="contact-subject" type="text" placeholder="A short subject helps us route your message" required></div>
-                        <div class="col-12"><label for="contact-message">Your message</label><textarea id="contact-message" rows="5" placeholder="Tell us a little more..." required></textarea></div>
+            <section class="wn-card reveal reveal--right" aria-labelledby="contact-form-title">
+                <div class="wn-contact-form__head">
+                    <div>
+                        <span class="wn-tag">Send a Message</span>
+                        <h2 id="contact-form-title">How can we help?</h2>
                     </div>
-                    <button class="contact-submit" type="submit"><span>Send message</span><i class="bi bi-arrow-up-right"></i></button>
-                    <p class="contact-form__note"><i class="bi bi-lock"></i> This form is a contact preview. For immediate help, use one of the email links.</p>
+                    <span class="wn-icon wn-icon--gold"><i class="bi bi-send" aria-hidden="true"></i></span>
+                </div>
+
+                <form id="wnContactForm" novalidate>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label" for="contact-name">Your name</label>
+                            <input class="form-control" id="contact-name" name="name" type="text" placeholder="e.g. Aisha Sharma" autocomplete="name" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="contact-email">Email address</label>
+                            <input class="form-control" id="contact-email" name="email" type="email" placeholder="you@example.com" autocomplete="email" required>
+                        </div>
+                        <div class="col-12">
+                            <fieldset class="wn-chip-group">
+                                <legend class="form-label">I&rsquo;m reaching out as</legend>
+                                <div class="wn-chip-group__options">
+                                    <label class="wn-chip"><input type="radio" name="role" value="Food donor" data-route="donors@foodbridge.org" required><span><i class="bi bi-box2-heart" aria-hidden="true"></i> Food donor</span></label>
+                                    <label class="wn-chip"><input type="radio" name="role" value="NGO or shelter" data-route="partners@foodbridge.org"><span><i class="bi bi-buildings" aria-hidden="true"></i> NGO or shelter</span></label>
+                                    <label class="wn-chip"><input type="radio" name="role" value="Volunteer" data-route="support@foodbridge.org"><span><i class="bi bi-bicycle" aria-hidden="true"></i> Volunteer</span></label>
+                                    <label class="wn-chip"><input type="radio" name="role" value="Community member" data-route="support@foodbridge.org"><span><i class="bi bi-people" aria-hidden="true"></i> Community member</span></label>
+                                </div>
+                            </fieldset>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="contact-subject">What is this about?</label>
+                            <input class="form-control" id="contact-subject" name="subject" type="text" placeholder="A short subject helps us route your message" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="contact-message">Your message</label>
+                            <textarea class="form-control" id="contact-message" name="message" rows="5" placeholder="Tell us a little more..." required></textarea>
+                        </div>
+                    </div>
+                    <div class="wn-contact-form__actions">
+                        <p class="wn-contact-form__note"><i class="bi bi-lock" aria-hidden="true"></i> Opens your email app with the message ready to send.</p>
+                        <button class="btn btn-lg btn-wanantara-primary" type="submit" data-magnetic>
+                            <span>Send message</span><i class="bi bi-arrow-up-right" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                    <div class="wn-contact-form__status" id="wnContactStatus" role="status" hidden>
+                        <i class="bi bi-envelope-open" aria-hidden="true"></i>
+                        <div>
+                            <strong>Your email app is opening.</strong>
+                            <span>The message is pre-addressed to <b data-route-label></b>. Just press send.</span>
+                        </div>
+                    </div>
                 </form>
             </section>
-        </section>
-
-        <section class="contact-impact reveal">
-            <div><p class="contact-kicker">FOODBRIDGE, IN MOTION</p><h2>Small messages can create<br>big local impact.</h2></div>
-            <div class="contact-impact__stats"><span><strong>500+</strong><small>Meals redirected</small></span><span><strong>24h</strong><small>Typical response</small></span><span><strong>1 goal</strong><small>Less waste, more care</small></span></div>
-        </section>
+        </div>
     </div>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    (function () {
+        'use strict';
+        var form = document.getElementById('wnContactForm');
+        if (!form) return;
+        var status = document.getElementById('wnContactStatus');
+
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            var data = new FormData(form);
+            var role = form.querySelector('input[name="role"]:checked');
+            var recipient = role ? role.getAttribute('data-route') : 'support@foodbridge.org';
+            var subject = String(data.get('subject') || '').trim();
+            var body = [
+                String(data.get('message') || '').trim(),
+                '',
+                '---',
+                'Name: ' + String(data.get('name') || '').trim(),
+                'Email: ' + String(data.get('email') || '').trim(),
+                'Reaching out as: ' + (role ? role.value : 'Community member')
+            ].join('\n');
+
+            window.location.href = 'mailto:' + recipient +
+                '?subject=' + encodeURIComponent(subject) +
+                '&body=' + encodeURIComponent(body);
+
+            if (status) {
+                var label = status.querySelector('[data-route-label]');
+                if (label) label.textContent = recipient;
+                status.hidden = false;
+            }
+        });
+    })();
+</script>
 {% endblock %}
