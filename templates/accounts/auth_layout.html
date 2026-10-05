@@ -1,45 +1,53 @@
 {% extends "base.html" %}
 {% load static %}
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/auth.css' %}?v=glass-v2">
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}?v=wanantara-1">
 {% endblock %}
 {% block content %}
     <section class="auth-page">
-        <div class="auth-orb auth-orb--one"></div>
-        <div class="auth-orb auth-orb--two"></div>
+        <div class="auth-orb auth-orb--one" aria-hidden="true"></div>
+        <div class="auth-orb auth-orb--two" aria-hidden="true"></div>
         <div class="container">
-            <div class="auth-wrapper glass">
-                <!-- Left Side -->
-                <div class="auth-brand">
+            <div class="auth-wrapper">
+                <!-- Left: mission panel -->
+                <aside class="auth-brand" aria-label="About FoodBridge">
                     <div class="auth-brand-content">
-                        <div class="brand-logo" aria-label="FoodBridge"><i class="bi bi-basket2-fill"></i></div>
-                        <p class="auth-overline">COMMUNITY FOOD NETWORK</p>
-                        <h1>FoodBridge</h1>
-                        <p class="lead">Turning surplus into shared meals, one thoughtful handoff at a time.</p>
+                        <div class="brand-logo" aria-hidden="true">{% include "components/brand_mark.html" %}</div>
+                        <span class="wn-tag">Join the Movement</span>
+                        <h1>Surplus food, <em>shared with care.</em></h1>
+                        <p class="lead">FoodBridge connects donors, volunteers and verified NGOs so good food reaches people, not landfills.</p>
                         <div class="brand-features">
                             <div class="feature">
-                                <i class="bi bi-check-circle-fill"></i>
-                                <span>Reduce Food Waste</span>
+                                <i class="bi bi-recycle" aria-hidden="true"></i>
+                                <span>Reduce food waste at the source</span>
                             </div>
                             <div class="feature">
-                                <i class="bi bi-building-check"></i>
-                                <span>Verified NGOs</span>
+                                <i class="bi bi-building-check" aria-hidden="true"></i>
+                                <span>Verified NGO and shelter partners</span>
                             </div>
                             <div class="feature">
-                                <i class="bi bi-truck"></i>
-                                <span>Easy Pickup & Delivery</span>
+                                <i class="bi bi-truck" aria-hidden="true"></i>
+                                <span>Volunteer pickups with photo proof</span>
                             </div>
                             <div class="feature">
-                                <i class="bi bi-heart-fill"></i>
-                                <span>Community Driven</span>
+                                <i class="bi bi-shield-check" aria-hidden="true"></i>
+                                <span>AI-assisted food safety screening</span>
                             </div>
                         </div>
+                    </div>
+                    <div class="auth-brand-footer">
+                        <div class="auth-impact">
+                            <div><strong class="wn-gradient-gold">12k+</strong><small>Meals shared</small></div>
+                            <div><strong class="wn-gradient-emerald">40+</strong><small>NGO hubs</small></div>
+                            <div><strong class="wn-gradient-gold">&lt;45m</strong><small>Dispatch</small></div>
+                        </div>
                         <blockquote>
-                            Every meal shared is hope delivered.
+                            &ldquo;Every meal shared is hope delivered.&rdquo;
+                            <cite>The FoodBridge promise</cite>
                         </blockquote>
                     </div>
-                </div>
-                <!-- Right Side -->
+                </aside>
+                <!-- Right: form -->
                 <div class="auth-form-container">
                     {% block auth_content %}{% endblock %}
                 </div>
