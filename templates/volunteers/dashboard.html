@@ -1,90 +1,229 @@
 {% extends "dashboards/base_dashboard.html" %}
-{% block title %}Volunteer Dashboard{% endblock %}
+{% load static %}
+
+{% block title %}Volunteer Mission Control — FoodBridge{% endblock %}
+
 {% block dashboard_content %}
-    <section class="volunteer-hero reveal">
+    <!-- Hero Mission Banner -->
+    <section class="volunteer-hero reveal tilt-card mb-4" data-tilt>
         <div class="volunteer-hero__glow"></div>
         <div class="volunteer-hero__content">
-            <div class="volunteer-eyebrow"><i class="bi bi-stars"></i> YOUR VOLUNTEER HUB</div>
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <span class="badge-modern-pill py-1 px-3">
+                    <span class="pulse-dot"></span>
+                    VOLUNTEER MISSION CONTROL
+                </span>
+            </div>
             <div class="d-flex flex-column flex-lg-row justify-content-between gap-4 align-items-lg-end">
                 <div>
-                    <h1>Good to see you, {{ user.first_name|default:user.email }}.</h1>
-                    <p>Every pickup you complete turns surplus food into a meal for someone nearby.</p>
+                    <h1 class="display-6 fw-bold text-white mb-2">Good to see you, {{ user.first_name|default:user.email }}.</h1>
+                    <p class="text-white-50 mb-0">Every pickup you complete rescues fresh food and feeds hungry families nearby.</p>
                 </div>
                 <div class="volunteer-hero__actions">
-                    <a href="{% url 'available_pickups' %}" class="btn volunteer-btn volunteer-btn--primary"><i class="bi bi-search"></i> Find a pickup</a>
-                    <a href="{% url 'volunteer_profile' %}" class="btn volunteer-btn volunteer-btn--ghost"><i class="bi bi-person-gear"></i> My profile</a>
+                    <a href="{% url 'available_pickups' %}" class="btn-cyber-primary py-2 px-4">
+                        <i class="bi bi-radar"></i>
+                        <span>Find Pickups</span>
+                    </a>
+                    <a href="{% url 'volunteer_profile' %}" class="btn-cyber-outline py-2 px-4">
+                        <i class="bi bi-person-gear"></i>
+                        <span>My Profile</span>
+                    </a>
                 </div>
             </div>
             <div class="volunteer-hero__meta">
-                <span class="volunteer-status {% if profile.is_available %}volunteer-status--available{% else %}volunteer-status--away{% endif %}"><i class="bi bi-circle-fill"></i> {% if profile.is_available %}Available to help{% else %}Currently unavailable{% endif %}</span>
-                <span><i class="bi bi-geo-alt"></i> {{ profile.service_area|default:"Set your service area" }}</span>
-                <span><i class="bi bi-bicycle"></i> {{ profile.get_transport_mode_display }}</span>
+                <span class="volunteer-status {% if profile.is_available %}volunteer-status--available{% else %}volunteer-status--away{% endif %}">
+                    <i class="bi bi-circle-fill"></i>
+                    {% if profile.is_available %}Available to Dispatch{% else %}Currently Offline{% endif %}
+                </span>
+                <span><i class="bi bi-geo-alt-fill text-warning"></i> {{ profile.service_area|default:"All Service Areas" }}</span>
+                <span><i class="bi bi-bicycle text-warning"></i> {{ profile.get_transport_mode_display }}</span>
             </div>
         </div>
     </section>
 
-    <section class="dashboard-section volunteer-stats-grid">
+    <!-- Bento Stats Grid (3D Tilt Cards) -->
+    <section class="dashboard-section volunteer-stats-grid mb-4">
         {% for stat in dashboard.stats %}
-            <article class="volunteer-stat-card reveal">
-                <div class="volunteer-stat-card__icon volunteer-stat-card__icon--{{ stat.color }}"><i class="bi {{ stat.icon }}"></i></div>
-                <div><p>{{ stat.title }}</p><strong>{{ stat.value }}</strong><span>{{ stat.subtitle }}</span></div>
+            <article class="volunteer-stat-card tilt-card reveal" data-tilt>
+                <div class="volunteer-stat-card__icon volunteer-stat-card__icon--{{ stat.color }}">
+                    <i class="bi {{ stat.icon }}"></i>
+                </div>
+                <div>
+                    <p>{{ stat.title }}</p>
+                    <strong>{{ stat.value }}</strong>
+                    <span>{{ stat.subtitle }}</span>
+                </div>
                 <span class="volunteer-stat-card__trend">{{ stat.trend }}</span>
             </article>
         {% endfor %}
     </section>
 
-    <section class="dashboard-section volunteer-progress reveal">
+    <!-- Progress Steps -->
+    <section class="dashboard-section volunteer-progress reveal tilt-card mb-4" data-tilt>
         <div>
-            <p class="volunteer-eyebrow mb-2">A SIMPLE, TRACKABLE HANDOFF</p>
-            <h2>Your pickup journey</h2>
+            <p class="volunteer-eyebrow mb-1">GEOFENCED DELIVERY PROTOCOL</p>
+            <h2 class="h4 fw-bold mb-0">Your Mission Protocol</h2>
         </div>
         <div class="volunteer-progress__steps">
-            <div class="volunteer-progress__step"><span>1</span><div><strong>Claim</strong><small>Choose an open pickup</small></div></div>
+            <div class="volunteer-progress__step">
+                <span>1</span>
+                <div><strong>Claim Run</strong><small>Select verified listing</small></div>
+            </div>
             <div class="volunteer-progress__line"></div>
-            <div class="volunteer-progress__step"><span>2</span><div><strong>Collect</strong><small>Confirm you have the food</small></div></div>
+            <div class="volunteer-progress__step">
+                <span>2</span>
+                <div><strong>Collect Food</strong><small>Confirm custody photo</small></div>
+            </div>
             <div class="volunteer-progress__line"></div>
-            <div class="volunteer-progress__step"><span>3</span><div><strong>Deliver</strong><small>Record a safe handoff</small></div></div>
+            <div class="volunteer-progress__step">
+                <span>3</span>
+                <div><strong>Hand Off</strong><small>NGO digital sign-off</small></div>
+            </div>
         </div>
     </section>
 
-    <section class="dashboard-section row g-4">
+    <!-- Active Pickups & Quick Actions -->
+    <section class="dashboard-section row g-4 mb-4">
         <div class="col-lg-8">
-            <div class="volunteer-panel h-100 reveal">
+            <div class="volunteer-panel h-100 reveal tilt-card" data-tilt>
                 <div class="volunteer-panel__header">
-                    <div><p class="volunteer-eyebrow">KEEP MOVING</p><h2>Active pickups</h2></div>
-                    <a href="{% url 'assigned_pickups' %}" class="volunteer-text-link">View all <i class="bi bi-arrow-right"></i></a>
+                    <div>
+                        <p class="volunteer-eyebrow">IN TRANSIT</p>
+                        <h2 class="h4 fw-bold mb-0">Active Pickups</h2>
+                    </div>
+                    <a href="{% url 'assigned_pickups' %}" class="volunteer-text-link">
+                        View all <i class="bi bi-arrow-right"></i>
+                    </a>
                 </div>
                 <div class="volunteer-panel__body">
                     {% for pickup in assigned_pickups %}
-                        <article class="active-pickup-card">
-                            <div class="active-pickup-card__icon"><i class="bi {% if pickup.status == 'COLLECTED' %}bi-box2-heart{% else %}bi-bag-check{% endif %}"></i></div>
-                            <div class="active-pickup-card__details"><span class="volunteer-status volunteer-status--{{ pickup.status|lower }}">{{ pickup.get_status_display }}</span><h3>{{ pickup.donor_name }}</h3><p><i class="bi bi-clock"></i> {{ pickup.pickup_window_start|date:"M j, g:i A" }} · <i class="bi bi-geo-alt"></i> {{ pickup.pickup_city }}</p></div>
-                            <a href="{% url 'pickup_details' pickup.id %}" class="btn volunteer-btn volunteer-btn--secondary">Continue <i class="bi bi-arrow-right"></i></a>
+                        <article class="active-pickup-card p-3 rounded-4 mb-3" style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08);">
+                            <div class="active-pickup-card__icon">
+                                <i class="bi {% if pickup.status == 'COLLECTED' %}bi-box2-heart-fill{% else %}bi-bag-check-fill{% endif %}"></i>
+                            </div>
+                            <div class="active-pickup-card__details">
+                                <span class="volunteer-status volunteer-status--{{ pickup.status|lower }} mb-1">
+                                    {{ pickup.get_status_display }}
+                                </span>
+                                <h3 class="h5 fw-bold text-white mb-1">{{ pickup.donor_name }}</h3>
+                                <p class="small text-white-50 mb-0">
+                                    <i class="bi bi-clock text-warning"></i> {{ pickup.pickup_window_start|date:"M j, g:i A" }} · 
+                                    <i class="bi bi-geo-alt text-warning"></i> {{ pickup.pickup_city }}
+                                </p>
+                            </div>
+                            <a href="{% url 'pickup_details' pickup.id %}" class="btn-cyber-primary py-2 px-3 small">
+                                <span>Continue</span>
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
                         </article>
                     {% empty %}
-                        <div class="volunteer-empty-state"><div><i class="bi bi-truck"></i></div><h3>You’re ready when a pickup needs you.</h3><p>Browse nearby listings and claim the one that fits your schedule.</p><a href="{% url 'available_pickups' %}" class="btn volunteer-btn volunteer-btn--primary">Browse pickups</a></div>
+                        <div class="volunteer-empty-state py-4 text-center">
+                            <div><i class="bi bi-truck fs-2 text-warning"></i></div>
+                            <h3 class="h5 fw-bold text-white">No active pickups right now.</h3>
+                            <p class="text-white-50 mb-3 small">Browse listings in your area to start your next rescue mission.</p>
+                            <a href="{% url 'available_pickups' %}" class="btn-cyber-primary py-2 px-4 small">
+                                <i class="bi bi-radar"></i> Browse Nearby Runs
+                            </a>
+                        </div>
                     {% endfor %}
                 </div>
             </div>
         </div>
+
         <div class="col-lg-4">
-            <div class="volunteer-panel volunteer-panel--accent h-100 reveal">
-                <div class="volunteer-panel__header"><div><p class="volunteer-eyebrow">QUICK START</p><h2>What would you like to do?</h2></div></div>
+            <div class="volunteer-panel volunteer-panel--accent h-100 reveal tilt-card" data-tilt>
+                <div class="volunteer-panel__header">
+                    <div>
+                        <p class="volunteer-eyebrow">QUICK ACCESS</p>
+                        <h2 class="h4 fw-bold mb-0">Actions</h2>
+                    </div>
+                </div>
                 <div class="volunteer-panel__body volunteer-action-list">
-                    <a href="{% url 'available_pickups' %}" class="volunteer-action"><span><i class="bi bi-search-heart"></i></span><div><strong>Find a nearby pickup</strong><small>Explore open food collections</small></div><i class="bi bi-chevron-right"></i></a>
-                    <a href="{% url 'assigned_pickups' %}" class="volunteer-action"><span><i class="bi bi-truck"></i></span><div><strong>Manage active pickup</strong><small>Collect or confirm delivery</small></div><i class="bi bi-chevron-right"></i></a>
-                    <a href="{% url 'pickup_history' %}" class="volunteer-action"><span><i class="bi bi-clock-history"></i></span><div><strong>See your impact</strong><small>Review completed deliveries</small></div><i class="bi bi-chevron-right"></i></a>
+                    <a href="{% url 'available_pickups' %}" class="volunteer-action">
+                        <span><i class="bi bi-search-heart"></i></span>
+                        <div>
+                            <strong>Explore Available Food</strong>
+                            <small>Find pickups waiting for transport</small>
+                        </div>
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                    <a href="{% url 'assigned_pickups' %}" class="volunteer-action">
+                        <span><i class="bi bi-truck"></i></span>
+                        <div>
+                            <strong>Manage Active Run</strong>
+                            <small>Upload evidence & complete delivery</small>
+                        </div>
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                    <a href="{% url 'pickup_history' %}" class="volunteer-action">
+                        <span><i class="bi bi-award"></i></span>
+                        <div>
+                            <strong>My Impact History</strong>
+                            <small>See completed rescues & hours</small>
+                        </div>
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="dashboard-section volunteer-panel reveal">
-        <div class="volunteer-panel__header"><div><p class="volunteer-eyebrow">IN YOUR AREA</p><h2>Open pickups near you</h2></div><a href="{% url 'available_pickups' %}" class="volunteer-text-link">Explore all <i class="bi bi-arrow-up-right"></i></a></div>
+    <!-- Available Pickups Near You Table -->
+    <section class="dashboard-section volunteer-panel reveal tilt-card" data-tilt>
+        <div class="volunteer-panel__header">
+            <div>
+                <p class="volunteer-eyebrow">RADAR DISCOVERY</p>
+                <h2 class="h4 fw-bold mb-0">Open Pickups in Your Area</h2>
+            </div>
+            <a href="{% url 'available_pickups' %}" class="volunteer-text-link">
+                Explore all <i class="bi bi-arrow-up-right"></i>
+            </a>
+        </div>
         <div class="volunteer-panel__body p-0">
-            <div class="table-responsive volunteer-table-wrap"><table class="table volunteer-table align-middle mb-0"><thead><tr><th>Donor</th><th>Food</th><th>Pickup time</th><th></th></tr></thead><tbody>
-                {% for pickup in available_pickups %}<tr><td><strong>{{ pickup.donor_name }}</strong><small><i class="bi bi-geo-alt"></i> {{ pickup.pickup_city }}</small></td><td>{{ pickup.food_description }}<small>{{ pickup.quantity }}</small></td><td><strong>{{ pickup.pickup_window_start|date:"M j" }}</strong><small>{{ pickup.pickup_window_start|date:"g:i A" }}</small></td><td><a href="{% url 'pickup_details' pickup.id %}" class="btn volunteer-icon-btn" aria-label="View {{ pickup.donor_name }} pickup"><i class="bi bi-arrow-right"></i></a></td></tr>{% empty %}<tr><td colspan="4"><div class="volunteer-table-empty">No open pickups in your service area right now.</div></td></tr>{% endfor %}
-            </tbody></table></div>
+            <div class="table-responsive volunteer-table-wrap">
+                <table class="table volunteer-table align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Donor Hub</th>
+                            <th>Portions & Food</th>
+                            <th>Pickup Window</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for pickup in available_pickups %}
+                            <tr>
+                                <td>
+                                    <strong>{{ pickup.donor_name }}</strong>
+                                    <small><i class="bi bi-geo-alt text-warning"></i> {{ pickup.pickup_city }}</small>
+                                </td>
+                                <td>
+                                    {{ pickup.food_description }}
+                                    <small class="text-white-50">{{ pickup.quantity }}</small>
+                                </td>
+                                <td>
+                                    <strong>{{ pickup.pickup_window_start|date:"M j" }}</strong>
+                                    <small>{{ pickup.pickup_window_start|date:"g:i A" }}</small>
+                                </td>
+                                <td>
+                                    <a href="{% url 'pickup_details' pickup.id %}" class="btn volunteer-icon-btn" aria-label="View {{ pickup.donor_name }} pickup">
+                                        <i class="bi bi-arrow-right"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="4">
+                                    <div class="volunteer-table-empty py-4 text-center text-white-50">
+                                        <i class="bi bi-broadcast fs-3 text-warning d-block mb-2"></i>
+                                        No open pickups in your service area right now. Check back soon!
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </section>
 {% endblock %}

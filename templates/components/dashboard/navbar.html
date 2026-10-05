@@ -1,14 +1,14 @@
 <div class="dashboard-topbar">
     <div class="glass-card px-4 py-3">
         <div class="d-flex justify-content-between align-items-center">
-            <!-- Left -->
+            <!-- Left: Title & Breadcrumbs -->
             <div>
-                <h4 class="fw-bold mb-0">{{ page_title|default:"Dashboard" }}</h4>
+                <h4 class="fw-bold mb-0 text-white" style="font-family: var(--font-heading);">{{ page_title|default:"Dashboard" }}</h4>
                 {% include "components/dashboard/breadcrumb.html" %}
             </div>
-            <!-- Right -->
+            <!-- Right: Notifications & User Profile Chip -->
             <div class="d-flex align-items-center gap-3">
-                <button class="btn btn-outline-light position-relative">
+                <button class="btn btn-outline-light position-relative p-2 rounded-circle" style="width: 40px; height: 40px;" aria-label="Notifications">
                     <i class="bi bi-bell"></i>
                     {% if notification_count %}
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark">
@@ -17,19 +17,16 @@
                     {% endif %}
                 </button>
                 <div class="d-flex align-items-center">
-                    <div class="text-end me-3">
-                        <div class="fw-semibold">{{ user.get_full_name|default:user.email }}</div>
-                        <small class="text-muted">{{ user.role }}</small>
+                    <div class="text-end me-3 d-none d-sm-block">
+                        <div class="fw-semibold text-white small">{{ user.get_full_name|default:user.email }}</div>
+                        <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill py-0 px-2" style="font-size: 0.7rem;">
+                            {{ user.role }}
+                        </span>
                     </div>
-                    <div class="rounded-circle bg-warning d-flex align-items-center justify-content-center avatar-circle">
-                        <i class="bi bi-person-fill text-dark"></i>
+                    <div class="rounded-circle d-flex align-items-center justify-content-center avatar-circle text-white fw-bold shadow-sm"
+                         style="width: 42px; height: 42px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: 2px solid rgba(255, 255, 255, 0.2);">
+                        <i class="bi bi-person-fill"></i>
                     </div>
-                    <style>
-                        .avatar-circle {
-                            width: 45px;
-                            height: 45px;
-                        }
-                    </style>
                 </div>
             </div>
         </div>

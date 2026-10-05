@@ -1,0 +1,108 @@
+{% load static %}
+<!-- Mobile App Shell Bottom Navigation Bar -->
+<nav class="mobile-bottom-bar d-lg-none" aria-label="Mobile Navigation">
+    <div class="mobile-bottom-bar__inner">
+        {% if user.is_authenticated %}
+            {% if user.role == 'DONOR' %}
+                <a href="{% url 'donor_dashboard' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'donor_dashboard' %}active{% endif %}">
+                    <i class="bi bi-grid-1x2-fill"></i>
+                    <span>Hub</span>
+                </a>
+                <a href="{% url 'my_donations' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'my_donations' %}active{% endif %}">
+                    <i class="bi bi-clock-history"></i>
+                    <span>Track</span>
+                </a>
+                <div class="mobile-nav-fab-wrap">
+                    <a href="{% url 'donation_create' %}" class="mobile-nav-fab" aria-label="Donate Food">
+                        <i class="bi bi-plus-lg"></i>
+                    </a>
+                </div>
+                <a href="{% url 'donor_profile' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'donor_profile' %}active{% endif %}">
+                    <i class="bi bi-person-circle"></i>
+                    <span>Profile</span>
+                </a>
+                <a href="{% url 'logout' %}" class="mobile-nav-item">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span>Exit</span>
+                </a>
+
+            {% elif user.role == 'VOLUNTEER' %}
+                <a href="{% url 'volunteer_dashboard' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'volunteer_dashboard' %}active{% endif %}">
+                    <i class="bi bi-speedometer2"></i>
+                    <span>Mission</span>
+                </a>
+                <a href="{% url 'assigned_pickups' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'assigned_pickups' %}active{% endif %}">
+                    <i class="bi bi-box-seam"></i>
+                    <span>Active</span>
+                </a>
+                <div class="mobile-nav-fab-wrap">
+                    <a href="{% url 'available_pickups' %}" class="mobile-nav-fab" aria-label="Find Pickups">
+                        <i class="bi bi-radar"></i>
+                    </a>
+                </div>
+                <a href="{% url 'pickup_history' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'pickup_history' %}active{% endif %}">
+                    <i class="bi bi-award"></i>
+                    <span>Impact</span>
+                </a>
+                <a href="{% url 'volunteer_profile' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'volunteer_profile' %}active{% endif %}">
+                    <i class="bi bi-person-circle"></i>
+                    <span>Profile</span>
+                </a>
+
+            {% elif user.role == 'NGO' %}
+                <a href="{% url 'ngo_dashboard' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'ngo_dashboard' %}active{% endif %}">
+                    <i class="bi bi-building"></i>
+                    <span>Desk</span>
+                </a>
+                <a href="{% url 'ngo_donations' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'ngo_donations' %}active{% endif %}">
+                    <i class="bi bi-search"></i>
+                    <span>Food</span>
+                </a>
+                <div class="mobile-nav-fab-wrap">
+                    <a href="{% url 'ngo_managed_donations' %}" class="mobile-nav-fab" aria-label="Managed Deliveries">
+                        <i class="bi bi-box2-heart"></i>
+                    </a>
+                </div>
+                <a href="{% url 'ngo_profile' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'ngo_profile' %}active{% endif %}">
+                    <i class="bi bi-shield-check"></i>
+                    <span>Verify</span>
+                </a>
+                <a href="{% url 'logout' %}" class="mobile-nav-item">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span>Exit</span>
+                </a>
+            {% else %}
+                <a href="{% url 'home' %}" class="mobile-nav-item active">
+                    <i class="bi bi-house-door"></i>
+                    <span>Home</span>
+                </a>
+                <a href="{% url 'logout' %}" class="mobile-nav-item">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span>Logout</span>
+                </a>
+            {% endif %}
+        {% else %}
+            <a href="{% url 'home' %}#home" class="mobile-nav-item active">
+                <i class="bi bi-house-door"></i>
+                <span>Home</span>
+            </a>
+            <a href="{% url 'home' %}#how" class="mobile-nav-item">
+                <i class="bi bi-lightning-charge"></i>
+                <span>Process</span>
+            </a>
+            <div class="mobile-nav-fab-wrap">
+                <a href="{% url 'register' %}" class="mobile-nav-fab" aria-label="Join FoodBridge">
+                    <i class="bi bi-plus-lg"></i>
+                </a>
+            </div>
+            <a href="{% url 'home' %}#stats" class="mobile-nav-item">
+                <i class="bi bi-bar-chart"></i>
+                <span>Impact</span>
+            </a>
+            <a href="{% url 'login' %}" class="mobile-nav-item">
+                <i class="bi bi-door-open"></i>
+                <span>Login</span>
+            </a>
+        {% endif %}
+    </div>
+</nav>

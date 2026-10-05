@@ -1,66 +1,182 @@
 {% extends "dashboards/base_dashboard.html" %}
-{% block title %}Donor Dashboard{% endblock %}
+{% load static %}
+
+{% block title %}Donor Dashboard — FoodBridge{% endblock %}
+
 {% block dashboard_content %}
-    <section class="volunteer-hero reveal donor-hero">
+    <!-- Hero Welcome Banner -->
+    <section class="volunteer-hero reveal donor-hero tilt-card mb-4" data-tilt>
         <div class="volunteer-hero__content">
-            <p class="volunteer-eyebrow"><i class="bi bi-heart-fill"></i> YOUR DONOR HUB</p>
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <span class="badge-modern-pill py-1 px-3">
+                    <span class="pulse-dot"></span>
+                    DONOR MISSION HUB
+                </span>
+            </div>
             <div class="d-flex flex-column flex-lg-row justify-content-between gap-4 align-items-lg-end">
                 <div>
-                    <h1>Good to see you, {{ user.first_name|default:user.email }}.</h1>
-                    <p>Turn surplus food into nourishing meals for people in your community.</p>
+                    <h1 class="display-6 fw-bold text-white mb-2">Good to see you, {{ user.first_name|default:user.email }}.</h1>
+                    <p class="text-white-50 mb-0">Turn excess portions into nourishing meals for community centers in your neighborhood.</p>
                 </div>
                 <div class="volunteer-hero__actions">
-                    <a href="{% url 'donation_create' %}" class="btn volunteer-btn volunteer-btn--primary"><i class="bi bi-plus-circle"></i> Donate food</a>
-                    <a href="{% url 'donor_profile' %}" class="btn volunteer-btn volunteer-btn--ghost"><i class="bi bi-person-gear"></i> My profile</a>
+                    <a href="{% url 'donation_create' %}" class="btn-cyber-primary py-2 px-4">
+                        <i class="bi bi-plus-circle-fill"></i>
+                        <span>Create Donation</span>
+                    </a>
+                    <a href="{% url 'donor_profile' %}" class="btn-cyber-outline py-2 px-4">
+                        <i class="bi bi-person-gear"></i>
+                        <span>Settings</span>
+                    </a>
                 </div>
             </div>
             <div class="volunteer-hero__meta">
-                <span class="volunteer-status volunteer-status--available"><i class="bi bi-circle-fill"></i> Ready to donate</span>
-                <span><i class="bi bi-arrow-repeat"></i> Track every handoff</span>
-                <span><i class="bi bi-people"></i> Help your local community</span>
+                <span class="volunteer-status volunteer-status--available">
+                    <i class="bi bi-circle-fill text-success"></i> Ready to donate
+                </span>
+                <span><i class="bi bi-arrow-repeat text-warning"></i> Instant AI screening</span>
+                <span><i class="bi bi-shield-check text-warning"></i> Verified volunteer pickups</span>
             </div>
         </div>
     </section>
 
-    <section class="dashboard-section donor-stats-grid">
+    <!-- Bento Stats Grid (3D Tilt Cards) -->
+    <section class="dashboard-section donor-stats-grid mb-4">
         {% for stat in dashboard.stats %}
-            <article class="volunteer-stat-card reveal">
-                <div class="volunteer-stat-card__icon volunteer-stat-card__icon--{{ stat.color }}"><i class="bi {{ stat.icon }}"></i></div>
-                <div><p>{{ stat.title }}</p><strong>{{ stat.value }}</strong><span>{{ stat.subtitle }}</span></div>
+            <article class="volunteer-stat-card tilt-card reveal" data-tilt>
+                <div class="volunteer-stat-card__icon volunteer-stat-card__icon--{{ stat.color }}">
+                    <i class="bi {{ stat.icon }}"></i>
+                </div>
+                <div>
+                    <p>{{ stat.title }}</p>
+                    <strong>{{ stat.value }}</strong>
+                    <span>{{ stat.subtitle }}</span>
+                </div>
                 <span class="volunteer-stat-card__trend">{{ stat.trend }}</span>
             </article>
         {% endfor %}
     </section>
 
-    <section class="dashboard-section volunteer-progress reveal donor-progress">
-        <div><p class="volunteer-eyebrow mb-2">FROM SURPLUS TO SUPPORT</p><h2>Your donation journey</h2></div>
+    <!-- Journey Progress Card -->
+    <section class="dashboard-section volunteer-progress reveal donor-progress tilt-card mb-4" data-tilt>
+        <div>
+            <p class="volunteer-eyebrow mb-1">REAL-TIME SURPLUS HANDOFF</p>
+            <h2 class="h4 fw-bold mb-0">Your Donation Journey</h2>
+        </div>
         <div class="volunteer-progress__steps">
-            <div class="volunteer-progress__step"><span>1</span><div><strong>List</strong><small>Share what you have</small></div></div>
+            <div class="volunteer-progress__step">
+                <span>1</span>
+                <div><strong>List</strong><small>Post food in 60s</small></div>
+            </div>
             <div class="volunteer-progress__line"></div>
-            <div class="volunteer-progress__step"><span>2</span><div><strong>Collect</strong><small>A volunteer picks it up</small></div></div>
+            <div class="volunteer-progress__step">
+                <span>2</span>
+                <div><strong>Verify</strong><small>AI & NGO Approval</small></div>
+            </div>
             <div class="volunteer-progress__line"></div>
-            <div class="volunteer-progress__step"><span>3</span><div><strong>Deliver</strong><small>Food reaches an NGO</small></div></div>
+            <div class="volunteer-progress__step">
+                <span>3</span>
+                <div><strong>Deliver</strong><small>Verified Safe Handoff</small></div>
+            </div>
         </div>
     </section>
 
+    <!-- Recent Listings & Quick Actions -->
     <section class="dashboard-section row g-4">
         <div class="col-lg-8">
-            <div class="volunteer-panel h-100 reveal">
-                <div class="volunteer-panel__header"><div><p class="volunteer-eyebrow">YOUR LISTINGS</p><h2>Recent donations</h2></div><a href="{% url 'my_donations' %}" class="volunteer-text-link">View all <i class="bi bi-arrow-right"></i></a></div>
+            <div class="volunteer-panel h-100 reveal tilt-card" data-tilt>
+                <div class="volunteer-panel__header">
+                    <div>
+                        <p class="volunteer-eyebrow">YOUR SURPLUS LOG</p>
+                        <h2 class="h4 fw-bold mb-0">Recent Donations</h2>
+                    </div>
+                    <a href="{% url 'my_donations' %}" class="volunteer-text-link">
+                        View all <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
                 <div class="volunteer-panel__body p-0">
-                    <div class="table-responsive volunteer-table-wrap"><table class="table volunteer-table align-middle mb-0"><thead><tr><th>Food</th><th>Pickup deadline</th><th>Status</th><th></th></tr></thead><tbody>
-                    {% for donation in recent_donations %}<tr><td><strong>{{ donation.title }}</strong><small>{{ donation.quantity }} {{ donation.get_unit_display }} · {{ donation.get_food_type_display }}</small></td><td><strong>{{ donation.pickup_window_end|date:"M j" }}</strong><small>{{ donation.pickup_window_end|date:"g:i A" }}</small></td><td><span class="volunteer-status donor-status">{{ donation.effective_status_display }}</span></td><td><a href="{% url 'donation_detail' donation.id %}" class="btn volunteer-icon-btn" aria-label="View {{ donation.title }}"><i class="bi bi-arrow-right"></i></a></td></tr>{% empty %}<tr><td colspan="4"><div class="volunteer-table-empty">Your donation history will appear here once you create a listing.</div></td></tr>{% endfor %}
-                    </tbody></table></div>
+                    <div class="table-responsive volunteer-table-wrap">
+                        <table class="table volunteer-table align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Food Listing</th>
+                                    <th>Pickup Window</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for donation in recent_donations %}
+                                    <tr>
+                                        <td>
+                                            <strong>{{ donation.title }}</strong>
+                                            <small>{{ donation.quantity }} {{ donation.get_unit_display }} · {{ donation.get_food_type_display }}</small>
+                                        </td>
+                                        <td>
+                                            <strong>{{ donation.pickup_window_end|date:"M j" }}</strong>
+                                            <small>{{ donation.pickup_window_end|date:"g:i A" }}</small>
+                                        </td>
+                                        <td>
+                                            <span class="volunteer-status donor-status">{{ donation.effective_status_display }}</span>
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'donation_detail' donation.id %}" class="btn volunteer-icon-btn" aria-label="View {{ donation.title }}">
+                                                <i class="bi bi-arrow-right"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="4">
+                                            <div class="volunteer-table-empty py-4 text-center">
+                                                <i class="bi bi-box2-heart fs-2 text-warning d-block mb-2"></i>
+                                                <p class="text-white-50 mb-3">You haven't listed any surplus food yet.</p>
+                                                <a href="{% url 'donation_create' %}" class="btn-cyber-primary py-2 px-3 small">
+                                                    <i class="bi bi-plus-lg"></i> Post your first donation
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
+
         <div class="col-lg-4">
-            <div class="volunteer-panel volunteer-panel--accent h-100 reveal">
-                <div class="volunteer-panel__header"><div><p class="volunteer-eyebrow">QUICK START</p><h2>What would you like to do?</h2></div></div>
+            <div class="volunteer-panel volunteer-panel--accent h-100 reveal tilt-card" data-tilt>
+                <div class="volunteer-panel__header">
+                    <div>
+                        <p class="volunteer-eyebrow">MISSION SHORTCUTS</p>
+                        <h2 class="h4 fw-bold mb-0">Quick Start</h2>
+                    </div>
+                </div>
                 <div class="volunteer-panel__body volunteer-action-list">
-                    <a href="{% url 'donation_create' %}" class="volunteer-action"><span><i class="bi bi-basket2-fill"></i></span><div><strong>Create a donation</strong><small>List surplus food for pickup</small></div><i class="bi bi-chevron-right"></i></a>
-                    <a href="{% url 'my_donations' %}" class="volunteer-action"><span><i class="bi bi-clock-history"></i></span><div><strong>Track donations</strong><small>See pickup and delivery progress</small></div><i class="bi bi-chevron-right"></i></a>
-                    <a href="{% url 'donor_profile' %}" class="volunteer-action"><span><i class="bi bi-geo-alt"></i></span><div><strong>Update your profile</strong><small>Keep your pickup details current</small></div><i class="bi bi-chevron-right"></i></a>
+                    <a href="{% url 'donation_create' %}" class="volunteer-action">
+                        <span><i class="bi bi-basket2-fill"></i></span>
+                        <div>
+                            <strong>Create Donation</strong>
+                            <small>List surplus food with photo & GPS</small>
+                        </div>
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                    <a href="{% url 'my_donations' %}" class="volunteer-action">
+                        <span><i class="bi bi-clock-history"></i></span>
+                        <div>
+                            <strong>Track Donations</strong>
+                            <small>Watch live volunteer collection progress</small>
+                        </div>
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                    <a href="{% url 'donor_profile' %}" class="volunteer-action">
+                        <span><i class="bi bi-geo-alt"></i></span>
+                        <div>
+                            <strong>Update Profile</strong>
+                            <small>Keep pickup address & phone verified</small>
+                        </div>
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
                 </div>
             </div>
         </div>

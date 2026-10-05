@@ -1,18 +1,19 @@
 <nav class="navbar navbar-expand-lg navbar-dark sticky-top" id="mainNav">
     <div class="container">
-        <a class="navbar-brand fw-bold fs-4" href="{% url 'home' %}">
-            <i class="bi bi-basket2-fill me-2 text-warning"></i>Food Bridge
+        <a class="navbar-brand fw-bold" href="{% url 'home' %}">
+            <i class="bi bi-basket2-fill me-2 text-warning"></i>FoodBridge
         </a>
         <button
-            class="navbar-toggler"
+            class="navbar-toggler border-0"
             type="button"
             data-bs-toggle="collapse"
             data-bs-target="#navMenu"
+            aria-label="Toggle navigation"
         >
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navMenu">
-            <ul class="navbar-nav ms-auto">
+            <ul class="navbar-nav ms-auto align-items-lg-center">
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'home' %}#home">Home</a>
                 </li>
@@ -33,16 +34,16 @@
 
                     <ul class="dropdown-menu dropdown-menu-dark">
                         <li>
-                            <a class="dropdown-item" href="{% url 'home' %}#features">Donor Registration</a>
+                            <a class="dropdown-item" href="{% url 'home' %}#features">GPS Routing</a>
                         </li>
                         <li>
-                            <a class="dropdown-item" href="{% url 'home' %}#features">Real-Time Tracking</a>
+                            <a class="dropdown-item" href="{% url 'home' %}#features">AI Safety Check</a>
                         </li>
                         <li>
-                            <a class="dropdown-item" href="{% url 'home' %}#features">Volunteer Pickup</a>
+                            <a class="dropdown-item" href="{% url 'home' %}#features">Volunteer Dispatch</a>
                         </li>
                         <li>
-                            <a class="dropdown-item" href="{% url 'home' %}#features">Impact Reports</a>
+                            <a class="dropdown-item" href="{% url 'home' %}#features">ESG Reports</a>
                         </li>
                     </ul>
                 </li>
@@ -52,12 +53,35 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'contact' %}"> Contact </a>
+                    <a class="nav-link" href="{% url 'contact' %}">Contact</a>
                 </li>
             </ul>
-            <a href="{% url 'login' %}" class="btn btn-warning ms-3 fw-semibold px-3"
-                >Login</a
-            >
+
+            <div class="d-flex align-items-center mt-3 mt-lg-0 ms-lg-3">
+                {% if user.is_authenticated %}
+                    {% if user.role == 'DONOR' %}
+                        <a href="{% url 'donor_dashboard' %}" class="btn-cyber-primary py-2 px-3 small">
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </a>
+                    {% elif user.role == 'VOLUNTEER' %}
+                        <a href="{% url 'volunteer_dashboard' %}" class="btn-cyber-primary py-2 px-3 small">
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </a>
+                    {% elif user.role == 'NGO' %}
+                        <a href="{% url 'ngo_dashboard' %}" class="btn-cyber-primary py-2 px-3 small">
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </a>
+                    {% else %}
+                        <a href="{% url 'home' %}" class="btn-cyber-primary py-2 px-3 small">
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </a>
+                    {% endif %}
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn-cyber-primary py-2 px-4 small">
+                        <i class="bi bi-box-arrow-in-right"></i> Sign In
+                    </a>
+                {% endif %}
+            </div>
         </div>
     </div>
 </nav>

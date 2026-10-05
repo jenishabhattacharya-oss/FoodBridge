@@ -1,223 +1,351 @@
 {% extends "base.html" %}
-{% block title %}FoodBridge - Redistribute. Reduce. Restore.
+{% load static %}
+
+{% block title %}FoodBridge — 3D Real-Time Surplus Food Redistribution Platform{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/three_hero.js' %}"></script>
 {% endblock %}
+
 {% block content %}
-    <!-- HERO — glass card removed, text sits directly on the background image -->
-    <section id="home" class="hero-section d-flex align-items-center">
-        <div class="hero-overlay"></div>
-        <div class="container position-relative z-1 py-5">
-            <div class="row justify-content-center">
-                <div class="col-lg-8 text-center">
-                    <p class="text-warning fw-semibold mb-2 letter-space hero-tagline">FIGHTING HUNGER, ONE EVENT AT A TIME</p>
-                    <h1 class="display-5 fw-bold mb-3 hero-title">
-                        Turn Surplus Food
-                        <br />
-                        Into Someone's Next Meal
-                    </h1>
-                    <p class="lead mb-4 mx-auto text-white-50 hero-lead">
-                        We connect event organizers and corporates with nearby shelters and NGOs, in
-                        real time, so no safe food goes to waste.
-                    </p>
-                    <div class="hero-btns">
-                        <a href="#how" class="btn btn-warning btn-lg fw-bold me-2">How It Works</a>
-                        <a href="#features" class="btn btn-outline-light btn-lg">Explore Features</a>
+<!-- ==========================================================
+     HERO SECTION WITH 3D WEBGL INTERACTIVE CANVAS
+========================================================== -->
+<section id="home" class="hero-3d-section">
+    <!-- Three.js 3D WebGL Canvas Background -->
+    <canvas id="hero3d-canvas"></canvas>
+
+    <div class="container hero-content-wrap">
+        <div class="row justify-content-center text-center">
+            <div class="col-lg-10 col-xl-9">
+                <!-- Status Pill -->
+                <div class="mb-4">
+                    <span class="badge-modern-pill">
+                        <span class="pulse-dot"></span>
+                        AI-POWERED FOOD REDISTRIBUTION NETWORK
+                    </span>
+                </div>
+
+                <!-- Main Heading -->
+                <h1 class="hero-main-title">
+                    Redistribute Surplus.<br />
+                    <span class="gradient-text-emerald">Zero Waste.</span>
+                    <span class="gradient-text-gold">Nourish Lives.</span>
+                </h1>
+
+                <!-- Subheading -->
+                <p class="hero-lead-text">
+                    Connecting event hosts, caterers, and corporations with nearby shelters in real time.
+                    Powered by Gemini AI food safety verification, smart routing, and verified handoffs.
+                </p>
+
+                <!-- Action CTAs -->
+                <div class="d-flex flex-wrap justify-content-center gap-3 mb-4">
+                    <a href="{% url 'register' %}" class="btn-cyber-primary">
+                        <i class="bi bi-box2-heart-fill"></i>
+                        <span>Start Donating</span>
+                    </a>
+                    <a href="#how" class="btn-cyber-outline">
+                        <i class="bi bi-play-circle-fill"></i>
+                        <span>Explore How It Works</span>
+                    </a>
+                    <a href="{% url 'register' %}?role=VOLUNTEER" class="btn-cyber-outline">
+                        <i class="bi bi-bicycle"></i>
+                        <span>Join as Volunteer</span>
+                    </a>
+                </div>
+
+                <!-- Floating Live Stats Pills -->
+                <div class="hero-floating-stats">
+                    <div class="hero-stat-pill">
+                        <i class="bi bi-broadcast"></i>
+                        <span>Real-Time GPS Dispatch</span>
+                    </div>
+                    <div class="hero-stat-pill">
+                        <i class="bi bi-shield-check"></i>
+                        <span>Gemini Vision AI Safety</span>
+                    </div>
+                    <div class="hero-stat-pill">
+                        <i class="bi bi-building-check"></i>
+                        <span>80+ Verified NGO Hubs</span>
+                    </div>
+                    <div class="hero-stat-pill">
+                        <i class="bi bi-clock-history"></i>
+                        <span>&lt; 45 Min Avg Delivery</span>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
-    <!-- CAROUSEL -->
-    <section class="py-5 reveal">
-        <div class="container">
-            <h2 class="text-center fw-bold mb-4">Real Stories. Real Impact.</h2>
-            <div id="foodCarousel"
-                 class="carousel slide glass-card overflow-hidden"
-                 data-bs-ride="carousel">
-                <div class="carousel-indicators">
-                    <button type="button"
-                            data-bs-target="#foodCarousel"
-                            data-bs-slide-to="0"
-                            class="active"></button>
-                    <button type="button" data-bs-target="#foodCarousel" data-bs-slide-to="1"></button>
-                    <button type="button" data-bs-target="#foodCarousel" data-bs-slide-to="2"></button>
+    </div>
+</section>
+
+<!-- ==========================================================
+     INNOVATION & FEATURES BENTO GRID (3D TILT CARDS)
+========================================================== -->
+<section id="features" class="py-5 my-lg-5 reveal">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="badge-modern-pill mb-2">
+                <i class="bi bi-cpu-fill"></i> SMART LOGISTICS
+            </span>
+            <h2 class="display-5 fw-bold mb-3">Engineered for Instant Redistribution</h2>
+            <p class="text-muted mx-auto" style="max-width: 620px;">
+                Every second matters when surplus food is on the line. Our 3D coordinated platform ensures safe, rapid, and transparent deliveries.
+            </p>
+        </div>
+
+        <div class="bento-grid">
+            <!-- Bento 1: Real-Time GPS Tracking (Span 8) -->
+            <div class="bento-card bento-span-8 tilt-card" data-tilt>
+                <div class="bento-icon">
+                    <i class="bi bi-radar"></i>
                 </div>
-                <div class="carousel-inner">
-                    <div class="carousel-item active slide-one">
-                        <div class="carousel-caption">
-                            <h4 class="fw-bold">Corporate Lunch Surplus Redistributed in 45 Minutes</h4>
-                            <p>
-                                A Kolkata tech firm donated 200 meals from a board meeting. Delivered to
-                                a local shelter before 2 PM.
-                            </p>
+                <h3 class="h2 fw-bold mb-2">Live Radar & Dynamic Volunteer Matching</h3>
+                <p class="text-muted mb-4" style="max-width: 580px;">
+                    Our geofenced routing engine matches excess food listings with the closest active volunteer, calculating optimal transit windows to preserve temperature and safety.
+                </p>
+                <div class="d-flex flex-wrap gap-2">
+                    <span class="badge bg-dark border border-secondary text-light px-3 py-2 rounded-pill">
+                        <i class="bi bi-geo-alt-fill text-warning me-1"></i> Interactive Leaflet Maps
+                    </span>
+                    <span class="badge bg-dark border border-secondary text-light px-3 py-2 rounded-pill">
+                        <i class="bi bi-lightning-charge-fill text-warning me-1"></i> Sub-Second Dispatch
+                    </span>
+                    <span class="badge bg-dark border border-secondary text-light px-3 py-2 rounded-pill">
+                        <i class="bi bi-lock-fill text-success me-1"></i> Single Active Run Rule
+                    </span>
+                </div>
+            </div>
+
+            <!-- Bento 2: AI Safety Verification (Span 4) -->
+            <div class="bento-card bento-span-4 tilt-card" data-tilt>
+                <div class="bento-icon gold">
+                    <i class="bi bi-robot"></i>
+                </div>
+                <h3 class="h3 fw-bold mb-2">Gemini AI Safety Check</h3>
+                <p class="text-muted mb-3">
+                    Donors upload food photos for instant visual screening. Gemini Vision evaluates condition, temperature suitability, and hygiene before publishing.
+                </p>
+                <div class="p-3 rounded-4" style="background: rgba(255, 255, 255, 0.04); border: 1px dashed rgba(245, 158, 11, 0.4);">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <span class="small text-white-50">Safety Verification</span>
+                        <span class="badge bg-success text-white">99.4% Score</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bento 3: Verified Digital Proof (Span 4) -->
+            <div class="bento-card bento-span-4 tilt-card" data-tilt>
+                <div class="bento-icon gold">
+                    <i class="bi bi-patch-check-fill"></i>
+                </div>
+                <h3 class="h3 fw-bold mb-2">Photo Proof of Delivery</h3>
+                <p class="text-muted mb-3">
+                    End-to-end custody tracking requires volunteer handoff photos and NGO digital receipt confirmations before any cycle closes.
+                </p>
+                <div class="d-flex align-items-center gap-2 text-warning small fw-semibold">
+                    <i class="bi bi-shield-lock-fill"></i> Tamper-evident Audit Trail
+                </div>
+            </div>
+
+            <!-- Bento 4: ESG & Carbon Analytics (Span 8) -->
+            <div class="bento-card bento-span-8 tilt-card" data-tilt>
+                <div class="bento-icon">
+                    <i class="bi bi-bar-chart-line-fill"></i>
+                </div>
+                <h3 class="h2 fw-bold mb-2">ESG Analytics & Automated Impact Reports</h3>
+                <p class="text-muted mb-4" style="max-width: 600px;">
+                    Track meals redirected, CO2 emissions mitigated, and methane prevented. Corporate and event donors receive verifiable ESG compliance certificates.
+                </p>
+                <div class="row g-3">
+                    <div class="col-sm-4">
+                        <div class="p-3 rounded-4" style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2);">
+                            <small class="text-secondary d-block mb-1">GHG Offset</small>
+                            <h4 class="fw-bold text-white mb-0">12.8 MT CO₂e</h4>
                         </div>
                     </div>
-                    <div class="carousel-item slide-two">
-                        <div class="carousel-caption">
-                            <h4 class="fw-bold">Wedding Feast, Zero Waste</h4>
-                            <p>
-                                500 servings of food saved from a Siliguri wedding. Matched with 3 NGOs
-                                via our real-time system.
-                            </p>
+                    <div class="col-sm-4">
+                        <div class="p-3 rounded-4" style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.2);">
+                            <small class="text-secondary d-block mb-1">Water Saved</small>
+                            <h4 class="fw-bold text-white mb-0">4.2M Liters</h4>
                         </div>
                     </div>
-                    <div class="carousel-item slide-three">
-                        <div class="carousel-caption">
-                            <h4 class="fw-bold">University Canteen Joins the Network</h4>
-                            <p>
-                                Daily leftover meals now routed to nearby student welfare centers every
-                                evening automatically.
-                            </p>
+                    <div class="col-sm-4">
+                        <div class="p-3 rounded-4" style="background: rgba(52, 211, 153, 0.08); border: 1px solid rgba(52, 211, 153, 0.2);">
+                            <small class="text-secondary d-block mb-1">Community Value</small>
+                            <h4 class="fw-bold text-white mb-0">₹14.5 Lakhs</h4>
                         </div>
                     </div>
                 </div>
-                <button class="carousel-control-prev"
-                        type="button"
-                        data-bs-target="#foodCarousel"
-                        data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon"></span>
-                </button>
-                <button class="carousel-control-next"
-                        type="button"
-                        data-bs-target="#foodCarousel"
-                        data-bs-slide="next">
-                    <span class="carousel-control-next-icon"></span>
-                </button>
             </div>
         </div>
-    </section>
-    <!-- HOW IT WORKS -->
-    <section id="how" class="py-5 reveal">
-        <div class="container text-center">
-            <h2 class="fw-bold mb-2">How It Works</h2>
-            <p class="text-muted mb-5">Three simple steps to get food from event to plate.</p>
-            <div class="row g-4">
-                <div class="col-md-4">
-                    <div class="step-card glass-card p-4 h-100">
-                        <i class="bi bi-pencil-square fs-2 text-warning mb-3 d-block"></i>
-                        <h5 class="fw-bold mb-3">1. Post Surplus</h5>
-                        <p class="text-muted">
-                            Event organizers log available food including quantity, type, location, and
-                            pickup window.
-                        </p>
-                    </div>
+    </div>
+</section>
+
+<!-- ==========================================================
+     HOW IT WORKS — 3D INTERACTIVE JOURNEY
+========================================================== -->
+<section id="how" class="py-5 my-lg-5 reveal">
+    <div class="container text-center">
+        <span class="badge-modern-pill mb-2">
+            <i class="bi bi-arrow-repeat"></i> THE 3-STEP PIPELINE
+        </span>
+        <h2 class="display-5 fw-bold mb-3">From Event Buffet to Nourished Community</h2>
+        <p class="text-muted mx-auto mb-5" style="max-width: 600px;">
+            A frictionless workflow designed to take surplus food from banquet tables to community centers in minutes.
+        </p>
+
+        <div class="journey-grid">
+            <!-- Step 1 -->
+            <div class="journey-step-card tilt-card" data-tilt>
+                <div class="journey-step-num">01</div>
+                <div class="bento-icon mx-auto mb-3">
+                    <i class="bi bi-pencil-square"></i>
                 </div>
-                <div class="col-md-4">
-                    <div class="step-card glass-card p-4 h-100">
-                        <i class="bi bi-lightning-charge-fill fs-2 text-warning mb-3 d-block"></i>
-                        <h5 class="fw-bold mb-3">2. Auto Match</h5>
-                        <p class="text-muted">
-                            Our system instantly notifies nearby verified NGOs, shelters, and food
-                            banks.
-                        </p>
-                    </div>
+                <h4 class="fw-bold text-white mb-2">List Surplus in 60s</h4>
+                <p class="text-muted small">
+                    Event hosts or chefs input portions, dietary types, pickup deadline, and snap a quick photo with location pins.
+                </p>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="journey-step-card tilt-card" data-tilt>
+                <div class="journey-step-num">02</div>
+                <div class="bento-icon gold mx-auto mb-3">
+                    <i class="bi bi-cpu"></i>
                 </div>
-                <div class="col-md-4">
-                    <div class="step-card glass-card p-4 h-100">
-                        <i class="bi bi-truck fs-2 text-warning mb-3 d-block"></i>
-                        <h5 class="fw-bold mb-3">3. Pickup and Deliver</h5>
-                        <p class="text-muted">
-                            Volunteers or NGO teams collect and distribute the food, fully tracked in
-                            the app.
-                        </p>
-                    </div>
+                <h4 class="fw-bold text-white mb-2">AI Verification & NGO Match</h4>
+                <p class="text-muted small">
+                    Gemini AI evaluates photo safety, while our matchmaking engine routes notifications to nearby shelters and verified NGOs.
+                </p>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="journey-step-card tilt-card" data-tilt>
+                <div class="journey-step-num">03</div>
+                <div class="bento-icon mx-auto mb-3">
+                    <i class="bi bi-truck"></i>
                 </div>
+                <h4 class="fw-bold text-white mb-2">Volunteer Collection & Handoff</h4>
+                <p class="text-muted small">
+                    A nearby volunteer claims the run, navigates with turn-by-turn directions, takes handoff photo evidence, and completes the loop.
+                </p>
             </div>
         </div>
-    </section>
-    <!-- FEATURES -->
-    <section id="features" class="py-5 reveal">
-        <div class="container">
-            <h2 class="fw-bold text-center mb-2">Key Features</h2>
-            <p class="text-center text-muted mb-5">Everything you need for seamless food redistribution.</p>
-            <div class="row g-4">
-                <div class="col-md-3 col-sm-6">
-                    <div class="feature-card glass-card text-center p-4 h-100">
-                        <i class="bi bi-person-check-fill fs-2 text-warning mb-3 d-block"></i>
-                        <h6 class="fw-bold mb-2">Donor Registration</h6>
-                        <p class="text-muted small">Easy sign-up for corporates, caterers, and event venues to start donating.</p>
-                    </div>
-                </div>
-                <div class="col-md-3 col-sm-6">
-                    <div class="feature-card glass-card text-center p-4 h-100">
-                        <i class="bi bi-map-fill fs-2 text-warning mb-3 d-block"></i>
-                        <h6 class="fw-bold mb-2">Real-Time Tracking</h6>
-                        <p class="text-muted small">
-                            Live map view of food listings and volunteer locations for fast
-                            coordination.
-                        </p>
-                    </div>
-                </div>
-                <div class="col-md-3 col-sm-6">
-                    <div class="feature-card glass-card text-center p-4 h-100">
-                        <i class="bi bi-shield-check fs-2 text-warning mb-3 d-block"></i>
-                        <h6 class="fw-bold mb-2">Safety Verification</h6>
-                        <p class="text-muted small">
-                            Food safety checks and NGO verification before any redistribution takes
-                            place.
-                        </p>
-                    </div>
-                </div>
-                <div class="col-md-3 col-sm-6">
-                    <div class="feature-card glass-card text-center p-4 h-100">
-                        <i class="bi bi-bar-chart-fill fs-2 text-warning mb-3 d-block"></i>
-                        <h6 class="fw-bold mb-2">Impact Dashboard</h6>
-                        <p class="text-muted small">
-                            Track meals donated, CO2 saved, and communities served with detailed
-                            reports.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- STATS -->
-    <section id="stats" class="py-5 stats-section text-center reveal">
-        <div class="container">
-            <h2 class="fw-bold mb-5">Our Impact So Far</h2>
-            <div class="row g-4">
+    </div>
+</section>
+
+<!-- ==========================================================
+     ANIMATED IMPACT STATS (DATA-COUNTER)
+========================================================== -->
+<section id="stats" class="py-5 reveal">
+    <div class="container">
+        <div class="impact-stats-card tilt-card" data-tilt>
+            <div class="row g-4 text-center">
                 <div class="col-md-3 col-6">
-                    <div class="stat-box p-4">
-                        <h2 class="fw-bold text-warning">12,000+</h2>
-                        <p class="mb-0 text-muted">Meals Redistributed</p>
-                    </div>
+                    <div class="stat-counter-val text-warning" data-counter="12000" data-suffix="+">12,000+</div>
+                    <p class="text-muted fw-semibold mb-0 mt-2">Meals Redistributed</p>
                 </div>
                 <div class="col-md-3 col-6">
-                    <div class="stat-box p-4">
-                        <h2 class="fw-bold text-warning">80+</h2>
-                        <p class="mb-0 text-muted">Partner NGOs</p>
-                    </div>
+                    <div class="stat-counter-val text-success" data-counter="80" data-suffix="+">80+</div>
+                    <p class="text-muted fw-semibold mb-0 mt-2">Partner Shelter & NGOs</p>
                 </div>
                 <div class="col-md-3 col-6">
-                    <div class="stat-box p-4">
-                        <h2 class="fw-bold text-warning">340+</h2>
-                        <p class="mb-0 text-muted">Food Donors</p>
-                    </div>
+                    <div class="stat-counter-val text-warning" data-counter="340" data-suffix="+">340+</div>
+                    <p class="text-muted fw-semibold mb-0 mt-2">Active Food Donors</p>
                 </div>
                 <div class="col-md-3 col-6">
-                    <div class="stat-box p-4">
-                        <h2 class="fw-bold text-warning">5 Tons</h2>
-                        <p class="mb-0 text-muted">Food Waste Prevented</p>
-                    </div>
+                    <div class="stat-counter-val text-success" data-counter="5" data-suffix=" Tons">5 Tons</div>
+                    <p class="text-muted fw-semibold mb-0 mt-2">Food Waste Prevented</p>
                 </div>
             </div>
         </div>
-    </section>
-    <!-- CTA -->
-    <section class="py-5 text-center reveal">
-        <div class="container">
-            <div class="glass glass-cta d-inline-block px-5 py-5 rounded-5">
-                <h3 class="fw-bold mb-2">Ready to Make a Difference?</h3>
-                <p class="text-muted mb-4">Join our growing network of donors, volunteers, and NGOs.</p>
-                <!-- Top Buttons -->
-                <div class="d-flex flex-column flex-lg-row justify-content-center gap-3 mb-4">
-                    <a href="{% url 'register' %}"
-                       class="btn btn-success btn-lg px-5 py-3 fw-semibold">Register as Donor</a>
-                    <a href="{% url 'register' %}?role=VOLUNTEER" class="btn btn-outline-success btn-lg px-5 py-3 fw-semibold">Become a Volunteer</a>
+    </div>
+</section>
+
+<!-- ==========================================================
+     REAL IMPACT STORIES CAROUSEL
+========================================================== -->
+<section class="py-5 reveal">
+    <div class="container">
+        <div class="text-center mb-4">
+            <span class="badge-modern-pill mb-2">
+                <i class="bi bi-heart-pulse-fill"></i> ON-THE-GROUND IMPACT
+            </span>
+            <h2 class="display-6 fw-bold">Real Stories. Real Communities.</h2>
+        </div>
+
+        <div id="foodCarousel" class="carousel slide rounded-4 overflow-hidden shadow-lg border border-secondary" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#foodCarousel" data-bs-slide-to="0" class="active"></button>
+                <button type="button" data-bs-target="#foodCarousel" data-bs-slide-to="1"></button>
+                <button type="button" data-bs-target="#foodCarousel" data-bs-slide-to="2"></button>
+            </div>
+            <div class="carousel-inner">
+                <div class="carousel-item active slide-one">
+                    <div class="carousel-caption p-4 rounded-4" style="background: rgba(7, 18, 10, 0.75); backdrop-filter: blur(12px);">
+                        <h4 class="fw-bold text-warning">Corporate Lunch Surplus Redistributed in 45 Minutes</h4>
+                        <p class="text-white-50 mb-0">
+                            A Kolkata tech firm donated 200 meals from an executive summit. Delivered to a local shelter before 2:00 PM.
+                        </p>
+                    </div>
                 </div>
-                <div class="text-center">
-                    <a href="{% url 'register' %}?role=NGO" class="btn btn-warning btn-lg px-5 py-3 fw-semibold">Join as NGO</a>
+                <div class="carousel-item slide-two">
+                    <div class="carousel-caption p-4 rounded-4" style="background: rgba(7, 18, 10, 0.75); backdrop-filter: blur(12px);">
+                        <h4 class="fw-bold text-warning">Wedding Feast, Zero Food Waste</h4>
+                        <p class="text-white-50 mb-0">
+                            500 freshly prepared portions saved from a grand banquet and safely routed to 3 partner NGOs simultaneously.
+                        </p>
+                    </div>
+                </div>
+                <div class="carousel-item slide-three">
+                    <div class="carousel-caption p-4 rounded-4" style="background: rgba(7, 18, 10, 0.75); backdrop-filter: blur(12px);">
+                        <h4 class="fw-bold text-warning">University Canteen Redistribution</h4>
+                        <p class="text-white-50 mb-0">
+                            Daily dinner surpluses automatically claimed by student volunteers for distribution to nearby evening community centers.
+                        </p>
+                    </div>
                 </div>
             </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#foodCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#foodCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon"></span>
+            </button>
         </div>
-    </section>
+    </div>
+</section>
+
+<!-- ==========================================================
+     CALL TO ACTION — ROLE BENTO
+========================================================== -->
+<section class="py-5 my-lg-5 text-center reveal">
+    <div class="container">
+        <div class="bento-card mx-auto p-5" style="max-width: 900px; border-color: rgba(16, 185, 129, 0.35);">
+            <span class="badge-modern-pill mb-3">
+                <i class="bi bi-stars"></i> GET STARTED TODAY
+            </span>
+            <h2 class="display-5 fw-bold mb-3">Join the Zero-Waste Movement</h2>
+            <p class="text-muted mb-4 mx-auto" style="max-width: 580px;">
+                Whether you have surplus meals to donate, wheels to deliver, or a community to feed — you are the missing bridge.
+            </p>
+
+            <div class="d-flex flex-wrap justify-content-center gap-3">
+                <a href="{% url 'register' %}" class="btn-cyber-primary">
+                    <i class="bi bi-box2-heart"></i>
+                    <span>Register as Donor</span>
+                </a>
+                <a href="{% url 'register' %}?role=VOLUNTEER" class="btn-cyber-outline">
+                    <i class="bi bi-bicycle"></i>
+                    <span>Become a Volunteer</span>
+                </a>
+                <a href="{% url 'register' %}?role=NGO" class="btn-cyber-outline">
+                    <i class="bi bi-building"></i>
+                    <span>Join as NGO Partner</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %}

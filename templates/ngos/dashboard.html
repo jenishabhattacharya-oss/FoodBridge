@@ -1,33 +1,143 @@
 {% extends "dashboards/base_dashboard.html" %}
-{% block title %}NGO Dashboard{% endblock %}
+{% load static %}
+
+{% block title %}NGO Collection Desk — FoodBridge{% endblock %}
+
 {% block dashboard_content %}
 {% if pending_approval %}
-<section class="profile-panel p-4"><p class="volunteer-eyebrow">ACCOUNT REVIEW</p><h1>Your NGO registration is pending</h1><p>FoodBridge staff will review your organization before you can browse donations, manage deliveries, or use payment features.</p><a class="btn volunteer-btn volunteer-btn--primary" href="{% url 'ngo_profile' %}">Review organization details</a></section>
-{% else %}
-    <section class="ngo-hero reveal">
-        <div>
-            <p class="volunteer-eyebrow"><i class="bi bi-buildings-fill"></i> COMMUNITY FOOD NETWORK</p>
-            <h1>{{ profile.organization_name }}</h1>
-            <p>See available food, coordinate collections, and keep every handoff visible to your team.</p>
-            <div class="ngo-hero__meta"><span><i class="bi bi-geo-alt"></i> {{ profile.address|truncatechars:70 }}</span><span><i class="bi bi-shield-check"></i> Verified FoodBridge partner</span></div>
+    <section class="profile-panel p-4 tilt-card" data-tilt>
+        <div class="d-flex align-items-center gap-2 mb-2">
+            <span class="badge-modern-pill py-1 px-3">
+                <i class="bi bi-clock-history"></i>
+                VERIFICATION IN PROGRESS
+            </span>
         </div>
-        <div class="ngo-hero__actions"><a class="btn volunteer-btn volunteer-btn--primary" href="{% url 'ngo_donations' %}"><i class="bi bi-search"></i> Browse available food</a>{% if PAYMENTS_ENABLED %}<a class="btn volunteer-btn volunteer-btn--ghost" href="{% url 'connect_razorpay' %}"><i class="bi bi-credit-card"></i> Connect Razorpay</a>{% endif %}</div>
+        <h1 class="display-6 fw-bold text-white mb-2">Your NGO registration is under review</h1>
+        <p class="text-white-50 mb-4" style="max-width: 600px;">
+            FoodBridge staff is validating your non-profit registration certificate. Once approved, you will have instant access to real-time food listings, direct volunteer coordination, and verified receipts.
+        </p>
+        <a class="btn-cyber-primary py-2 px-4" href="{% url 'ngo_profile' %}">
+            <i class="bi bi-file-earmark-person"></i>
+            <span>Review Organization Details</span>
+        </a>
+    </section>
+{% else %}
+    <!-- NGO Hero Banner -->
+    <section class="ngo-hero reveal tilt-card mb-4" data-tilt>
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <span class="badge-modern-pill py-1 px-3">
+                    <span class="pulse-dot"></span>
+                    COMMUNITY SHELTER DESK
+                </span>
+            </div>
+            <h1 class="display-6 fw-bold text-white mb-2">{{ profile.organization_name }}</h1>
+            <p class="text-white-50 mb-0">Browse incoming surplus food, coordinate intake, and keep every community handoff transparent.</p>
+            <div class="ngo-hero__meta mt-3">
+                <span><i class="bi bi-geo-alt-fill text-warning"></i> {{ profile.address|truncatechars:70 }}</span>
+                <span><i class="bi bi-patch-check-fill text-success"></i> Verified FoodBridge Partner</span>
+            </div>
+        </div>
+        <div class="ngo-hero__actions">
+            <a class="btn-cyber-primary py-2 px-4" href="{% url 'ngo_donations' %}">
+                <i class="bi bi-search"></i>
+                <span>Browse Surplus Food</span>
+            </a>
+            {% if PAYMENTS_ENABLED %}
+                <a class="btn-cyber-outline py-2 px-4" href="{% url 'connect_razorpay' %}">
+                    <i class="bi bi-credit-card"></i>
+                    <span>Connect Payouts</span>
+                </a>
+            {% endif %}
+        </div>
     </section>
 
-    <section class="ngo-stat-grid dashboard-section">
-        {% for stat in stats %}<article class="ngo-stat-card reveal"><span><i class="bi {{ stat.icon }}"></i></span><div><small>{{ stat.label }}</small><strong>{{ stat.value }}</strong><p>{{ stat.note }}</p></div></article>{% endfor %}
+    <!-- Bento Stats Grid (3D Tilt Cards) -->
+    <section class="ngo-stat-grid dashboard-section mb-4">
+        {% for stat in stats %}
+            <article class="ngo-stat-card tilt-card reveal" data-tilt>
+                <span><i class="bi {{ stat.icon }}"></i></span>
+                <div>
+                    <small>{{ stat.label }}</small>
+                    <strong>{{ stat.value }}</strong>
+                    <p>{{ stat.note }}</p>
+                </div>
+            </article>
+        {% endfor %}
     </section>
 
-    <section class="ngo-impact-strip reveal">
-        <div><p class="volunteer-eyebrow">COMMUNITY REACH</p><h2>Every confirmed collection becomes support where it’s needed most.</h2></div>
-        <div class="ngo-impact-strip__items"><span><i class="bi bi-heart-pulse"></i> Reduce waste</span><span><i class="bi bi-people"></i> Strengthen community</span><span><i class="bi bi-arrow-repeat"></i> Track each handoff</span></div>
+    <!-- Impact Strip -->
+    <section class="ngo-impact-strip reveal tilt-card mb-4" data-tilt>
+        <div>
+            <p class="volunteer-eyebrow mb-1">LOCAL COMMUNITY DIRECT REACH</p>
+            <h2 class="h4 fw-bold mb-0">Every confirmed delivery directly fights urban hunger.</h2>
+        </div>
+        <div class="ngo-impact-strip__items">
+            <span><i class="bi bi-heart-pulse-fill text-warning"></i> Reduce Waste</span>
+            <span><i class="bi bi-people-fill text-warning"></i> Strengthen Families</span>
+            <span><i class="bi bi-shield-check text-success"></i> 100% Tracked Runs</span>
+        </div>
     </section>
 
+    <!-- Incoming Opportunities & Collection Desk -->
     <section class="row g-4 dashboard-section">
-        <div class="col-lg-7"><div class="volunteer-panel h-100 reveal"><div class="volunteer-panel__header"><div><p class="volunteer-eyebrow">INCOMING OPPORTUNITIES</p><h2>Available food nearby</h2></div><a href="{% url 'ngo_donations' %}" class="volunteer-text-link">View all <i class="bi bi-arrow-right"></i></a></div><div class="volunteer-panel__body ngo-list">
-            {% for donation in available_donations %}<article class="ngo-list-item"><span><i class="bi bi-basket2-fill"></i></span><div><h3>{{ donation.title }}</h3><p>{{ donation.quantity }} {{ donation.get_unit_display }} · {{ donation.get_food_type_display }} · Pickup by {{ donation.pickup_window_end|date:"M j, g:i A" }}</p></div><a href="{% url 'donation_detail' donation.id %}" class="btn volunteer-icon-btn" aria-label="View {{ donation.title }}"><i class="bi bi-arrow-right"></i></a></article>{% empty %}<div class="volunteer-empty-state"><div><i class="bi bi-basket"></i></div><h3>No food listings at the moment</h3><p>New donor listings will appear here when available.</p></div>{% endfor %}
-        </div></div></div>
-        <div class="col-lg-5"><div class="ngo-collection-panel h-100 reveal"><p class="volunteer-eyebrow">YOUR COLLECTION DESK</p><h2>Stay on top of managed donations</h2><p>Review the handoffs your organization is responsible for and confirm receipt once food arrives.</p><div class="ngo-collection-panel__count"><i class="bi bi-box2-heart"></i><strong>{{ managed_donations|length }}</strong><span>recent managed listings</span></div><a href="{% url 'ngo_managed_donations' %}" class="btn volunteer-btn volunteer-btn--primary">Open collection desk <i class="bi bi-arrow-right"></i></a></div></div>
+        <div class="col-lg-7">
+            <div class="volunteer-panel h-100 reveal tilt-card" data-tilt>
+                <div class="volunteer-panel__header">
+                    <div>
+                        <p class="volunteer-eyebrow">INCOMING SUPPLY</p>
+                        <h2 class="h4 fw-bold mb-0">Available Food Nearby</h2>
+                    </div>
+                    <a href="{% url 'ngo_donations' %}" class="volunteer-text-link">
+                        View all <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+                <div class="volunteer-panel__body ngo-list">
+                    {% for donation in available_donations %}
+                        <article class="ngo-list-item p-3 rounded-4 mb-2" style="background: rgba(255, 255, 255, 0.035); border: 1px solid rgba(255, 255, 255, 0.06);">
+                            <span><i class="bi bi-basket2-fill"></i></span>
+                            <div>
+                                <h3 class="h6 fw-bold text-white mb-1">{{ donation.title }}</h3>
+                                <p class="small text-white-50 mb-0">
+                                    {{ donation.quantity }} {{ donation.get_unit_display }} · {{ donation.get_food_type_display }} · 
+                                    <span class="text-warning">Pickup by {{ donation.pickup_window_end|date:"M j, g:i A" }}</span>
+                                </p>
+                            </div>
+                            <a href="{% url 'donation_detail' donation.id %}" class="btn volunteer-icon-btn" aria-label="View {{ donation.title }}">
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </article>
+                    {% empty %}
+                        <div class="volunteer-empty-state py-4 text-center">
+                            <div><i class="bi bi-basket text-warning fs-3"></i></div>
+                            <h3 class="h5 fw-bold text-white">No food listings at the moment</h3>
+                            <p class="text-white-50 small mb-0">New surplus donations from banquet halls and corporates will appear here immediately.</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="ngo-collection-panel h-100 reveal tilt-card" data-tilt>
+                <p class="volunteer-eyebrow mb-1">YOUR COLLECTION DESK</p>
+                <h2 class="h4 fw-bold mb-2">Managed Deliveries</h2>
+                <p class="text-white-50 small mb-4">
+                    Monitor handoffs assigned to your shelter and upload digital confirmation receipts once food boxes arrive safely.
+                </p>
+                <div class="ngo-collection-panel__count p-3 rounded-4 mb-4" style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.1);">
+                    <i class="bi bi-box2-heart-fill text-warning fs-2"></i>
+                    <div>
+                        <strong class="display-6 fw-bold text-white d-block line-height-1">{{ managed_donations|length }}</strong>
+                        <span class="text-white-50 small">Active Managed Runs</span>
+                    </div>
+                </div>
+                <a href="{% url 'ngo_managed_donations' %}" class="btn-cyber-primary py-2 px-4 w-100 justify-content-center">
+                    <span>Open Collection Desk</span>
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
     </section>
 {% endif %}
 {% endblock %}
