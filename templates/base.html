@@ -3,9 +3,9 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
         <meta name="description"
-              content="FoodBridge - Connecting food donors with those in need" />
+              content="{% block description %}FoodBridge is a non-profit food recovery network connecting surplus food donors, volunteers and verified NGOs.{% endblock %}" />
         <title>{% block title %} FoodBridge {% endblock %}</title>
         <meta name="theme-color" content="#07120a" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -13,26 +13,36 @@
         <link rel="manifest" href="{% static 'manifest.json' %}" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <!-- Google Fonts: Plus Jakarta Sans & Space Grotesk -->
-        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
-        <!-- Bootstrap -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+        <!-- Typography: Figtree (body) & Plus Jakarta Sans (headings) -->
+        <link href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap"
               rel="stylesheet" />
-        <!-- Bootstrap Icons -->
+        <!-- Bootstrap Icons (icon font only; Bootstrap CSS is no longer used) -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
               rel="stylesheet" />
-        <!-- Global CSS -->
-        <link rel="stylesheet" href="{% static 'css/style.css' %}?v=3d-modern-v1" />
+        <!-- Wanantara design system -->
+        <link rel="stylesheet" href="{% static 'css/wanantara.css' %}?v=wanantara-1" />
+        <link rel="stylesheet" href="{% static 'css/style.css' %}?v=wanantara-1" />
+        <noscript>
+            <style>.reveal,.wn-fade-up,.wn-word{opacity:1!important;transform:none!important;animation:none!important}.wn-accordion__panel{grid-template-rows:1fr!important}</style>
+        </noscript>
         {% block extra_css %}{% endblock %}
     </head>
-    <body class="foodbridge-app">
+    <body class="foodbridge-app wn-public">
+        <a class="wn-skip-link" href="#main-content">Skip to content</a>
+        <div class="wn-ambient" aria-hidden="true">
+            <span class="wn-orb wn-orb--emerald"></span>
+            <span class="wn-orb wn-orb--gold"></span>
+            <span class="wn-orb wn-orb--moss"></span>
+        </div>
         {% include "components/navbar.html" %}
         {% if messages %}
-            <div class="container mt-3">
+            <div class="wn-toast-stack" aria-live="polite">
                 {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show modern-alert"
-                         role="alert">
-                        {{ message }}
+                    <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show wn-toast"
+                         {% if 'success' in message.tags or 'info' in message.tags %}data-autodismiss="6000"{% endif %}>
+                        <i class="bi {% if 'error' in message.tags or 'danger' in message.tags %}bi-exclamation-octagon{% elif 'warning' in message.tags %}bi-exclamation-triangle{% elif 'success' in message.tags %}bi-check2-circle{% else %}bi-info-circle{% endif %} wn-toast__icon"
+                           aria-hidden="true"></i>
+                        <div class="wn-toast__body">{{ message }}</div>
                         <button type="button"
                                 class="btn-close"
                                 data-bs-dismiss="alert"
@@ -41,18 +51,17 @@
                 {% endfor %}
             </div>
         {% endif %}
-        <main class="main-viewport">
+        <main class="main-viewport" id="main-content">
             {% block content %}
             {% endblock %}
         </main>
         {% include "components/footer.html" %}
         {% include "components/mobile_nav.html" %}
-        
-        <!-- Core Scripts -->
+
+        <!-- Core Scripts (Bootstrap JS kept only for data-bs-* behaviours such as dismissable alerts) -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-        <script src="{% static 'js/main.js' %}"></script>
-        <script src="{% static 'js/ui_effects.js' %}"></script>
+        <script src="{% static 'js/main.js' %}?v=wanantara-1"></script>
+        <script src="{% static 'js/ui_effects.js' %}?v=wanantara-1"></script>
         {% block extra_js %}{% endblock %}
     </body>
 </html>
