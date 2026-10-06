@@ -1,0 +1,62 @@
+/* Voice donation form filler */
+.voice-fill { padding: 1.4rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,.1); background: linear-gradient(135deg, rgba(240,173,78,.08), rgba(255,255,255,.02)); }
+.voice-fill [hidden] { display: none !important; }
+.voice-fill__header { display: flex; align-items: center; gap: .9rem; }
+.voice-fill__icon { display: grid; width: 42px; height: 42px; place-items: center; flex: 0 0 42px; border-radius: 13px; color: var(--amber); background: rgba(240,173,78,.13); font-size: 1.1rem; }
+.voice-fill__header h2 { margin: 0; font-size: 1.05rem; }
+.voice-fill__header p { margin: .2rem 0 0; color: rgba(237,244,234,.72); font-size: .88rem; }
+.voice-fill__example { display: flex; gap: .5rem; margin: .9rem 0 0; padding: .65rem .85rem; border-radius: 12px; color: rgba(237,244,234,.78); background: rgba(4,30,17,.35); font-size: .84rem; font-style: italic; }
+
+.voice-fill__controls { display: flex; flex-wrap: wrap; align-items: center; gap: .7rem; margin-top: 1rem; }
+.voice-fill__mic { display: inline-flex; align-items: center; gap: .55rem; min-height: 46px; padding: .6rem 1.25rem; border: 0; border-radius: 999px; color: #173222; background: var(--amber); font-weight: 700; cursor: pointer; transition: transform .15s ease, background .2s ease; }
+.voice-fill__mic:hover { transform: translateY(-1px); }
+.voice-fill__mic:focus-visible { outline: 3px solid rgba(240,173,78,.55); outline-offset: 3px; }
+.voice-fill__mic:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+.voice-fill__mic.is-listening { color: #fff; background: #d9534f; animation: voice-pulse 1.4s ease-out infinite; }
+@keyframes voice-pulse { 0% { box-shadow: 0 0 0 0 rgba(217,83,79,.55); } 70% { box-shadow: 0 0 0 14px rgba(217,83,79,0); } 100% { box-shadow: 0 0 0 0 rgba(217,83,79,0); } }
+
+.voice-fill__transcript { margin-top: 1rem; }
+.voice-fill__transcript label { display: block; margin-bottom: .4rem; font-size: .84rem; font-weight: 600; }
+.voice-fill__transcript label small { color: rgba(237,244,234,.6); font-weight: 400; }
+.voice-fill__transcript textarea { width: 100%; padding: .75rem .9rem; border: 1px solid rgba(255,255,255,.14); border-radius: 12px; color: inherit; background: rgba(4,30,17,.42); resize: vertical; }
+.voice-fill__transcript textarea:focus { outline: none; border-color: var(--amber); box-shadow: 0 0 0 3px rgba(240,173,78,.13); }
+.voice-fill[data-state="listening"] .voice-fill__transcript textarea { border-color: rgba(217,83,79,.6); }
+.voice-fill__transcript-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .6rem; margin-top: .6rem; }
+.voice-fill__transcript-meta { display: flex; flex-wrap: wrap; align-items: center; gap: .9rem; color: rgba(237,244,234,.66); font-size: .8rem; }
+.voice-fill__link { padding: 0; border: 0; color: var(--amber); background: none; font-size: .8rem; text-decoration: underline; cursor: pointer; }
+.voice-fill__overwrite { display: inline-flex; align-items: center; gap: .4rem; cursor: pointer; }
+
+.voice-fill__status { margin-top: .8rem; padding: .6rem .85rem; border-radius: 10px; background: rgba(255,255,255,.05); font-size: .85rem; }
+.voice-fill__status[data-tone="error"] { color: #ffb2a7; background: rgba(217,83,79,.12); }
+.voice-fill[data-state="parsing"] .voice-fill__status::before { content: ""; display: inline-block; width: .85rem; height: .85rem; margin-right: .5rem; vertical-align: -2px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: voice-spin .8s linear infinite; }
+@keyframes voice-spin { to { transform: rotate(360deg); } }
+
+.voice-fill__summary { margin-top: 1rem; padding: 1rem; border: 1px solid rgba(240,173,78,.35); border-radius: 14px; background: rgba(240,173,78,.07); }
+.voice-fill__summary[data-complete="true"] { border-color: rgba(143,227,168,.4); background: rgba(143,227,168,.07); }
+.voice-fill__summary-text { display: flex; gap: .5rem; margin: 0; font-size: .9rem; font-weight: 600; }
+.voice-fill__missing { display: flex; flex-wrap: wrap; gap: .45rem; margin: .7rem 0 0; padding: 0; list-style: none; }
+.voice-fill__missing-link { padding: .3rem .75rem; border: 1px solid rgba(240,173,78,.5); border-radius: 999px; color: var(--amber); background: rgba(240,173,78,.1); font-size: .8rem; cursor: pointer; }
+.voice-fill__missing-link:hover, .voice-fill__missing-link:focus-visible { background: rgba(240,173,78,.22); }
+.voice-fill__notes { margin: .7rem 0 0; padding-left: 1.1rem; color: rgba(237,244,234,.72); font-size: .8rem; }
+.voice-fill__summary-actions { display: flex; justify-content: flex-end; margin-top: .8rem; }
+
+/* Field state badges and highlights */
+.voice-badge { display: inline-flex; align-items: center; gap: .25rem; margin-left: .5rem; padding: .1rem .5rem; border-radius: 999px; font-size: .7rem; font-style: normal; font-weight: 600; vertical-align: middle; }
+.voice-badge--filled { color: #8fe3a8; background: rgba(143,227,168,.14); }
+.voice-badge--uncertain { color: #9fd3ff; background: rgba(159,211,255,.14); }
+.voice-badge--missing { color: var(--amber); background: rgba(240,173,78,.16); }
+.is-voice-filled :is(input, select, textarea):not([type="checkbox"]):not([type="hidden"]):not([data-location-search]) { border-color: rgba(143,227,168,.6); animation: voice-flash 1.6s ease-out 1; }
+.is-voice-uncertain :is(input, select, textarea):not([type="checkbox"]):not([type="hidden"]):not([data-location-search]) { border-color: rgba(159,211,255,.65); }
+.is-voice-missing :is(input, select, textarea):not([type="checkbox"]):not([type="hidden"]):not([data-location-search]) { border-color: rgba(240,173,78,.8); box-shadow: 0 0 0 3px rgba(240,173,78,.12); }
+.is-voice-filled .donation-toggle { border-color: rgba(143,227,168,.6); }
+@keyframes voice-flash { 0% { box-shadow: 0 0 0 4px rgba(143,227,168,.35); } 100% { box-shadow: 0 0 0 0 rgba(143,227,168,0); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .voice-fill__mic.is-listening,
+  .voice-fill[data-state="parsing"] .voice-fill__status::before,
+  .is-voice-filled :is(input, select, textarea) { animation: none; }
+}
+@media (max-width: 576px) {
+  .voice-fill { padding: 1.1rem; }
+  .voice-fill__controls > *, .voice-fill__transcript-actions > .btn { flex: 1 1 100%; justify-content: center; }
+}

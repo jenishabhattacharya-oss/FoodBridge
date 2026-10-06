@@ -1,5 +1,7 @@
 {% extends base_template|default:"base.html" %}
+{% load static %}
 {% block title %}{{ page_title }} - FoodBridge{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/voice_fill.css' %}">{% endblock %}
 {% block content %}
 <section class="donor-workspace donor-form-workspace">
   <div class="volunteer-page-header reveal">
@@ -18,6 +20,8 @@
       <span><i class="bi bi-basket2-heart"></i></span>
       <div><h2>List your surplus food</h2><p>Fields marked <b>*</b> are required to arrange a pickup.</p></div>
     </div>
+
+    {% include "donations/voice_fill.html" %}
 
     <section class="donation-form-section" aria-labelledby="food-details-heading">
       <div class="donation-form-section__heading"><span><i class="bi bi-card-list"></i></span><div><h2 id="food-details-heading">Food details</h2><p>Help local organizations understand what is available.</p></div></div>
@@ -91,4 +95,5 @@
   unpackagedInput.addEventListener('change', updateLabelPhotoVisibility);
   updateLabelPhotoVisibility();
 </script>
+<script src="{% static 'js/voice_fill.js' %}"></script>
 {% endblock %}

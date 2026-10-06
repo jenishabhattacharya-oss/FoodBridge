@@ -1,0 +1,41 @@
+<section class="voice-fill" data-voice-fill data-state="idle" data-lang="en-IN" data-parse-url="{% url 'donation_voice_parse' %}" aria-labelledby="voice-fill-heading">
+  <div class="voice-fill__header">
+    <span class="voice-fill__icon" aria-hidden="true"><i class="bi bi-mic"></i></span>
+    <div>
+      <h2 id="voice-fill-heading">Fill with voice</h2>
+      <p>Describe your donation and we will fill in the form for you. You can review and edit everything before saving.</p>
+    </div>
+  </div>
+  <p class="voice-fill__example"><i class="bi bi-chat-quote" aria-hidden="true"></i><span>e.g. "20 plates of veg biryani cooked at 6 pm, contains cashews, pickup from MG Road between 8 and 10 tonight."</span></p>
+
+  <div class="voice-fill__controls">
+    <button type="button" class="voice-fill__mic" data-voice-start aria-pressed="false" aria-controls="voice-fill-transcript">
+      <i class="bi bi-mic-fill" aria-hidden="true"></i><span data-voice-start-label>Start speaking</span>
+    </button>
+    <button type="button" class="btn volunteer-btn volunteer-btn--ghost" data-voice-type-toggle><i class="bi bi-keyboard" aria-hidden="true"></i> Type instead</button>
+  </div>
+
+  <div class="voice-fill__transcript" data-voice-transcript-wrap hidden>
+    <label for="voice-fill-transcript">What we heard <small>(you can correct it)</small></label>
+    <textarea id="voice-fill-transcript" rows="3" maxlength="2000" data-voice-transcript placeholder="Describe the food, quantity, when it was prepared, pickup address and pickup time."></textarea>
+    <div class="voice-fill__transcript-actions">
+      <div class="voice-fill__transcript-meta">
+        <small data-voice-count aria-live="off">0 / 2000</small>
+        <button type="button" class="voice-fill__link" data-voice-clear>Clear</button>
+        <label class="voice-fill__overwrite"><input type="checkbox" data-voice-overwrite> Replace fields I already filled</label>
+      </div>
+      <button type="button" class="btn volunteer-btn volunteer-btn--primary" data-voice-parse><i class="bi bi-magic" aria-hidden="true"></i> Fill the form</button>
+    </div>
+  </div>
+
+  <div class="voice-fill__status" data-voice-status role="status" aria-live="polite" hidden></div>
+
+  <div class="voice-fill__summary" data-voice-summary hidden>
+    <p class="voice-fill__summary-text"><i class="bi bi-clipboard-check" aria-hidden="true"></i><span data-voice-summary-text></span></p>
+    <ul class="voice-fill__missing" data-voice-missing aria-label="Details that need your input"></ul>
+    <ul class="voice-fill__notes" data-voice-notes></ul>
+    <div class="voice-fill__summary-actions">
+      <button type="button" class="btn volunteer-btn volunteer-btn--ghost" data-voice-undo><i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i> Undo voice fill</button>
+    </div>
+  </div>
+</section>
