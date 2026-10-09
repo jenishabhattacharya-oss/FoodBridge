@@ -1,9 +1,10 @@
 from django.urls import path
 
-from . import views
+from . import views, voice_views
 
 urlpatterns = [
     path("", views.ngo_list, name="ngo_donations"),
+    path("voice-parse/", voice_views.voice_parse, name="donation_voice_parse"),
     path("managed/", views.ngo_managed, name="ngo_managed_donations"),
     path("food-review/", views.food_review_queue, name="food_review_queue"),
     path("food-review/<int:donation_id>/<str:decision>/", views.review_food, name="review_food"),
