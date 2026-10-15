@@ -54,7 +54,7 @@ def _available_queryset(request, default_city=""):
         donation__status="NGO_ACCEPTED",
         donation__receiving_ngo__isnull=False,
         donation__pickup_window_end__gt=timezone.now(),
-    ).select_related("donation__receiving_ngo")
+    ).select_related("donation", "donation__receiving_ngo")
     city = request.GET.get("city", default_city).strip()
     if city:
         pickups = pickups.filter(pickup_city__iexact=city)
@@ -98,7 +98,7 @@ def dashboard(request):
     active = Pickup.objects.filter(
         assigned_volunteer=request.user,
         status__in=(Pickup.Status.CLAIMED, Pickup.Status.COLLECTED),
-    )
+    ).select_related("donation")
     delivered = Pickup.objects.filter(assigned_volunteer=request.user, status=Pickup.Status.DELIVERED)
     dashboard_data = {
         "welcome": {
@@ -147,7 +147,9 @@ def available_pickups(request):
 @role_required(User.Role.VOLUNTEER)
 @approved_volunteer_required
 def pickup_details(request, pickup_id):
-    pickup = _visible_pickup_or_404(request, pickup_id)
+    pickup = get_object_or_404(Pickup.objects.select_related("donation"), pk=pickup_id)
+    if pickup.status != Pickup.Status.OPEN and pickup.assigned_volunteer_id != request.user.id:
+        raise Http404("Pickup not found.")
     return render(request, "volunteers/pickup_details.html", {
         "pickup": pickup,
         "has_claimed_pickup": pickup.assigned_volunteer_id == request.user.id,
@@ -231,7 +233,7 @@ def assigned_pickups(request):
     pickups = Pickup.objects.filter(
         assigned_volunteer=request.user,
         status__in=(Pickup.Status.CLAIMED, Pickup.Status.COLLECTED),
-    )
+    ).select_related("donation")
     return render(request, "volunteers/assigned_pickups.html", {
         "pickups": pickups,
         "sidebar_items": _sidebar("Assigned Pickups"),

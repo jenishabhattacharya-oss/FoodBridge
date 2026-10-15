@@ -418,12 +418,10 @@
 .assigned-pickup-list { display: grid; gap: 1rem; }.assigned-pickup-card { display: flex; align-items: center; gap: 1.15rem; padding: 1.2rem 1.3rem; border: 1px solid rgba(255,255,255,.11); border-radius: 20px; background: rgba(255,255,255,.055); transition: transform .22s ease, background .22s ease; }.assigned-pickup-card:hover { transform: translateX(4px); background: rgba(255,255,255,.08); }.assigned-pickup-card__step { display: grid; width: 52px; height: 52px; place-items: center; flex: 0 0 52px; border-radius: 16px; color: var(--amber); background: rgba(240,173,78,.13); font-size: 1.25rem; }.assigned-pickup-card__main { flex: 1; }.assigned-pickup-card h2 { margin: .5rem 0 .3rem; font-size: 1.15rem; }.assigned-pickup-card p { margin: 0 0 .5rem; color: rgba(255,255,255,.73); }.assigned-pickup-card__main > div { display: flex; flex-wrap: wrap; gap: .8rem; color: rgba(255,255,255,.53); font-size: .78rem; }.assigned-pickup-card__main > div i { color: var(--amber); }
 @media (max-width: 767.98px) { .volunteer-page-header { align-items: flex-start; flex-direction: column; }.volunteer-filter { grid-template-columns: 1fr; }.volunteer-filter__actions .volunteer-btn { flex: 1; }.assigned-pickup-card { align-items: flex-start; flex-wrap: wrap; }.assigned-pickup-card__main { min-width: calc(100% - 70px); }.assigned-pickup-card > .volunteer-btn { width: 100%; } }
 
-/* Abstract wallpaper with the existing FoodBridge forest-and-amber palette. */
+/* Ambient forest-and-amber treatment behind dashboard cards. */
 .dashboard-body { background: #0a2618; }
 .dashboard-layout { position: relative; isolation: isolate; background: rgba(6, 37, 22, .68); }
-.dashboard-layout::before { position: fixed; z-index: -1; inset: -24px; content: ""; background: url("../img/volunteer-abstract-wallpaper.png") center / cover no-repeat; filter: blur(10px); transform: scale(1.04); }
-.dashboard-body--donor .dashboard-layout::before { background-image: url("../img/volunteer-abstract-wallpaper.png"); background-position: 28% center; }
-.dashboard-body--ngo .dashboard-layout::before { background-image: url("../img/background1-contact.jpeg"); background-position: center; filter: blur(12px) saturate(.7) hue-rotate(45deg) brightness(.62); }
+.dashboard-layout::before { position: fixed; z-index: -1; inset: -24px; content: ""; background: radial-gradient(ellipse at 12% 8%, rgba(16,185,129,.13), transparent 42%), radial-gradient(ellipse at 88% 80%, rgba(240,173,78,.09), transparent 44%); }
 .dashboard-sidebar { width: 238px; padding: 1rem; }
 .dashboard-content { max-width: 1240px; padding: 1.25rem 1.5rem 2rem; }
 .dashboard-topbar { padding: 1rem 1.5rem 0; }
@@ -748,6 +746,29 @@
 .leaflet-control-attribution { color: var(--text-muted) !important; background: rgba(7, 18, 10, 0.72) !important; }
 .leaflet-control-attribution a { color: var(--accent-gold) !important; }
 .leaflet-popup-content-wrapper, .leaflet-popup-tip { color: var(--text-primary); background: rgba(9, 22, 13, 0.95); border: 1px solid var(--border-gold); box-shadow: var(--glass-shadow); }
+
+/* Food photos belong on listings and handoff records, not as dashboard wallpaper. */
+.donation-card-photo { display: block; width: calc(100% + 2.7rem); height: 150px; margin: -1.35rem -1.35rem 1.1rem; object-fit: cover; background: rgba(255,255,255,.05); }
+.donation-card-photo--empty { display: grid; place-items: center; color: var(--amber); font-size: 2rem; }
+.donor-donation-card { overflow: hidden; }
+.ngo-managed-card { overflow: hidden; }
+.review-photo { width: 100%; height: 150px; object-fit: cover; }
+.pickup-card__photo { display: block; width: calc(100% + 2.6rem); height: 180px; margin: -1.3rem -1.3rem 1rem; border-radius: 19px 19px 0 0; object-fit: cover; }
+.pickup-food-preview { margin: 1rem 0 1.35rem; }
+.pickup-food-preview p { margin-bottom: .5rem; }
+.pickup-food-preview img { display: block; width: min(100%, 560px); max-height: 340px; border-radius: 16px; object-fit: cover; }
+.active-pickup-card__photo { width: 76px; height: 64px; flex: 0 0 76px; border-radius: 12px; object-fit: cover; }
+.assigned-pickup-card__photo { width: 92px; height: 72px; flex: 0 0 92px; border-radius: 12px; object-fit: cover; }
+.history-item__photo { width: 64px; height: 54px; flex: 0 0 64px; border-radius: 11px; object-fit: cover; }
+.ngo-list-item__photo { width: 54px; height: 48px; flex: 0 0 54px; border-radius: 10px; object-fit: cover; }
+.donor-table-food { display: flex; align-items: center; gap: .7rem; }
+.donor-table-food img { width: 54px; height: 44px; flex: 0 0 54px; border-radius: 9px; object-fit: cover; }
+.donation-evidence-gallery { margin-top: 1.5rem; }
+.donation-evidence-gallery > div { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; }
+.donation-evidence-gallery a { position: relative; display: block; min-height: 150px; overflow: hidden; border-radius: 14px; color: #fff; }
+.donation-evidence-gallery img { width: 100%; height: 180px; object-fit: cover; }
+.donation-evidence-gallery a span { position: absolute; right: 0; bottom: 0; left: 0; padding: 1.7rem .8rem .65rem; background: linear-gradient(transparent, rgba(3,24,14,.9)); font-size: .8rem; font-weight: 700; }
+@media (max-width: 575.98px) { .donation-evidence-gallery > div { grid-template-columns: 1fr; }.pickup-card__photo { height: 165px; }.assigned-pickup-card__photo { width: 100%; height: 140px; flex-basis: 100%; }.history-item__photo { width: 56px; flex-basis: 56px; } }
 
 /* Motion & spacing */
 .reveal { transition: opacity 0.9s var(--ease-framer), transform 0.9s var(--ease-framer); }

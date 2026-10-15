@@ -95,7 +95,7 @@
                 <div class="volunteer-panel__body ngo-list">
                     {% for donation in available_donations %}
                         <article class="ngo-list-item p-3 rounded-4 mb-2" style="background: rgba(255, 255, 255, 0.035); border: 1px solid rgba(255, 255, 255, 0.06);">
-                            <span><i class="bi bi-basket2-fill"></i></span>
+                            {% if donation.food_photo_overview and donation.verification_status == 'APPROVED' %}<img class="ngo-list-item__photo" src="{% url 'donation_photo' donation.id 'overview' %}" alt="Food overview: {{ donation.title }}" loading="lazy">{% else %}<span><i class="bi bi-basket2-fill"></i></span>{% endif %}
                             <div>
                                 <h3 class="h6 fw-bold text-white mb-1">{{ donation.title }}</h3>
                                 <p class="small text-white-50 mb-0">

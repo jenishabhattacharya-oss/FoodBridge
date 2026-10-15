@@ -22,12 +22,64 @@ DEMO_EMAIL_PREFIX = "demo."
 DEMO_PASSWORD = "FoodBridgeDemo123!"
 
 DEMO_ASSET_DIRECTORY = Path(__file__).resolve().parent.parent / "demo_assets"
-DEMO_FOOD_IMAGES = (
-    "meal-plated.jpg",
-    "salad-fresh.jpg",
-    "produce-bowl.jpg",
-    "vegetables.jpg",
-)
+DEMO_FOOD_PROFILES = {
+    "thali": {
+        "food_type": Donation.FoodType.VEG, "food_condition": Donation.FoodCondition.COOKED,
+        "quantity": 24, "unit": Donation.Unit.PLATES, "is_unpackaged": True,
+        "description": "Fresh vegetarian thali portions with rice, dal and seasonal sides.",
+        "allergen_notes": "Contains dairy and wheat.", "storage_notes": "Kept covered in insulated serving trays.",
+        "overview": "thali.jpg", "closeup": "meal-plated.jpg",
+    },
+    "catered_meals": {
+        "food_type": Donation.FoodType.VEG, "food_condition": Donation.FoodCondition.COOKED,
+        "quantity": 36, "unit": Donation.Unit.PLATES, "is_unpackaged": True,
+        "description": "Vegetarian lunch portions prepared today for a community event.",
+        "allergen_notes": "Contains legumes; may contain dairy.", "storage_notes": "Packed in covered food-safe trays.",
+        "overview": "meal-containers.jpg", "closeup": "salad-fresh.jpg",
+    },
+    "bakery": {
+        "food_type": Donation.FoodType.BAKERY, "food_condition": Donation.FoodCondition.FRESH,
+        "quantity": 6, "unit": Donation.Unit.BOXES, "is_unpackaged": True,
+        "description": "Assorted fresh bakery loaves and rolls from this morning.",
+        "allergen_notes": "Contains wheat and gluten.", "storage_notes": "Stored in clean bakery boxes.",
+        "overview": "bakery-bread.jpg", "closeup": "bread-loaves.jpg",
+    },
+    "fish_meal": {
+        "food_type": Donation.FoodType.NON_VEG, "food_condition": Donation.FoodCondition.COOKED,
+        "quantity": 18, "unit": Donation.Unit.PLATES, "is_unpackaged": True,
+        "description": "Cooked rice and fish meal portions prepared for lunch service.",
+        "allergen_notes": "Contains fish; prepared with coconut.", "storage_notes": "Kept covered and ready for prompt collection.",
+        "overview": "kerala-fish-meal.jpg", "closeup": "thali.jpg",
+    },
+    "salad": {
+        "food_type": Donation.FoodType.VEG, "food_condition": Donation.FoodCondition.FRESH,
+        "quantity": 12, "unit": Donation.Unit.PACKS, "is_unpackaged": True,
+        "description": "Fresh salad packs with leafy greens and seasonal vegetables.",
+        "allergen_notes": "Dressing served separately; contains no listed allergens.", "storage_notes": "Chilled until collection.",
+        "overview": "salad-fresh.jpg", "closeup": "produce-bowl.jpg",
+    },
+    "vegetables": {
+        "food_type": Donation.FoodType.VEGETABLES, "food_condition": Donation.FoodCondition.FRESH,
+        "quantity": 8, "unit": Donation.Unit.KG, "is_unpackaged": True,
+        "description": "Fresh seasonal vegetables sorted for a community kitchen.",
+        "allergen_notes": "No known allergens.", "storage_notes": "Stored in a cool, clean area.",
+        "overview": "vegetables.jpg", "closeup": "produce-bowl.jpg",
+    },
+    "packaged_meals": {
+        "food_type": Donation.FoodType.GROCERIES, "food_condition": Donation.FoodCondition.PACKAGED,
+        "quantity": 18, "unit": Donation.Unit.PACKS, "is_unpackaged": False,
+        "description": "Sealed vegetarian meal packs and pantry items with package details available for review.",
+        "allergen_notes": "Check package labels for allergen details.", "storage_notes": "Sealed packs stored as directed on the packaging.",
+        "overview": "meal-containers.jpg", "closeup": "meal-plated.jpg", "label": "food-label-jar.jpg",
+    },
+    "fruit": {
+        "food_type": Donation.FoodType.FRUITS, "food_condition": Donation.FoodCondition.FRESH,
+        "quantity": 10, "unit": Donation.Unit.KG, "is_unpackaged": True,
+        "description": "A mixed selection of fresh fruit for the afternoon meal service.",
+        "allergen_notes": "No known allergens.", "storage_notes": "Washed fruit kept in clean crates.",
+        "overview": "fruit-platter.jpg", "closeup": "produce-bowl.jpg",
+    },
+}
 
 
 class Command(BaseCommand):
@@ -132,29 +184,32 @@ class Command(BaseCommand):
         )
         return {"donor": donor, "volunteer": volunteer, "ngo": ngo, "pending_ngo": pending_ngo}
 
-    def _image(self, asset_index, name):
-        """Return a bundled real-food photo without relying on network access at seed time."""
-        asset_path = DEMO_ASSET_DIRECTORY / DEMO_FOOD_IMAGES[asset_index % len(DEMO_FOOD_IMAGES)]
+    def _image(self, asset_name, name):
+        """Return a bundled photo without relying on network access at seed time."""
+        asset_path = DEMO_ASSET_DIRECTORY / asset_name
         return ContentFile(asset_path.read_bytes(), name=name)
 
-    def _donation(self, *, title, donor, verification_status, status, hours=1, pickup=True, **extra):
+    def _donation(self, *, title, donor, verification_status, status, food_profile, hours=1, pickup=True, **extra):
         now = timezone.now()
-        photo_start = getattr(self, "_next_photo_index", 0)
-        self._next_photo_index = photo_start + 1
+        food = {**DEMO_FOOD_PROFILES[food_profile]}
+        for key in tuple(food):
+            if key in extra:
+                food[key] = extra.pop(key)
         donation = Donation.objects.create(
             donor=donor,
             title=f"{DEMO_PREFIX}{title}",
-            description=extra.pop("description", "Fresh surplus food prepared for the FoodBridge demonstration."),
-            food_type=Donation.FoodType.VEG,
-            food_condition=Donation.FoodCondition.COOKED,
-            quantity=extra.pop("quantity", 24),
-            unit=Donation.Unit.PLATES,
+            description=food["description"],
+            food_type=food["food_type"],
+            food_condition=food["food_condition"],
+            quantity=food["quantity"],
+            unit=food["unit"],
             prepared_at=now - timedelta(minutes=30),
-            storage_notes="Kept covered and ready for collection.",
-            allergen_notes="Contains gluten.",
-            food_photo_overview=self._image(photo_start, "food-overview.jpg"),
-            food_photo_closeup=self._image(photo_start + 1, "food-closeup.jpg"),
-            food_photo_label=self._image(photo_start + 2, "food-label.jpg"),
+            storage_notes=food["storage_notes"],
+            allergen_notes=food["allergen_notes"],
+            is_unpackaged=food["is_unpackaged"],
+            food_photo_overview=self._image(food["overview"], "food-overview.jpg"),
+            food_photo_closeup=self._image(food["closeup"], "food-closeup.jpg"),
+            food_photo_label=self._image(food["label"], "food-label.jpg") if food.get("label") else "",
             verification_status=verification_status,
             verification_summary=extra.pop("verification_summary", "Demo visual-screening result."),
             verification_confidence=extra.pop("verification_confidence", 92),
@@ -196,18 +251,20 @@ class Command(BaseCommand):
         donations["available"] = self._donation(
             title="Available food listing", donor=donor,
             verification_status=Donation.VerificationStatus.APPROVED,
-            status=Donation.Status.AVAILABLE,
+            status=Donation.Status.AVAILABLE, food_profile="thali",
         )
         donations["ready_for_volunteer"] = self._donation(
             title="NGO accepted - ready for volunteer", donor=donor,
             verification_status=Donation.VerificationStatus.APPROVED,
             status=Donation.Status.NGO_ACCEPTED,
+            food_profile="catered_meals",
             receiving_ngo=ngo,
         )
         active = self._donation(
             title="Collected - live location", donor=donor,
             verification_status=Donation.VerificationStatus.APPROVED,
             status=Donation.Status.IN_TRANSIT,
+            food_profile="bakery",
             receiving_ngo=ngo,
         )
         active.pickup.assigned_volunteer = volunteer
@@ -224,6 +281,7 @@ class Command(BaseCommand):
             title="Completed volunteer delivery", donor=donor,
             verification_status=Donation.VerificationStatus.APPROVED,
             status=Donation.Status.DELIVERED,
+            food_profile="fish_meal",
             receiving_ngo=ngo,
         )
         completed.pickup.assigned_volunteer = volunteer
@@ -237,7 +295,7 @@ class Command(BaseCommand):
         completed.pickup.destination_longitude = ngo.ngo_profile.longitude
         completed.pickup.destination_place_label = ngo.ngo_profile.organization_name
         completed.pickup.handoff_notes = "Delivered to the NGO demonstration coordinator."
-        completed.pickup.delivery_photo = self._image(3, "delivery-proof.jpg")
+        completed.pickup.delivery_photo = self._image("food-distribution.jpg", "delivery-proof.jpg")
         completed.pickup.save()
         VolunteerPayment.objects.create(
             pickup=completed.pickup, ngo=ngo, volunteer=volunteer, amount_paise=50000,
@@ -254,14 +312,14 @@ class Command(BaseCommand):
         donations["review"] = self._donation(
             title="Food safety review required", donor=donor,
             verification_status=Donation.VerificationStatus.HUMAN_REVIEW,
-            status=Donation.Status.AVAILABLE, pickup=False,
+            status=Donation.Status.AVAILABLE, food_profile="salad", pickup=False,
             verification_summary="Demo images need an NGO reviewer decision.",
             verification_confidence=38, visible_risk_flags=["unclear_image"],
         )
         donations["rejected"] = self._donation(
             title="Food safety screening rejected", donor=donor,
             verification_status=Donation.VerificationStatus.REJECTED,
-            status=Donation.Status.AVAILABLE, pickup=False,
+            status=Donation.Status.AVAILABLE, food_profile="vegetables", pickup=False,
             verification_summary="Demo rejection: visible quality concern.",
             verification_confidence=18, visible_risk_flags=["visible_quality_concern"],
         )
@@ -269,6 +327,7 @@ class Command(BaseCommand):
             title="NGO takeover awaiting receipt", donor=donor,
             verification_status=Donation.VerificationStatus.APPROVED,
             status=Donation.Status.NGO_MANAGED,
+            food_profile="fruit",
             claimed_by_ngo=ngo,
         )
         managed.pickup.status = Pickup.Status.CANCELLED
@@ -279,11 +338,12 @@ class Command(BaseCommand):
             title="NGO takeover receipt confirmed", donor=donor,
             verification_status=Donation.VerificationStatus.APPROVED,
             status=Donation.Status.DELIVERED,
+            food_profile="packaged_meals",
             claimed_by_ngo=ngo,
         )
         receipt.pickup.status = Pickup.Status.CANCELLED
         receipt.pickup.save(update_fields=("status", "updated_at"))
-        receipt.receipt_photo = self._image(3, "ngo-receipt.jpg")
+        receipt.receipt_photo = self._image("food-distribution.jpg", "ngo-receipt.jpg")
         receipt.save(update_fields=("receipt_photo", "updated_at"))
         donations["receipt"] = receipt
 
@@ -291,6 +351,7 @@ class Command(BaseCommand):
             title="NGO rejection reopened listing", donor=donor,
             verification_status=Donation.VerificationStatus.APPROVED,
             status=Donation.Status.AVAILABLE,
+            food_profile="fruit",
             verification_summary="Returned to the available queue after NGO rejection.",
         )
         return donations

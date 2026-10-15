@@ -98,6 +98,7 @@
                 <div class="volunteer-panel__body">
                     {% for pickup in assigned_pickups %}
                         <article class="active-pickup-card p-3 rounded-4 mb-3" style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08);">
+                            {% if pickup.donation.food_photo_overview and pickup.donation.verification_status == 'APPROVED' %}<img class="active-pickup-card__photo" src="{% url 'donation_photo' pickup.donation.id 'overview' %}" alt="Food overview for active pickup" loading="lazy">{% endif %}
                             <div class="active-pickup-card__icon">
                                 <i class="bi {% if pickup.status == 'COLLECTED' %}bi-box2-heart-fill{% else %}bi-bag-check-fill{% endif %}"></i>
                             </div>

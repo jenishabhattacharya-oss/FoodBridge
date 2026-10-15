@@ -48,6 +48,7 @@
                 </div>
             </article>
         </div>
+        {% if pickup.donation.food_photo_overview and pickup.donation.verification_status == 'APPROVED' %}<section class="pickup-food-preview"><p class="volunteer-eyebrow">FOOD PREVIEW</p><img src="{% url 'donation_photo' pickup.donation.id 'overview' %}" alt="Food overview for this pickup" loading="lazy"></section>{% endif %}
         {% if has_claimed_pickup %}<section class="navigation-panel">
             <div><p class="volunteer-eyebrow">GPS NAVIGATION</p><h2>Navigate your handoff</h2><p>Open your preferred map app for turn-by-turn guidance.</p></div>
             <div class="navigation-panel__destinations">

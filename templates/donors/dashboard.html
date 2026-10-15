@@ -108,8 +108,9 @@
                                 {% for donation in recent_donations %}
                                     <tr>
                                         <td>
-                                            <strong>{{ donation.title }}</strong>
+                                            <div class="donor-table-food">{% if donation.food_photo_overview %}<img src="{% url 'donation_photo' donation.id 'overview' %}" alt="" loading="lazy">{% endif %}<div><strong>{{ donation.title }}</strong>
                                             <small>{{ donation.quantity }} {{ donation.get_unit_display }} · {{ donation.get_food_type_display }}</small>
+                                            </div></div>
                                         </td>
                                         <td>
                                             <strong>{{ donation.pickup_window_end|date:"M j" }}</strong>

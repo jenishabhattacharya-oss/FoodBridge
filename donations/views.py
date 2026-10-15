@@ -148,7 +148,7 @@ def review_food(request, donation_id, decision):
 @login_required(login_url="login")
 def donation_photo(request, donation_id, kind):
     field_name = {"overview": "food_photo_overview", "closeup": "food_photo_closeup", "label": "food_photo_label"}.get(kind)
-    donation = get_object_or_404(Donation, pk=donation_id)
+    donation = get_object_or_404(Donation.objects.select_related("pickup"), pk=donation_id)
     can_view = request.user.role == User.Role.DONOR and donation.donor_id == request.user.id
     can_view = can_view or (
         request.user.is_staff
@@ -165,6 +165,18 @@ def donation_photo(request, donation_id, kind):
             )
         )
     )
+    volunteer_profile = getattr(request.user, "volunteer_profile", None)
+    volunteer_has_active_pickup = (
+        request.user.role == User.Role.VOLUNTEER
+        and getattr(volunteer_profile, "is_approved", False)
+        and donation.verification_status == Donation.VerificationStatus.APPROVED
+        and donation.pickup_id
+        and (
+            (donation.pickup.status == donation.pickup.Status.OPEN and donation.status == Donation.Status.NGO_ACCEPTED)
+            or donation.pickup.assigned_volunteer_id == request.user.id
+        )
+    )
+    can_view = can_view or volunteer_has_active_pickup
     if not can_view or not field_name or not getattr(donation, field_name):
         raise Http404("Photo not found.")
     photo = getattr(donation, field_name)
@@ -224,6 +236,8 @@ def detail(request, donation_id):
         "receipt_form": receipt_form,
         "can_accept_for_delivery": can_accept_for_delivery,
         "food_safety_disclaimer": "Visual AI screening cannot guarantee freshness, contamination absence, allergens, temperature history, or food safety.",
+        "delivery_evidence_url": reverse("evidence_photo", args=(donation.pickup_id, "delivery")) if donation.pickup_id and donation.pickup.delivery_photo else None,
+        "receipt_evidence_url": reverse("evidence_photo", args=(donation.pickup_id, "receipt")) if donation.pickup_id and donation.receipt_photo else None,
     }
     active_pickup = donation.pickup and donation.pickup.status in (donation.pickup.Status.CLAIMED, donation.pickup.Status.COLLECTED)
     can_see_location = active_pickup and (donation.donor_id == request.user.id or donation.receiving_ngo_id == request.user.id)

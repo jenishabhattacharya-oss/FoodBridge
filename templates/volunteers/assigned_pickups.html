@@ -14,6 +14,7 @@
     <section class="assigned-pickup-list">
         {% for pickup in pickups %}
             <article class="assigned-pickup-card reveal">
+                {% if pickup.donation.food_photo_overview and pickup.donation.verification_status == 'APPROVED' %}<img class="assigned-pickup-card__photo" src="{% url 'donation_photo' pickup.donation.id 'overview' %}" alt="Food overview for active pickup" loading="lazy">{% endif %}
                 <div class="assigned-pickup-card__step">
                     {% if pickup.status == 'COLLECTED' %}
                         <i class="bi bi-box2-heart"></i>

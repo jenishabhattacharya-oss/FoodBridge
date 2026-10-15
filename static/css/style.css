@@ -379,7 +379,7 @@ section[id], [id].wn-anchor { scroll-margin-top: calc(var(--nav-offset) + 8px); 
 .wn-stories { display: grid; grid-template-columns: 1.25fr 1fr; gap: 1.25rem; }
 .wn-stories__side { display: grid; gap: 1.25rem; }
 .wn-story { display: flex; flex-direction: column; justify-content: flex-end; min-height: 260px; }
-.wn-story--feature { min-height: 540px; background: linear-gradient(180deg, rgba(7, 18, 10, 0.15) 0%, rgba(7, 18, 10, 0.88) 70%), url('../img/background1-contact.jpeg') center / cover no-repeat; }
+.wn-story--feature { min-height: 540px; background: linear-gradient(180deg, rgba(7, 18, 10, 0.12) 0%, rgba(7, 18, 10, 0.9) 74%), url('../img/shareplate-food-feature.jpg') center 58% / cover no-repeat; }
 .wn-story--feature h3 { font-size: clamp(1.6rem, 2.8vw, 2.3rem); }
 .wn-story__watermark { position: absolute; top: 1.5rem; right: 1.5rem; font-size: 5rem; line-height: 1; color: rgba(229, 192, 91, 0.12); transition: transform 0.8s var(--ease-framer), color 0.4s ease; }
 .wn-story:hover .wn-story__watermark { color: rgba(229, 192, 91, 0.22); transform: rotate(-8deg) scale(1.08); }
@@ -425,7 +425,8 @@ section[id], [id].wn-anchor { scroll-margin-top: calc(var(--nav-offset) + 8px); 
 /* ==========================================================================
    CONTACT
    ========================================================================== */
-.wn-contact { position: relative; padding: clamp(2.5rem, 6vw, 5rem) 0 clamp(4rem, 8vw, 7rem); }
+.wn-contact { position: relative; isolation: isolate; padding: clamp(2.5rem, 6vw, 5rem) 0 clamp(4rem, 8vw, 7rem); }
+.wn-contact::before { position: absolute; z-index: -1; inset: 0; content: ''; pointer-events: none; opacity: .24; background: linear-gradient(180deg, rgba(7,18,10,.68), rgba(7,18,10,.9)), url('../img/background1-contact.jpeg') center / cover no-repeat; }
 .wn-contact__hero { max-width: 860px; margin: 0 auto clamp(3rem, 6vw, 4.5rem); text-align: center; }
 .wn-contact__hero .wn-heading { margin: 1.25rem 0 1rem; font-size: clamp(2.4rem, 6vw, 4.6rem); }
 .wn-contact__hero .wn-subheading { margin: 0 auto; }

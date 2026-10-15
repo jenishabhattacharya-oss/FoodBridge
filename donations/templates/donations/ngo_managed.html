@@ -9,6 +9,7 @@
     <section class="ngo-managed-grid">
         {% for donation in donations %}
             <article class="ngo-managed-card reveal">
+                {% if donation.food_photo_overview %}<img class="donation-card-photo" src="{% url 'donation_photo' donation.id 'overview' %}" alt="Food overview: {{ donation.title }}" loading="lazy">{% endif %}
                 <header><div><p class="volunteer-eyebrow">{{ donation.get_food_type_display }}</p><h2>{{ donation.title }}</h2></div><span class="volunteer-status {% if donation.status == 'DELIVERED' %}ngo-status--delivered{% else %}donor-status{% endif %}">{{ donation.effective_status_display }}</span></header>
                 <div class="ngo-managed-card__facts">
                     <span><i class="bi bi-basket2-fill"></i>{{ donation.quantity }} {{ donation.get_unit_display }}</span>
