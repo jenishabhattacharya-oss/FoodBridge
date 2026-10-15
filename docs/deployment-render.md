@@ -1,4 +1,4 @@
-# Deploy FoodBridge MVP on Render
+# Deploy SharePlate MVP on Render
 
 This deployment uses a Docker web service, managed PostgreSQL, and a one-gigabyte persistent disk for private food and delivery evidence. The blueprint uses Singapore for lower latency in India.
 
@@ -48,11 +48,11 @@ After adding a custom domain in Render, add its hostname to `DJANGO_ALLOWED_HOST
 Set a real PostgreSQL `DATABASE_URL`, a secure `DJANGO_SECRET_KEY`, and `DJANGO_ALLOWED_HOSTS=localhost`, then run:
 
 ```bash
-docker build -t foodbridge .
+docker build -t shareplate .
 docker run --rm -p 8000:8000 \
   -e DATABASE_URL \
   -e DJANGO_SECRET_KEY \
   -e DJANGO_ALLOWED_HOSTS \
-  -v foodbridge-media:/var/data \
-  foodbridge
+  -v shareplate-media:/var/data \
+  shareplate
 ```

@@ -1,4 +1,4 @@
-# FoodBridge manual demonstration guide
+# SharePlate manual demonstration guide
 
 ## Prepare the demo
 
@@ -10,7 +10,7 @@
    python manage.py runserver
    ```
 
-2. Open <http://127.0.0.1:8000/login/>. Every demo account uses the password printed by `seed_demo` (`FoodBridgeDemo123!`).
+2. Open <http://127.0.0.1:8000/login/>. Every demo account uses the password printed by `seed_demo` (`SharePlateDemo123!`).
 3. The seed command refreshes only users whose e-mail starts with `demo.` and their linked demonstration records. It never clears other users or records. Run it again whenever a walkthrough step changes a demo record.
 4. Optional payment and payout-profile screen: use a local-only encryption key and enable payment pages for both commands. This only exposes the already-completed simulated record; do not click a payment or payout action.
 
