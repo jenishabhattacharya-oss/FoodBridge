@@ -379,7 +379,7 @@ section[id], [id].wn-anchor { scroll-margin-top: calc(var(--nav-offset) + 8px); 
 .wn-stories { display: grid; grid-template-columns: 1.25fr 1fr; gap: 1.25rem; }
 .wn-stories__side { display: grid; gap: 1.25rem; }
 .wn-story { display: flex; flex-direction: column; justify-content: flex-end; min-height: 260px; }
-.wn-story--feature { min-height: 540px; background: linear-gradient(180deg, rgba(7, 18, 10, 0.12) 0%, rgba(7, 18, 10, 0.9) 74%), url('../img/shareplate-food-feature.jpg') center 58% / cover no-repeat; }
+.wn-story--feature { min-height: 540px; background: linear-gradient(180deg, rgba(7, 18, 10, 0.12) 0%, rgba(7, 18, 10, 0.9) 74%), url('../img/shareplate-food-feature.jpg') center 58% / cover no-repeat; background-clip: padding-box; }
 .wn-story--feature h3 { font-size: clamp(1.6rem, 2.8vw, 2.3rem); }
 .wn-story__watermark { position: absolute; top: 1.5rem; right: 1.5rem; font-size: 5rem; line-height: 1; color: rgba(229, 192, 91, 0.12); transition: transform 0.8s var(--ease-framer), color 0.4s ease; }
 .wn-story:hover .wn-story__watermark { color: rgba(229, 192, 91, 0.22); transform: rotate(-8deg) scale(1.08); }
