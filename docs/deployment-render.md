@@ -18,24 +18,26 @@ This deployment uses a Docker web service, managed PostgreSQL, and a one-gigabyt
 4. Create the Blueprint and wait for the `/health/` health check to pass.
 5. Open the generated `onrender.com` URL. It is automatically accepted as an allowed host and trusted CSRF origin by `config.settings_production`.
 
-### Load demo data without a Render Shell
+### Demo data
 
-If your Render plan does not include an interactive Shell, add this environment variable to the web service in Render:
-
-```text
-SEED_DEMO_DATA=true
-```
-
-Redeploy the service. The container runs `python manage.py seed_demo` after migrations on its first startup. It checks for the existing `demo.` users first, so later restarts do not recreate or reset the demo records. The command and the bundled food photographs are part of the Docker image, while uploaded images are written to the configured media directory.
-
-After the first successful deployment, you can remove `SEED_DEMO_DATA` or set it to `false`; the seeded records remain in PostgreSQL.
+Production startup never seeds demo accounts. Use `python manage.py seed_demo` only in an isolated development environment, and do not deploy its accounts or credentials.
 
 ## First release checks
 
 1. Register a non-demo account for each role and verify role-based access.
 2. Submit a small test donation, confirm its photos remain visible after a redeploy, then delete the test record if desired.
 3. Verify password reset only after SMTP is configured.
-4. Keep `FOODBRIDGE_PAYMENTS_ENABLED=false` until Razorpay OAuth, webhook, payout credentials, and payment testing are complete.
+4. Keep `FOODBRIDGE_PAYMENTS_ENABLED=false` while configuring Razorpay sandbox credentials. Set `RAZORPAY_MODE=test`, use test Checkout keys, OAuth app credentials, the exact HTTPS OAuth callback URL, a sandbox webhook secret, and the RazorpayX test account number. Keep `PAYMENT_ENCRYPTION_KEY` stable: changing it makes previously stored OAuth and payout details unreadable.
+5. Configure the webhook URL as `https://<your-domain>/payments/webhooks/razorpay/` and subscribe to `payment.captured`, `payment.failed`, `order.paid`, `payout.processed`, `payout.failed`, `payout.reversed`, and `payout.rejected`. Keep payments disabled until the complete sandbox walkthrough below succeeds.
+
+### Razorpay sandbox verification
+
+1. Register the OAuth callback URL in the Razorpay application and set the same value in `RAZORPAY_OAUTH_REDIRECT_URI`.
+2. Enable `FOODBRIDGE_PAYMENTS_ENABLED=true` only in the sandbox environment after all credentials are configured.
+3. Connect a test NGO account, create a delivered volunteer pickup, and confirm it from the NGO account. Verify the fixed ₹500 Checkout order uses the test key and completes with Razorpay's test payment method.
+4. Confirm the app remains payment-pending after the browser callback and becomes payout-ready only after a valid captured-payment webhook.
+5. Configure a volunteer test UPI or bank destination, submit the payout, and verify it reaches its final state through the payout webhook. Also exercise a failed payment, failed or reversed payout, invalid webhook signature, and repeated webhook delivery.
+6. Disable payments again after testing. Do not place live credentials in local files committed to the repository.
 
 ## Custom domain
 

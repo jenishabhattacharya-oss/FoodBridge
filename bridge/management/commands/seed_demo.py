@@ -2,7 +2,7 @@ from datetime import timedelta
 from pathlib import Path
 
 from django.core.files.base import ContentFile
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 from django.core.files.storage import default_storage
 from django.conf import settings
 from django.db import transaction
@@ -33,7 +33,16 @@ DEMO_FOOD_IMAGES = (
 class Command(BaseCommand):
     help = "Create or refresh the isolated FoodBridge demonstration dataset."
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--allow-production",
+            action="store_true",
+            help="Explicitly allow demo data creation outside development.",
+        )
+
     def handle(self, *args, **options):
+        if not settings.DEBUG and not options["allow_production"]:
+            raise CommandError("Demo seeding is disabled outside development.")
         with transaction.atomic():
             self._remove_existing_demo_data()
             users = self._create_users()
@@ -92,6 +101,8 @@ class Command(BaseCommand):
             current_latitude="12.971600",
             current_longitude="77.594600",
             location_updated_at=timezone.now(),
+            approval_status=VolunteerProfile.ApprovalStatus.APPROVED,
+            approved_at=timezone.now(),
         )
         if settings.PAYMENT_ENCRYPTION_KEY:
             payout_profile = VolunteerPayoutProfile(

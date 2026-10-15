@@ -23,7 +23,12 @@ class VolunteerPickupTests(TestCase):
             phone="1234567890",
             role=User.Role.VOLUNTEER,
         )
-        self.profile = VolunteerProfile.objects.create(user=self.user, service_area="Bengaluru")
+        self.profile = VolunteerProfile.objects.create(
+            user=self.user,
+            service_area="Bengaluru",
+            approval_status=VolunteerProfile.ApprovalStatus.APPROVED,
+            approved_at=timezone.now(),
+        )
         self.client.force_login(self.user)
 
     def create_pickup(self, **overrides):
@@ -117,7 +122,11 @@ class VolunteerPickupTests(TestCase):
         other = User.objects.create_user(
             email="other@example.com", password="test-password", first_name="Other", last_name="Volunteer", phone="1234567891", role=User.Role.VOLUNTEER
         )
-        VolunteerProfile.objects.create(user=other)
+        VolunteerProfile.objects.create(
+            user=other,
+            approval_status=VolunteerProfile.ApprovalStatus.APPROVED,
+            approved_at=timezone.now(),
+        )
         self.client.force_login(other)
 
         response = self.client.post(reverse("collect_pickup", args=[pickup.id]))
@@ -132,7 +141,11 @@ class VolunteerPickupTests(TestCase):
         other = User.objects.create_user(
             email="other@example.com", password="test-password", first_name="Other", last_name="Volunteer", phone="1234567891", role=User.Role.VOLUNTEER
         )
-        VolunteerProfile.objects.create(user=other)
+        VolunteerProfile.objects.create(
+            user=other,
+            approval_status=VolunteerProfile.ApprovalStatus.APPROVED,
+            approved_at=timezone.now(),
+        )
         self.client.force_login(other)
 
         self.assertEqual(self.client.get(reverse("pickup_details", args=[pickup.id])).status_code, 404)
@@ -215,3 +228,20 @@ class VolunteerPickupTests(TestCase):
         )
         self.client.force_login(donor)
         self.assertRedirects(self.client.get(reverse("available_pickups")), reverse("home"))
+
+    def test_open_pickup_hides_identity_and_exact_address_until_claimed(self):
+        pickup = self.create_pickup()
+
+        response = self.client.get(reverse("pickup_details", args=[pickup.id]))
+
+        self.assertNotContains(response, pickup.donor_phone)
+        self.assertNotContains(response, pickup.pickup_address)
+        self.assertContains(response, "Exact address is available after claiming")
+
+    def test_pending_volunteer_cannot_view_pickups(self):
+        self.profile.approval_status = VolunteerProfile.ApprovalStatus.PENDING
+        self.profile.save()
+
+        response = self.client.get(reverse("available_pickups"))
+
+        self.assertRedirects(response, reverse("volunteer_profile"))

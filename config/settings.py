@@ -14,8 +14,14 @@ import os
 import logging
 from pathlib import Path
 
+from dotenv import load_dotenv
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Local development credentials live in .env (which is gitignored). Production
+# platforms supply real environment variables, which take precedence.
+load_dotenv(BASE_DIR / ".env", override=False)
 
 
 # Quick-start development settings - unsuitable for production
@@ -149,7 +155,11 @@ CSRF_COOKIE_SECURE = not DEBUG
 SECURE_HSTS_SECONDS = 31_536_000 if not DEBUG else 0
 SECURE_HSTS_INCLUDE_SUBDOMAINS = not DEBUG
 SECURE_HSTS_PRELOAD = not DEBUG
-SECURE_REFERRER_POLICY = "same-origin"
+# Map tile providers need the requesting site's origin to identify browser traffic.
+# This sends only the origin for cross-site requests (never a dashboard path or
+# query string), while allowing the OpenStreetMap standard tile service to apply
+# its usage policy correctly.
+SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
 X_FRAME_OPTIONS = "DENY"
 
 # Razorpay credentials are deliberately environment-only. Keep the defaults empty so
@@ -166,8 +176,8 @@ PAYMENT_ENCRYPTION_KEY = os.environ.get("PAYMENT_ENCRYPTION_KEY", "")
 VOLUNTEER_DELIVERY_FEE_PAISE = int(os.environ.get("VOLUNTEER_DELIVERY_FEE_PAISE", "50000"))
 
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
-GEMINI_VISION_MODEL = os.environ.get("GEMINI_VISION_MODEL", "gemini-2.0-flash")
-GEMINI_TEXT_MODEL = os.environ.get("GEMINI_TEXT_MODEL", "gemini-2.0-flash")
+GEMINI_VISION_MODEL = os.environ.get("GEMINI_VISION_MODEL", "gemini-3.6-flash")
+GEMINI_TEXT_MODEL = os.environ.get("GEMINI_TEXT_MODEL", "gemini-3.6-flash")
 VOICE_PARSE_TIMEOUT_SECONDS = int(os.environ.get("VOICE_PARSE_TIMEOUT_SECONDS", "10"))
 FOOD_PHOTO_MAX_SIZE_BYTES = int(os.environ.get("FOOD_PHOTO_MAX_SIZE_BYTES", str(5 * 1024 * 1024)))
 EVIDENCE_PHOTO_MAX_SIZE_BYTES = int(os.environ.get("EVIDENCE_PHOTO_MAX_SIZE_BYTES", str(5 * 1024 * 1024)))

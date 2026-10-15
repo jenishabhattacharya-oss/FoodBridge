@@ -151,8 +151,19 @@ def donation_photo(request, donation_id, kind):
     donation = get_object_or_404(Donation, pk=donation_id)
     can_view = request.user.role == User.Role.DONOR and donation.donor_id == request.user.id
     can_view = can_view or (
-        request.user.role == User.Role.NGO
-        and getattr(getattr(request.user, "ngo_profile", None), "is_approved", False)
+        request.user.is_staff
+        or (
+            request.user.role == User.Role.NGO
+            and getattr(getattr(request.user, "ngo_profile", None), "is_approved", False)
+            and (
+                (
+                    donation.effective_status == Donation.Status.AVAILABLE
+                    and donation.verification_status == Donation.VerificationStatus.APPROVED
+                )
+                or donation.verification_status == Donation.VerificationStatus.HUMAN_REVIEW
+                or request.user.id in {donation.receiving_ngo_id, donation.claimed_by_ngo_id}
+            )
+        )
     )
     if not can_view or not field_name or not getattr(donation, field_name):
         raise Http404("Photo not found.")
@@ -184,6 +195,8 @@ def detail(request, donation_id):
     if request.user.role == User.Role.DONOR and donation.donor_id != request.user.id:
         raise Http404("Donation not found.")
     if request.user.role == User.Role.NGO and (donation.effective_status != Donation.Status.AVAILABLE and donation.claimed_by_ngo_id != request.user.id and donation.receiving_ngo_id != request.user.id and donation.verification_status != Donation.VerificationStatus.HUMAN_REVIEW):
+        raise Http404("Donation not found.")
+    if request.user.role == User.Role.NGO and not getattr(getattr(request.user, "ngo_profile", None), "is_approved", False):
         raise Http404("Donation not found.")
     if request.user.role not in (User.Role.DONOR, User.Role.NGO):
         raise Http404("Donation not found.")

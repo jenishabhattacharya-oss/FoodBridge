@@ -1,5 +1,5 @@
 {% extends base_template|default:"base.html" %}
-{% block title %}{{ donation.title }} - FoodBridge{% endblock %}
+{% block title %}{{ donation.title }} - SharePlate{% endblock %}
 {% block content %}
 <section class="donor-workspace donor-detail-workspace"><a href="{% if user.role == 'DONOR' %}{% url 'my_donations' %}{% elif donation.claimed_by_ngo_id == user.id %}{% url 'ngo_managed_donations' %}{% else %}{% url 'ngo_donations' %}{% endif %}" class="volunteer-text-link"><i class="bi bi-arrow-left"></i> Back to donations</a>
   <div class="profile-panel reveal mt-3"><div class="donor-detail-heading"><div><p class="volunteer-eyebrow">DONATION DETAILS</p><h1>{{ donation.title }}</h1></div><span class="volunteer-status donor-status">{{ donation.effective_status_display }}</span></div><div class="donor-detail-body">

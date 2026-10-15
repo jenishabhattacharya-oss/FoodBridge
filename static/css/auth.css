@@ -120,7 +120,7 @@
 /* ── Right: form ── */
 .auth-form-container { display: flex; flex-direction: column; justify-content: center; padding: clamp(2rem, 4.5vw, 3.75rem); }
 .auth-header { margin-bottom: 2rem; text-align: center; }
-.auth-header::before { display: inline-block; margin-bottom: 0.9rem; content: '( FoodBridge )'; color: var(--accent-gold); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; }
+.auth-header::before { display: inline-block; margin-bottom: 0.9rem; content: '( SharePlate )'; color: var(--accent-gold); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; }
 .auth-header h2 { margin-bottom: 0.5rem; font-size: clamp(1.9rem, 3vw, 2.5rem); letter-spacing: -0.045em; }
 .auth-header p { margin: 0; color: var(--text-secondary); }
 

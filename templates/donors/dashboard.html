@@ -1,7 +1,7 @@
 {% extends "dashboards/base_dashboard.html" %}
 {% load static %}
 
-{% block title %}Donor Dashboard — FoodBridge{% endblock %}
+{% block title %}Donor Dashboard — SharePlate{% endblock %}
 
 {% block dashboard_content %}
     <!-- Hero Welcome Banner -->
@@ -51,7 +51,7 @@
                     <strong>{{ stat.value }}</strong>
                     <span>{{ stat.subtitle }}</span>
                 </div>
-                <span class="volunteer-stat-card__trend">{{ stat.trend }}</span>
+                <span class="volunteer-stat-card__trend volunteer-stat-card__trend--{{ stat.trend_tone }}">{{ stat.trend }}</span>
             </article>
         {% endfor %}
     </section>

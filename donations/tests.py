@@ -184,6 +184,22 @@ class DonationPhotoVerificationTests(TestCase):
         self.assertContains(response, f'/donations/{donation.id}/photos/closeup/')
         self.assertNotContains(response, f'/donations/{donation.id}/photos/label/')
 
+    def test_unassigned_ngo_cannot_download_photo_for_another_ngos_delivery(self):
+        with TemporaryDirectory() as media_root, override_settings(MEDIA_ROOT=media_root):
+            donation = create_donation(donor=self.donor, cleaned_data=self._data())
+            owner = User.objects.create_user(email="owner@example.com", password="password", first_name="Owner", last_name="NGO", phone="777", role=User.Role.NGO)
+            NGOProfile.objects.create(user=owner, organization_name="Owner", address="MG Road", approval_status=NGOProfile.ApprovalStatus.APPROVED, approved_at=timezone.now())
+            donation.receiving_ngo = owner
+            donation.status = Donation.Status.NGO_ACCEPTED
+            donation.save()
+            other = User.objects.create_user(email="other@example.com", password="password", first_name="Other", last_name="NGO", phone="888", role=User.Role.NGO)
+            NGOProfile.objects.create(user=other, organization_name="Other", address="Indiranagar", approval_status=NGOProfile.ApprovalStatus.APPROVED, approved_at=timezone.now())
+            self.client.force_login(other)
+
+            response = self.client.get(f"/donations/{donation.id}/photos/overview/")
+
+        self.assertEqual(response.status_code, 404)
+
 
 class DonationFormPresentationTests(TestCase):
     def setUp(self):

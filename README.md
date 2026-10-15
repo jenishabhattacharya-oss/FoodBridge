@@ -94,6 +94,10 @@ Copy `.env.example` to `.env` and set only the services you plan to use. The def
 | `GEMINI_API_KEY` | Enables visual food screening. Without it, unavailable screening safely routes listings to human review. |
 | `FOODBRIDGE_PAYMENTS_ENABLED` | Enables payment-related pages and actions; defaults to `false`. |
 | `PAYMENT_ENCRYPTION_KEY` | Required before storing encrypted payout or provider credentials. |
+| `RAZORPAY_MODE`, `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET` | Checkout mode and server-side Checkout credentials; use test keys for sandbox verification. |
+| `RAZORPAY_OAUTH_CLIENT_ID`, `RAZORPAY_OAUTH_CLIENT_SECRET`, `RAZORPAY_OAUTH_REDIRECT_URI` | NGO account connection credentials and the exact registered callback URL. |
+| `RAZORPAY_WEBHOOK_SECRET` | Secret configured for the Razorpay webhook endpoint. |
+| `RAZORPAYX_ACCOUNT_NUMBER` | RazorpayX account used to fund volunteer payouts. |
 | `DATABASE_URL` | PostgreSQL connection URL for production settings. |
 | SMTP variables | Enable password-reset emails in production. |
 

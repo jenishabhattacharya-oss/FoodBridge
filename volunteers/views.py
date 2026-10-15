@@ -11,7 +11,7 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST
 from decimal import Decimal, InvalidOperation
 
-from accounts.decorators import role_required
+from accounts.decorators import approved_volunteer_required, role_required
 from accounts.models import User
 
 from .forms import DeliveryForm, VolunteerProfileForm
@@ -89,6 +89,7 @@ def _visible_pickup_or_404(request, pickup_id):
 
 @login_required(login_url="login")
 @role_required(User.Role.VOLUNTEER)
+@approved_volunteer_required
 def dashboard(request):
     profile = _profile(request.user)
     available, _, _ = _available_queryset(request, profile.service_area)
@@ -122,6 +123,7 @@ def dashboard(request):
 
 @login_required(login_url="login")
 @role_required(User.Role.VOLUNTEER)
+@approved_volunteer_required
 def available_pickups(request):
     profile = _profile(request.user)
     pickups, city, pickup_date = _available_queryset(request, profile.service_area)
@@ -143,10 +145,12 @@ def available_pickups(request):
 
 @login_required(login_url="login")
 @role_required(User.Role.VOLUNTEER)
+@approved_volunteer_required
 def pickup_details(request, pickup_id):
     pickup = _visible_pickup_or_404(request, pickup_id)
     return render(request, "volunteers/pickup_details.html", {
         "pickup": pickup,
+        "has_claimed_pickup": pickup.assigned_volunteer_id == request.user.id,
         "delivery_form": DeliveryForm(instance=pickup),
         "sidebar_items": _sidebar("Assigned Pickups" if pickup.assigned_volunteer_id else "Available Pickups"),
         "page_title": "Pickup Details",
@@ -156,6 +160,7 @@ def pickup_details(request, pickup_id):
 
 @login_required(login_url="login")
 @role_required(User.Role.VOLUNTEER)
+@approved_volunteer_required
 @require_POST
 def accept_pickup(request, pickup_id):
     try:
@@ -173,6 +178,7 @@ def accept_pickup(request, pickup_id):
 
 @login_required(login_url="login")
 @role_required(User.Role.VOLUNTEER)
+@approved_volunteer_required
 @require_POST
 def collect_pickup(request, pickup_id):
     try:
@@ -189,6 +195,7 @@ def collect_pickup(request, pickup_id):
 
 @login_required(login_url="login")
 @role_required(User.Role.VOLUNTEER)
+@approved_volunteer_required
 @require_POST
 def deliver_pickup(request, pickup_id):
     pickup = _visible_pickup_or_404(request, pickup_id)
@@ -210,6 +217,7 @@ def deliver_pickup(request, pickup_id):
             return redirect("pickup_history")
     return render(request, "volunteers/pickup_details.html", {
         "pickup": pickup,
+        "has_claimed_pickup": pickup.assigned_volunteer_id == request.user.id,
         "delivery_form": form,
         "sidebar_items": _sidebar("Assigned Pickups"),
         "page_title": "Pickup Details",
@@ -218,6 +226,7 @@ def deliver_pickup(request, pickup_id):
 
 @login_required(login_url="login")
 @role_required(User.Role.VOLUNTEER)
+@approved_volunteer_required
 def assigned_pickups(request):
     pickups = Pickup.objects.filter(
         assigned_volunteer=request.user,
@@ -232,6 +241,7 @@ def assigned_pickups(request):
 
 @login_required(login_url="login")
 @role_required(User.Role.VOLUNTEER)
+@approved_volunteer_required
 def pickup_history(request):
     pickups = Pickup.objects.filter(assigned_volunteer=request.user, status=Pickup.Status.DELIVERED)
     return render(request, "volunteers/pickup_history.html", {
@@ -262,6 +272,7 @@ def volunteer_profile(request):
 
 @login_required(login_url="login")
 @role_required(User.Role.VOLUNTEER)
+@approved_volunteer_required
 @require_POST
 def update_location(request):
     profile = _profile(request.user)

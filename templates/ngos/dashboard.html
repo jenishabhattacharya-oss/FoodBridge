@@ -1,7 +1,7 @@
 {% extends "dashboards/base_dashboard.html" %}
 {% load static %}
 
-{% block title %}NGO Collection Desk — FoodBridge{% endblock %}
+{% block title %}NGO Collection Desk — SharePlate{% endblock %}
 
 {% block dashboard_content %}
 {% if pending_approval %}
@@ -14,7 +14,7 @@
         </div>
         <h1 class="display-6 fw-bold text-white mb-2">Your NGO registration is under review</h1>
         <p class="text-white-50 mb-4" style="max-width: 600px;">
-            FoodBridge staff is validating your non-profit registration certificate. Once approved, you will have instant access to real-time food listings, direct volunteer coordination, and verified receipts.
+            SharePlate staff is validating your non-profit registration certificate. Once approved, you will have instant access to real-time food listings, direct volunteer coordination, and verified receipts.
         </p>
         <a class="btn-cyber-primary py-2 px-4" href="{% url 'ngo_profile' %}">
             <i class="bi bi-file-earmark-person"></i>
@@ -35,7 +35,7 @@
             <p class="text-white-50 mb-0">Browse incoming surplus food, coordinate intake, and keep every community handoff transparent.</p>
             <div class="ngo-hero__meta mt-3">
                 <span><i class="bi bi-geo-alt-fill text-warning"></i> {{ profile.address|truncatechars:70 }}</span>
-                <span><i class="bi bi-patch-check-fill text-success"></i> Verified FoodBridge Partner</span>
+                <span><i class="bi bi-patch-check-fill text-success"></i> Verified SharePlate Partner</span>
             </div>
         </div>
         <div class="ngo-hero__actions">

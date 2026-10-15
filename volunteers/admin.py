@@ -1,13 +1,22 @@
 from django.contrib import admin
+from django.utils import timezone
 
 from .models import Pickup, VolunteerProfile
 
 
 @admin.register(VolunteerProfile)
 class VolunteerProfileAdmin(admin.ModelAdmin):
-    list_display = ("user", "service_area", "transport_mode", "is_available")
-    list_filter = ("is_available", "transport_mode")
+    list_display = ("user", "approval_status", "approved_at", "service_area", "transport_mode", "is_available")
+    list_filter = ("approval_status", "is_available", "transport_mode")
     search_fields = ("user__email", "user__first_name", "user__last_name", "service_area")
+    actions = ("approve_selected",)
+
+    @admin.action(description="Approve selected volunteer profiles")
+    def approve_selected(self, request, queryset):
+        queryset.exclude(approval_status=VolunteerProfile.ApprovalStatus.APPROVED).update(
+            approval_status=VolunteerProfile.ApprovalStatus.APPROVED,
+            approved_at=timezone.now(),
+        )
 
 
 @admin.register(Pickup)

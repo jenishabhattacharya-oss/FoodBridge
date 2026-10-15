@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="SharePlate">
+  <rect width="512" height="512" rx="112" fill="#07120a"/>
+  <circle cx="256" cy="278" r="144" fill="none" stroke="#10b981" stroke-width="32"/>
+  <circle cx="256" cy="278" r="92" fill="#0b1a10" stroke="#e5c05b" stroke-width="16"/>
+  <path d="M256 106c-55 0-96 37-96 87 57 8 105-29 118-87h-22z" fill="#10b981"/>
+  <path d="M230 191c13-37 36-64 70-85" fill="none" stroke="#e5c05b" stroke-linecap="round" stroke-width="14"/>
+  <path d="M180 278h152" stroke="#10b981" stroke-linecap="round" stroke-width="22"/>
+</svg>

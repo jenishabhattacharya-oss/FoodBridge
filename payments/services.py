@@ -27,6 +27,18 @@ def _require(value, name):
     return value
 
 
+def _require_checkout_credentials():
+    mode = settings.RAZORPAY_MODE.lower()
+    if mode not in ("test", "live"):
+        raise ImproperlyConfigured("RAZORPAY_MODE must be either 'test' or 'live'.")
+    key_id = _require(settings.RAZORPAY_KEY_ID, "RAZORPAY_KEY_ID")
+    key_secret = _require(settings.RAZORPAY_KEY_SECRET, "RAZORPAY_KEY_SECRET")
+    expected_prefix = "rzp_test_" if mode == "test" else "rzp_live_"
+    if not key_id.startswith(expected_prefix):
+        raise ImproperlyConfigured(f"RAZORPAY_KEY_ID does not match RAZORPAY_MODE={mode}.")
+    return key_id, key_secret
+
+
 def oauth_authorize_url(state):
     return f"{RAZORPAY_AUTH}/authorize?{urlencode({
         'client_id': _require(settings.RAZORPAY_OAUTH_CLIENT_ID, 'RAZORPAY_OAUTH_CLIENT_ID'),
@@ -96,6 +108,7 @@ def confirm_delivery(*, pickup_id, ngo):
 
 @transaction.atomic
 def create_checkout_order(*, payment, ngo):
+    _require_checkout_credentials()
     payment = VolunteerPayment.objects.select_for_update().select_related("ngo__payment_connection").get(pk=payment.pk)
     if payment.ngo_id != ngo.id or payment.status not in (VolunteerPayment.Status.AWAITING_NGO_PAYMENT, VolunteerPayment.Status.PAYMENT_FAILED):
         raise ValidationError("This payment cannot be started.")
@@ -138,28 +151,37 @@ def _payout_destination(profile):
     return {"account_type": "bank_account", "bank_account": {"name": profile.account_holder(), "ifsc": profile.ifsc(), "account_number": profile.account_number()}}
 
 
-@transaction.atomic
 def release_payout(*, payment, ngo):
-    payment = VolunteerPayment.objects.select_for_update().select_related("volunteer", "ngo__payment_connection").get(pk=payment.pk)
-    if payment.ngo_id != ngo.id or payment.status not in (VolunteerPayment.Status.PAYOUT_READY, VolunteerPayment.Status.PAYOUT_FAILED):
-        raise ValidationError("This payout is not ready to release.")
-    try:
-        connection = ngo.payment_connection
-        profile = payment.volunteer.payout_profile
-    except (NGOPaymentConnection.DoesNotExist, VolunteerPayoutProfile.DoesNotExist):
-        raise ValidationError("A Razorpay connection and volunteer payout details are required.")
+    # Commit the idempotency key before calling Razorpay. If the request times
+    # out after Razorpay creates the payout, a retry must use the same key.
+    with transaction.atomic():
+        payment = VolunteerPayment.objects.select_for_update().select_related("volunteer", "ngo__payment_connection").get(pk=payment.pk)
+        if payment.ngo_id != ngo.id or payment.status not in (VolunteerPayment.Status.PAYOUT_READY, VolunteerPayment.Status.PAYOUT_FAILED):
+            raise ValidationError("This payout is not ready to release.")
+        try:
+            connection = ngo.payment_connection
+            profile = payment.volunteer.payout_profile
+        except (NGOPaymentConnection.DoesNotExist, VolunteerPayoutProfile.DoesNotExist):
+            raise ValidationError("A Razorpay connection and volunteer payout details are required.")
+        key = payment.payout_idempotency_key or secrets.token_hex(24)
+        if not payment.payout_idempotency_key:
+            payment.payout_idempotency_key = key
+            payment.save(update_fields=("payout_idempotency_key", "updated_at"))
+
     contact = _api(connection, "POST", "/contacts", data={"name": payment.volunteer.get_full_name(), "email": payment.volunteer.email, "contact": payment.volunteer.phone, "type": "employee", "reference_id": f"foodbridge-volunteer-{payment.volunteer_id}"})
     fund_account = _api(connection, "POST", "/fund_accounts", data={"contact_id": contact["id"], **_payout_destination(profile)})
-    key = payment.payout_idempotency_key or secrets.token_hex(24)
     payout = _api(connection, "POST", "/payouts", data={"account_number": _require(settings.RAZORPAYX_ACCOUNT_NUMBER, "RAZORPAYX_ACCOUNT_NUMBER"), "fund_account_id": fund_account["id"], "amount": payment.amount_paise, "currency": "INR", "mode": "UPI" if profile.destination == profile.Destination.UPI else "IMPS", "purpose": "salary", "queue_if_low_balance": True, "reference_id": f"foodbridge-{payment.pk}"}, headers={"X-Payout-Idempotency": key})
-    payment.razorpay_contact_id = contact["id"]
-    payment.razorpay_fund_account_id = fund_account["id"]
-    payment.razorpay_payout_id = payout["id"]
-    payment.payout_idempotency_key = key
-    payment.status = VolunteerPayment.Status.PAYOUT_PROCESSING
-    payment.payout_released_at = timezone.now()
-    payment.failure_reason = ""
-    payment.save()
+    with transaction.atomic():
+        payment = VolunteerPayment.objects.select_for_update().get(pk=payment.pk)
+        if payment.razorpay_payout_id:
+            return payment
+        payment.razorpay_contact_id = contact["id"]
+        payment.razorpay_fund_account_id = fund_account["id"]
+        payment.razorpay_payout_id = payout["id"]
+        payment.status = VolunteerPayment.Status.PAYOUT_PROCESSING
+        payment.payout_released_at = timezone.now()
+        payment.failure_reason = ""
+        payment.save()
     return payment
 
 
@@ -175,11 +197,13 @@ def process_webhook(event):
     payment_entity = payload.get("payment", {}).get("entity", {})
     payout_entity = payload.get("payout", {}).get("entity", {})
     event_name = event.get("event")
-    if payment_entity.get("id"):
-        payment = VolunteerPayment.objects.select_for_update().filter(razorpay_order_id=payment_entity.get("order_id")).first()
+    if payment_entity.get("id") or (event_name == "order.paid" and payload.get("order", {}).get("entity", {}).get("id")):
+        order_id = payment_entity.get("order_id") or payload.get("order", {}).get("entity", {}).get("id")
+        payment = VolunteerPayment.objects.select_for_update().filter(razorpay_order_id=order_id).first()
         if not payment: return
         if event_name in ("payment.captured", "order.paid") and payment.status in (VolunteerPayment.Status.PAYMENT_PENDING, VolunteerPayment.Status.PAYMENT_FAILED):
-            payment.razorpay_payment_id = payment_entity["id"]
+            if payment_entity.get("id"):
+                payment.razorpay_payment_id = payment_entity["id"]
             payment.status = VolunteerPayment.Status.PAYOUT_READY
             payment.paid_at = timezone.now()
             payment.failure_reason = ""
@@ -192,7 +216,8 @@ def process_webhook(event):
         if not payment: return
         if event_name == "payout.processed" and payment.status == VolunteerPayment.Status.PAYOUT_PROCESSING:
             payment.status = VolunteerPayment.Status.PAYOUT_PROCESSED
-        elif event_name in ("payout.failed", "payout.reversed") and payment.status == VolunteerPayment.Status.PAYOUT_PROCESSING:
+        elif event_name in ("payout.failed", "payout.reversed", "payout.rejected") and payment.status == VolunteerPayment.Status.PAYOUT_PROCESSING:
             payment.status = VolunteerPayment.Status.PAYOUT_FAILED
-            payment.failure_reason = payout_entity.get("status_details", {}).get("description", "Payout failed")[:255]
+            details = payout_entity.get("status_details", {}).get("description") or payout_entity.get("failure_reason") or payout_entity.get("error", {}).get("description") or "Payout failed"
+            payment.failure_reason = details[:255]
         payment.save()

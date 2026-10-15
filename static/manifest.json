@@ -1,6 +1,6 @@
 {
-  "name": "FoodBridge",
-  "short_name": "FoodBridge",
+  "name": "SharePlate",
+  "short_name": "SharePlate",
   "description": "Connecting food donors with shelters and NGOs in real-time.",
   "start_url": "/",
   "display": "standalone",

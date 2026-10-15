@@ -1,12 +1,12 @@
 {% extends "base.html" %}
-{% block title %}Contact · FoodBridge{% endblock %}
+{% block title %}Contact · SharePlate{% endblock %}
 {% block content %}
 <section class="wn-contact">
     <div class="container">
         <header class="wn-contact__hero">
             <span class="wn-tag wn-tag--pill wn-fade-up"><span class="wn-pulse" aria-hidden="true"></span>Connect with Us</span>
             <h1 class="wn-heading wn-fade-up" style="--d: 120ms">Every good connection<br><em>starts with hello.</em></h1>
-            <p class="wn-subheading wn-fade-up" style="--d: 240ms">Questions about a donation, a pickup run or an NGO partnership? Reach the right FoodBridge coordinator directly, or send us a note below.</p>
+            <p class="wn-subheading wn-fade-up" style="--d: 240ms">Questions about a donation, a pickup run or an NGO partnership? Reach the right SharePlate coordinator directly, or send us a note below.</p>
             <div class="wn-contact__meta wn-fade-up" style="--d: 360ms">
                 <span class="glass-pill"><i class="bi bi-clock-history" aria-hidden="true"></i> Usually replies within 24 hours</span>
                 <span class="glass-pill"><i class="bi bi-shield-lock" aria-hidden="true"></i> Your details stay private</span>
@@ -15,26 +15,26 @@
         </header>
 
         <div class="wn-contact__channels" data-reveal-stagger="110">
-            <a class="wn-card wn-channel wn-spotlight reveal" href="mailto:donors@foodbridge.org">
+            <a class="wn-card wn-channel wn-spotlight reveal" href="mailto:donors@shareplate.org">
                 <span class="wn-icon wn-icon--gold"><i class="bi bi-box2-heart" aria-hidden="true"></i></span>
                 <span class="wn-tag">Donor Relations</span>
                 <h2>Giving surplus food</h2>
                 <p>List surplus, fix a listing, or ask about pickup windows and AI screening.</p>
-                <span class="wn-channel__email">donors@foodbridge.org <i class="bi bi-arrow-up-right" aria-hidden="true"></i></span>
+                <span class="wn-channel__email">donors@shareplate.org <i class="bi bi-arrow-up-right" aria-hidden="true"></i></span>
             </a>
-            <a class="wn-card wn-channel wn-spotlight reveal" href="mailto:partners@foodbridge.org">
+            <a class="wn-card wn-channel wn-spotlight reveal" href="mailto:partners@shareplate.org">
                 <span class="wn-icon"><i class="bi bi-buildings" aria-hidden="true"></i></span>
                 <span class="wn-tag wn-tag--emerald">NGO Partnerships</span>
                 <h2>Receiving food</h2>
                 <p>Verification, receiving capacity and delivery confirmations for shelters and community kitchens.</p>
-                <span class="wn-channel__email">partners@foodbridge.org <i class="bi bi-arrow-up-right" aria-hidden="true"></i></span>
+                <span class="wn-channel__email">partners@shareplate.org <i class="bi bi-arrow-up-right" aria-hidden="true"></i></span>
             </a>
-            <a class="wn-card wn-channel wn-spotlight reveal" href="mailto:support@foodbridge.org">
+            <a class="wn-card wn-channel wn-spotlight reveal" href="mailto:support@shareplate.org">
                 <span class="wn-icon wn-icon--gold"><i class="bi bi-bicycle" aria-hidden="true"></i></span>
                 <span class="wn-tag">Volunteer Coordination</span>
                 <h2>Moving food</h2>
                 <p>Pickup runs, live location sharing, handoff proofs and delivery payouts.</p>
-                <span class="wn-channel__email">support@foodbridge.org <i class="bi bi-arrow-up-right" aria-hidden="true"></i></span>
+                <span class="wn-channel__email">support@shareplate.org <i class="bi bi-arrow-up-right" aria-hidden="true"></i></span>
             </a>
         </div>
 
@@ -82,10 +82,10 @@
                             <fieldset class="wn-chip-group">
                                 <legend class="form-label">I&rsquo;m reaching out as</legend>
                                 <div class="wn-chip-group__options">
-                                    <label class="wn-chip"><input type="radio" name="role" value="Food donor" data-route="donors@foodbridge.org" required><span><i class="bi bi-box2-heart" aria-hidden="true"></i> Food donor</span></label>
-                                    <label class="wn-chip"><input type="radio" name="role" value="NGO or shelter" data-route="partners@foodbridge.org"><span><i class="bi bi-buildings" aria-hidden="true"></i> NGO or shelter</span></label>
-                                    <label class="wn-chip"><input type="radio" name="role" value="Volunteer" data-route="support@foodbridge.org"><span><i class="bi bi-bicycle" aria-hidden="true"></i> Volunteer</span></label>
-                                    <label class="wn-chip"><input type="radio" name="role" value="Community member" data-route="support@foodbridge.org"><span><i class="bi bi-people" aria-hidden="true"></i> Community member</span></label>
+                                    <label class="wn-chip"><input type="radio" name="role" value="Food donor" data-route="donors@shareplate.org" required><span><i class="bi bi-box2-heart" aria-hidden="true"></i> Food donor</span></label>
+                                    <label class="wn-chip"><input type="radio" name="role" value="NGO or shelter" data-route="partners@shareplate.org"><span><i class="bi bi-buildings" aria-hidden="true"></i> NGO or shelter</span></label>
+                                    <label class="wn-chip"><input type="radio" name="role" value="Volunteer" data-route="support@shareplate.org"><span><i class="bi bi-bicycle" aria-hidden="true"></i> Volunteer</span></label>
+                                    <label class="wn-chip"><input type="radio" name="role" value="Community member" data-route="support@shareplate.org"><span><i class="bi bi-people" aria-hidden="true"></i> Community member</span></label>
                                 </div>
                             </fieldset>
                         </div>
@@ -134,7 +134,7 @@
             }
             var data = new FormData(form);
             var role = form.querySelector('input[name="role"]:checked');
-            var recipient = role ? role.getAttribute('data-route') : 'support@foodbridge.org';
+            var recipient = role ? role.getAttribute('data-route') : 'support@shareplate.org';
             var subject = String(data.get('subject') || '').trim();
             var body = [
                 String(data.get('message') || '').trim(),

@@ -1,5 +1,12 @@
 (() => {
   const defaultCenter = [12.9716, 77.5946];
+  // Tile servers require an identifiable browser origin.  Keep this in sync
+  // with Django's Referrer-Policy header; it exposes only the origin, not any
+  // account, address, or other page-specific information.
+  const tileLayerOptions = () => ({
+    attribution: document.body.dataset.mapAttribution,
+    referrerPolicy: 'strict-origin-when-cross-origin',
+  });
   const csrf = () => document.cookie.split('; ').find(row => row.startsWith('csrftoken='))?.split('=')[1] || '';
   document.querySelectorAll('[data-location-picker]').forEach((picker) => {
     if (!window.L) return;
@@ -9,7 +16,7 @@
     const label = picker.querySelector('input[name$="place_label"]');
     const confirmation = picker.querySelector('[data-location-confirmation]');
     let map = L.map(picker.querySelector('[data-location-map]')).setView(defaultCenter, 11);
-    L.tileLayer(document.body.dataset.mapTile, {attribution: document.body.dataset.mapAttribution}).addTo(map);
+    L.tileLayer(document.body.dataset.mapTile, tileLayerOptions()).addTo(map);
     let marker;
     const setPoint = (lat, lng, text) => {
       const point = [Number(lat), Number(lng)];
@@ -46,7 +53,7 @@
     const pins = [...container.parentElement.querySelectorAll('[data-pickup-pin]')];
     if (!pins.length) { container.parentElement.hidden = true; return; }
     const map = L.map(container).setView(defaultCenter, 11);
-    L.tileLayer(document.body.dataset.mapTile, {attribution: document.body.dataset.mapAttribution}).addTo(map);
+    L.tileLayer(document.body.dataset.mapTile, tileLayerOptions()).addTo(map);
     const bounds = [];
     pins.forEach((pin) => { const point = [Number(pin.dataset.latitude), Number(pin.dataset.longitude)]; L.marker(point).addTo(map).bindPopup(pin.dataset.label); bounds.push(point); });
     map.fitBounds(bounds, {padding: [28, 28], maxZoom: 14});

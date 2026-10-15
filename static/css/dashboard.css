@@ -394,7 +394,9 @@
     letter-spacing: -0.03em;
     color: #ffffff;
 }
-.volunteer-stat-card__trend { margin-left: auto !important; align-self: start; color: var(--accent-emerald-bright, #34d399) !important; font-weight: 700; font-size: 0.82rem; }
+.volunteer-stat-card__trend { margin-left: auto !important; align-self: start; font-weight: 700; font-size: 0.82rem; }
+.volunteer-stat-card__trend--neutral { color: var(--text-muted) !important; }
+.volunteer-stat-card__trend--active { color: var(--accent-emerald-bright, #34d399) !important; }
 
 .volunteer-progress { display: flex; align-items: center; justify-content: space-between; gap: 2rem; padding: 1.35rem 1.55rem; border-radius: 19px; background: rgba(15, 47, 31, .55); }.volunteer-progress h2,.volunteer-panel h2 { margin: .25rem 0 0; font-size: 1.25rem; }.volunteer-progress__steps { display: flex; flex: 1; max-width: 690px; align-items: center; }.volunteer-progress__step { display: flex; align-items: center; gap: .65rem; white-space: nowrap; }.volunteer-progress__step > span { display: grid; width: 29px; height: 29px; place-items: center; border: 1px solid rgba(240,173,78,.5); border-radius: 50%; color: var(--amber); font-size: .76rem; font-weight: 800; }.volunteer-progress__step strong,.volunteer-progress__step small { display: block; }.volunteer-progress__step small { color: rgba(255,255,255,.55); font-size: .72rem; }.volunteer-progress__line { height: 1px; flex: 1; min-width: 20px; margin: 0 .7rem; background: linear-gradient(90deg, rgba(240,173,78,.65), rgba(255,255,255,.15)); }
 

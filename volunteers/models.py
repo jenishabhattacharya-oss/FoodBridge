@@ -5,6 +5,11 @@ from django.utils import timezone
 
 
 class VolunteerProfile(models.Model):
+    class ApprovalStatus(models.TextChoices):
+        PENDING = "PENDING", "Pending approval"
+        APPROVED = "APPROVED", "Approved"
+        REJECTED = "REJECTED", "Rejected"
+
     class TransportMode(models.TextChoices):
         WALKING = "WALKING", "Walking"
         BICYCLE = "BICYCLE", "Bicycle"
@@ -24,6 +29,13 @@ class VolunteerProfile(models.Model):
         default=TransportMode.WALKING,
     )
     is_available = models.BooleanField(default=True)
+    approval_status = models.CharField(
+        max_length=16,
+        choices=ApprovalStatus.choices,
+        default=ApprovalStatus.PENDING,
+        db_index=True,
+    )
+    approved_at = models.DateTimeField(null=True, blank=True)
     location_sharing_consent = models.BooleanField(default=False)
     current_latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
     current_longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
@@ -31,6 +43,14 @@ class VolunteerProfile(models.Model):
 
     def __str__(self):
         return f"{self.user.get_full_name()} (Volunteer)"
+
+    @property
+    def is_approved(self):
+        return self.approval_status == self.ApprovalStatus.APPROVED
+
+    def approve(self):
+        self.approval_status = self.ApprovalStatus.APPROVED
+        self.approved_at = timezone.now()
 
     def clean(self):
         super().clean()

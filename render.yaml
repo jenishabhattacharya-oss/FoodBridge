@@ -25,10 +25,26 @@ services:
         value: /var/data/media
       - key: FOODBRIDGE_PAYMENTS_ENABLED
         value: "false"
+      - key: RAZORPAY_MODE
+        value: test
+      - key: RAZORPAY_KEY_ID
+        sync: false
+      - key: RAZORPAY_KEY_SECRET
+        sync: false
+      - key: RAZORPAY_OAUTH_CLIENT_ID
+        sync: false
+      - key: RAZORPAY_OAUTH_CLIENT_SECRET
+        sync: false
+      - key: RAZORPAY_OAUTH_REDIRECT_URI
+        sync: false
+      - key: RAZORPAY_WEBHOOK_SECRET
+        sync: false
+      - key: RAZORPAYX_ACCOUNT_NUMBER
+        sync: false
       # Seeds the demo workflow automatically on a new deployment. Set to
       # "false" after the first deployment if this is becoming production.
       - key: SEED_DEMO_DATA
-        value: "true"
+        value: "false"
       - key: GEMINI_API_KEY
         sync: false
       - key: DJANGO_EMAIL_HOST

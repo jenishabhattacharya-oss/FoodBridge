@@ -19,9 +19,9 @@ class DemoSeedCommandTests(TestCase):
 
         with TemporaryDirectory() as media_root, override_settings(MEDIA_ROOT=media_root):
             output = StringIO()
-            call_command("seed_demo", stdout=output)
+            call_command("seed_demo", "--allow-production", stdout=output)
             first_count = Donation.objects.filter(donor__email__startswith="demo.").count()
-            call_command("seed_demo", stdout=StringIO())
+            call_command("seed_demo", "--allow-production", stdout=StringIO())
 
         self.assertIn("FoodBridge demonstration dataset is ready.", output.getvalue())
         self.assertTrue(User.objects.filter(pk=ordinary_user.pk).exists())
@@ -31,7 +31,7 @@ class DemoSeedCommandTests(TestCase):
 
     def test_seed_demo_creates_featured_workflow_states_and_evidence(self):
         with TemporaryDirectory() as media_root, override_settings(MEDIA_ROOT=media_root, PAYMENT_ENCRYPTION_KEY="demo-test-key"):
-            call_command("seed_demo", stdout=StringIO())
+            call_command("seed_demo", "--allow-production", stdout=StringIO())
 
             completed = Donation.objects.get(title="[DEMO] Completed volunteer delivery")
             review = Donation.objects.get(title="[DEMO] Food safety review required")

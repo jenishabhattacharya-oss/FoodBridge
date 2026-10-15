@@ -9,8 +9,20 @@ def approved_ngo_required(view_func):
     def wrapper(request, *args, **kwargs):
         profile = getattr(request.user, "ngo_profile", None)
         if profile is None or not profile.is_approved:
-            messages.info(request, "Your NGO account is awaiting FoodBridge staff approval.")
+            messages.info(request, "Your NGO account is awaiting SharePlate staff approval.")
             return redirect("ngo_dashboard")
+        return view_func(request, *args, **kwargs)
+
+    return wrapper
+
+
+def approved_volunteer_required(view_func):
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        profile = getattr(request.user, "volunteer_profile", None)
+        if profile is None or not profile.is_approved:
+            messages.info(request, "Your volunteer account is awaiting SharePlate staff approval.")
+            return redirect("volunteer_profile")
         return view_func(request, *args, **kwargs)
 
     return wrapper
