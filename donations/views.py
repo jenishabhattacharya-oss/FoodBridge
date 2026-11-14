@@ -181,7 +181,13 @@ def donation_photo(request, donation_id, kind):
     if not can_view or not field_name or not getattr(donation, field_name):
         raise Http404("Photo not found.")
     photo = getattr(donation, field_name)
-    return FileResponse(photo.open("rb"), content_type="image/*")
+    try:
+        return FileResponse(photo.open("rb"), content_type="image/*")
+    except FileNotFoundError:
+        # Free-tier Render deployments store media in /tmp, which is wiped on
+        # every restart or redeploy; the database row then outlives the file.
+        # Return 404 instead of a 500 so pages degrade gracefully.
+        raise Http404("Photo file is missing.")
 
 
 @login_required(login_url="login")
@@ -199,7 +205,11 @@ def evidence_photo(request, pickup_id, kind):
     source = pickup if field_name == "delivery_photo" else donation
     if not field_name or not (is_donor or is_volunteer or is_approved_ngo) or not getattr(source, field_name):
         raise Http404("Evidence not found.")
-    return FileResponse(getattr(source, field_name).open("rb"), content_type="image/*")
+    try:
+        return FileResponse(getattr(source, field_name).open("rb"), content_type="image/*")
+    except FileNotFoundError:
+        # See donation_photo: media on the free tier is ephemeral.
+        raise Http404("Photo file is missing.")
 
 
 @login_required(login_url="login")
