@@ -93,7 +93,13 @@ def confirm_delivery(*, pickup_id, ngo):
     if not pickup.assigned_volunteer_id:
         raise ValidationError("This pickup has no assigned volunteer.")
     payment, created = VolunteerPayment.objects.get_or_create(
-        pickup=pickup, defaults={"ngo": ngo, "volunteer": pickup.assigned_volunteer, "amount_paise": settings.VOLUNTEER_DELIVERY_FEE_PAISE},
+        pickup=pickup,
+        defaults={
+            "ngo": ngo,
+            "volunteer": pickup.assigned_volunteer,
+            "amount_paise": settings.VOLUNTEER_DELIVERY_FEE_PAISE,
+            "payout_idempotency_key": secrets.token_hex(24),
+        },
     )
     if not created and payment.ngo_id != ngo.id:
         raise ValidationError("This payment belongs to another NGO.")

@@ -5,10 +5,26 @@ from .models import VolunteerPayoutProfile
 
 class VolunteerPayoutProfileForm(forms.Form):
     destination = forms.ChoiceField(choices=VolunteerPayoutProfile.Destination.choices)
-    upi_id = forms.CharField(required=False, max_length=100)
-    account_holder = forms.CharField(required=False, max_length=120)
-    account_number = forms.CharField(required=False, max_length=40)
-    ifsc = forms.CharField(required=False, max_length=20)
+    upi_id = forms.CharField(
+        required=False,
+        max_length=100,
+        widget=forms.TextInput(attrs={"placeholder": "e.g. volunteer@upi"}),
+    )
+    account_holder = forms.CharField(
+        required=False,
+        max_length=120,
+        widget=forms.TextInput(attrs={"placeholder": "Name as printed on the passbook"}),
+    )
+    account_number = forms.CharField(
+        required=False,
+        max_length=40,
+        widget=forms.TextInput(attrs={"placeholder": "Bank account number"}),
+    )
+    ifsc = forms.CharField(
+        required=False,
+        max_length=20,
+        widget=forms.TextInput(attrs={"placeholder": "e.g. SBIN0001234"}),
+    )
 
     def clean(self):
         data = super().clean()
