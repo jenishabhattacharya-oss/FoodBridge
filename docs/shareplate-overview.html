@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SharePlate — Project Overview</title>
+<style>
+  @page{ size:A4; margin:18mm 17mm; }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{ font-family:"DejaVu Sans",Arial,sans-serif; color:#111; font-size:11px; line-height:1.55; }
+  section{ page-break-after:always; }
+  section:last-child{ page-break-after:avoid; }
+  h1{ font-size:22px; margin-bottom:2px; }
+  .sub{ color:#555; font-size:12px; margin-bottom:14px; }
+  h2{ font-size:14px; margin:16px 0 6px; page-break-after:avoid; }
+  p{ margin-bottom:6px; }
+  ul,ol{ margin:4px 0 8px 16px; }
+  li{ margin-bottom:3px; }
+  table{ border-collapse:collapse; width:100%; font-size:10px; margin:6px 0; }
+  th,td{ border:1px solid #999; padding:4px 7px; text-align:left; vertical-align:top; }
+  th{ background:#f0f0f0; }
+  figure{ margin:8px 0; page-break-inside:avoid; }
+  figcaption{ font-size:9.5px; color:#555; margin-top:4px; }
+  svg{ display:block; }
+  svg text{ font-family:"DejaVu Sans",Arial,sans-serif; }
+  .b{ font-weight:bold; }
+</style>
+</head>
+<body>
+
+<!-- PAGE 1 -->
+<section>
+  <h1>SharePlate — Project Overview</h1>
+  <p class="sub">A web platform connecting surplus food with people who need it. November 2026.</p>
+
+  <h2>1. What the website is</h2>
+  <p>SharePlate moves surplus food from donors to verified NGOs. A donor posts food with photos and a pickup
+  window. A staff-verified NGO reviews the food for safety and accepts it. A volunteer collects it and delivers
+  it. The NGO confirms receipt, closing the loop. If no volunteer is available, the NGO handles the pickup itself.
+  Every step — status, timestamps, photos, recipient details — is recorded.</p>
+
+  <h2>2. How it works — the donation lifecycle</h2>
+
+  <figure>
+  <svg viewBox="0 0 720 190" width="100%">
+    <defs>
+      <marker id="a" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#111"/></marker>
+    </defs>
+    <g font-size="10" fill="#111">
+      <!-- row 1: main path -->
+      <rect x="10"  y="25" width="110" height="42" fill="#fff" stroke="#111"/>
+      <text x="65"  y="43" text-anchor="middle" font-weight="bold">Donor posts food</text>
+      <text x="65"  y="57" text-anchor="middle" font-size="8.5" fill="#555">photos + details</text>
+
+      <line x1="120" y1="46" x2="148" y2="46" stroke="#111" marker-end="url(#a)"/>
+
+      <rect x="150" y="25" width="120" height="42" fill="#fff" stroke="#111"/>
+      <text x="210" y="43" text-anchor="middle" font-weight="bold">Safety screening</text>
+      <text x="210" y="57" text-anchor="middle" font-size="8.5" fill="#555">AI vision or human</text>
+
+      <line x1="270" y1="46" x2="298" y2="46" stroke="#111" marker-end="url(#a)"/>
+
+      <rect x="300" y="25" width="100" height="42" fill="#fff" stroke="#111"/>
+      <text x="350" y="43" text-anchor="middle" font-weight="bold">NGO accepts</text>
+      <text x="350" y="57" text-anchor="middle" font-size="8.5" fill="#555">or rejects</text>
+
+      <line x1="400" y1="46" x2="428" y2="46" stroke="#111" marker-end="url(#a)"/>
+
+      <rect x="430" y="25" width="110" height="42" fill="#fff" stroke="#111"/>
+      <text x="485" y="43" text-anchor="middle" font-weight="bold">Volunteer delivers</text>
+      <text x="485" y="57" text-anchor="middle" font-size="8.5" fill="#555">proof photo + GPS</text>
+
+      <line x1="540" y1="46" x2="568" y2="46" stroke="#111" marker-end="url(#a)"/>
+
+      <rect x="570" y="25" width="140" height="42" fill="#fff" stroke="#111"/>
+      <text x="640" y="43" text-anchor="middle" font-weight="bold">NGO confirms receipt</text>
+      <text x="640" y="57" text-anchor="middle" font-size="8.5" fill="#555">closes the loop</text>
+    </g>
+
+    <!-- branch: no volunteer -->
+    <line x1="350" y1="67" x2="350" y2="103" stroke="#111" stroke-dasharray="4 3" marker-end="url(#a)"/>
+    <text x="357" y="95" font-size="8.5" fill="#555">no volunteer available</text>
+    <rect x="270" y="105" width="160" height="42" fill="#fff" stroke="#111" stroke-dasharray="4 3"/>
+    <text x="350" y="123" text-anchor="middle" font-weight="bold">NGO-managed pickup</text>
+    <text x="350" y="137" text-anchor="middle" font-size="8.5" fill="#555">NGO collects the food itself</text>
+    <path d="M430,126 L450,126 L450,88 L640,88 L640,69" fill="none" stroke="#111" stroke-dasharray="4 3" marker-end="url(#a)"/>
+
+    <!-- branch: payment -->
+    <line x1="640" y1="67" x2="640" y2="103" stroke="#111" marker-end="url(#a)"/>
+    <rect x="560" y="105" width="160" height="42" fill="#fff" stroke="#111"/>
+    <text x="640" y="123" text-anchor="middle" font-weight="bold">₹500 volunteer payout</text>
+    <text x="640" y="137" text-anchor="middle" font-size="8.5" fill="#555">only after receipt is confirmed</text>
+
+    <!-- branch: rejection -->
+    <line x1="210" y1="67" x2="210" y2="103" stroke="#111" marker-end="url(#a)"/>
+    <rect x="120" y="105" width="140" height="42" fill="#fff" stroke="#111"/>
+    <text x="190" y="123" text-anchor="middle" font-weight="bold">Rejected / review</text>
+    <text x="190" y="137" text-anchor="middle" font-size="8.5" fill="#555">donor sees the reason</text>
+  </svg>
+  <figcaption>Figure 1 — One tracked path for every donation, with fallbacks. Uncertain or rejected items go back
+  to the donor with a reason; the NGO-managed branch keeps food moving without a volunteer.</figcaption>
+  </figure>
+
+  <h2>3. Rules that make it trustworthy</h2>
+  <ul>
+    <li><span class="b">Three separate roles</span> — Donor, NGO, Volunteer. Each account is exactly one role, with its own workspace and server-enforced permissions.</li>
+    <li><span class="b">NGOs are verified</span> — a newly registered NGO can log in but cannot act on any listing until staff approve it in the admin panel.</li>
+    <li><span class="b">Volunteers see only accepted pickups</span> — and can hold one active pickup at a time.</li>
+    <li><span class="b">Object-level permission checks</span> — every view verifies the caller actually owns or is assigned to the record.</li>
+    <li><span class="b">Full audit trail</span> — status changes, timestamps, photos and recipient details are stored on each donation.</li>
+  </ul>
+</section>
+
+<!-- PAGE 2 -->
+<section>
+  <h2>4. System architecture</h2>
+
+  <figure>
+  <svg viewBox="0 0 720 300" width="100%">
+    <defs>
+      <marker id="a2" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#111"/></marker>
+    </defs>
+    <g font-size="10" fill="#111">
+      <rect x="80" y="10" width="560" height="44" fill="#fff" stroke="#111"/>
+      <text x="360" y="29" text-anchor="middle" font-weight="bold">Browser / mobile (installable PWA)</text>
+      <text x="360" y="44" text-anchor="middle" font-size="8.5" fill="#555">server-rendered pages · plain JavaScript · OpenStreetMap maps</text>
+
+      <line x1="360" y1="54" x2="360" y2="82" stroke="#111" marker-end="url(#a2)"/>
+      <text x="368" y="72" font-size="8.5" fill="#555">HTTPS</text>
+
+      <rect x="60" y="84" width="600" height="104" fill="#fff" stroke="#111"/>
+      <text x="360" y="104" text-anchor="middle" font-weight="bold">Django 6 web application (Gunicorn + WhiteNoise)</text>
+      <rect x="85"  y="118" width="125" height="34" fill="#fff" stroke="#111"/>
+      <text x="147" y="139" text-anchor="middle" font-size="9.5">accounts — auth, roles</text>
+      <rect x="225" y="118" width="125" height="34" fill="#fff" stroke="#111"/>
+      <text x="287" y="139" text-anchor="middle" font-size="9.5">donations — listings</text>
+      <rect x="365" y="118" width="125" height="34" fill="#fff" stroke="#111"/>
+      <text x="427" y="139" text-anchor="middle" font-size="9.5">volunteers — pickups</text>
+      <rect x="505" y="118" width="125" height="34" fill="#fff" stroke="#111"/>
+      <text x="567" y="139" text-anchor="middle" font-size="9.5">payments — payouts</text>
+      <text x="360" y="172" text-anchor="middle" font-size="8.5" fill="#555">Django admin panel for staff oversight · per-view role checks · server-side sessions</text>
+
+      <line x1="250" y1="188" x2="250" y2="216" stroke="#111" marker-end="url(#a2)"/>
+      <line x1="470" y1="188" x2="470" y2="216" stroke="#111" marker-end="url(#a2)"/>
+
+      <rect x="120" y="218" width="260" height="40" fill="#fff" stroke="#111"/>
+      <text x="250" y="236" text-anchor="middle" font-weight="bold">Database</text>
+      <text x="250" y="250" text-anchor="middle" font-size="8.5" fill="#555">SQLite in development · PostgreSQL in production</text>
+
+      <rect x="420" y="218" width="240" height="40" fill="#fff" stroke="#111"/>
+      <text x="540" y="236" text-anchor="middle" font-weight="bold">Hosting — Render</text>
+      <text x="540" y="250" text-anchor="middle" font-size="8.5" fill="#555">Docker container · auto-deploy on git push</text>
+
+      <rect x="60" y="266" width="600" height="30" fill="#fff" stroke="#111" stroke-dasharray="5 3"/>
+      <text x="360" y="285" text-anchor="middle" font-size="9.5" fill="#111">Optional external services: Gemini vision (photo screening) · Razorpay (payments) · SMTP (e-mail) · geocoding</text>
+    </g>
+  </svg>
+  <figcaption>Figure 2 — A simple server-rendered monolith: one Django project with four app modules, one
+  database, no JavaScript build step. Third-party services are optional and behind swappable interfaces.</figcaption>
+  </figure>
+
+  <h2>5. How the AI food-safety screening works</h2>
+  <p>When a donor submits photos, the system can screen them with the Google Gemini vision API before a human
+  ever sees them:</p>
+  <ol>
+    <li>The photos are sent to the model with a strict prompt: check <span class="b">only visible warning signs</span>
+    (spoilage, mold, pests, damaged packaging). The model must reply in JSON with a decision —
+    <span class="b">approve</span>, <span class="b">reject</span>, or <span class="b">review</span> — plus a
+    confidence score and risk flags.</li>
+    <li>The reply is parsed, validated and range-checked before any status changes.</li>
+    <li><span class="b">Graceful degradation:</span> if there is no API key, the model is unsure, or the API fails,
+    the listing goes to a human review queue instead of being blocked. Reviewers are reminded that a visual
+    check is not a food-safety certification.</li>
+  </ol>
+</section>
+
+<!-- PAGE 3 -->
+<section>
+  <h2>6. Database design (core entities)</h2>
+
+  <figure>
+  <svg viewBox="0 0 720 250" width="100%">
+    <defs>
+      <marker id="a3" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#111"/></marker>
+    </defs>
+    <g font-size="9" fill="#111">
+      <rect x="20"  y="15" width="170" height="72" fill="#fff" stroke="#111"/>
+      <text x="105" y="31" text-anchor="middle" font-weight="bold">User</text>
+      <text x="28" y="47">role: donor | ngo | volunteer</text>
+      <text x="28" y="60">login, name, contact</text>
+      <text x="28" y="73">staff approval flags</text>
+
+      <rect x="280" y="15" width="180" height="72" fill="#fff" stroke="#111"/>
+      <text x="370" y="31" text-anchor="middle" font-weight="bold">Donation</text>
+      <text x="288" y="47">food type, condition, quantity</text>
+      <text x="288" y="60">3 photos, allergen notes</text>
+      <text x="288" y="73">pickup window, location, status</text>
+
+      <rect x="530" y="15" width="170" height="72" fill="#fff" stroke="#111"/>
+      <text x="615" y="31" text-anchor="middle" font-weight="bold">Pickup</text>
+      <text x="538" y="47">volunteer, accepted NGO</text>
+      <text x="538" y="60">claimed → collected →</text>
+      <text x="538" y="73">delivered → confirmed</text>
+
+      <rect x="20"  y="135" width="170" height="60" fill="#fff" stroke="#111"/>
+      <text x="105" y="151" text-anchor="middle" font-weight="bold">Role profile</text>
+      <text x="28" y="167">Donor / NGO / Volunteer</text>
+      <text x="28" y="180">profile details, GPS, approval</text>
+
+      <rect x="280" y="135" width="180" height="60" fill="#fff" stroke="#111"/>
+      <text x="370" y="151" text-anchor="middle" font-weight="bold">PayoutProfile</text>
+      <text x="288" y="167">volunteer's UPI or bank</text>
+      <text x="288" y="180">details encrypted at rest</text>
+
+      <rect x="530" y="135" width="170" height="60" fill="#fff" stroke="#111"/>
+      <text x="615" y="151" text-anchor="middle" font-weight="bold">VolunteerPayment</text>
+      <text x="538" y="167">fixed ₹500 delivery fee</text>
+      <text x="538" y="180">awaiting → ready → paid</text>
+
+      <line x1="190" y1="51" x2="278" y2="51" stroke="#111" marker-end="url(#a3)"/>
+      <text x="196" y="45" font-size="8.5" fill="#555">donor posts *</text>
+
+      <line x1="460" y1="51" x2="528" y2="51" stroke="#111" marker-end="url(#a3)"/>
+      <text x="464" y="45" font-size="8.5" fill="#555">1 : 0..1</text>
+
+      <line x1="105" y1="87" x2="105" y2="133" stroke="#111" marker-end="url(#a3)"/>
+      <text x="111" y="115" font-size="8.5" fill="#555">1 : 1</text>
+
+      <line x1="615" y1="87" x2="615" y2="133" stroke="#111" marker-end="url(#a3)"/>
+      <text x="621" y="115" font-size="8.5" fill="#555">1 : 1</text>
+
+      <line x1="460" y1="165" x2="528" y2="165" stroke="#111" marker-end="url(#a3)"/>
+      <text x="464" y="159" font-size="8.5" fill="#555">1 : 0..1</text>
+    </g>
+  </svg>
+  <figcaption>Figure 3 — Simplified schema. Every donation optionally becomes one pickup; every confirmed pickup
+  leads to one payment. Django's ORM maps these to the database; the same models run on SQLite and PostgreSQL.</figcaption>
+  </figure>
+
+  <h2>7. Technology stack</h2>
+  <table>
+    <tr><th style="width:22%;">Layer</th><th>Technology</th><th style="width:40%;">Purpose</th></tr>
+    <tr><td>Backend</td><td>Django 6 (Python), Gunicorn</td><td>Server-rendered web application; security features built in.</td></tr>
+    <tr><td>Frontend</td><td>Django templates, JavaScript, PWA, Leaflet</td><td>Works on low-end phones; installable; maps without paid API keys.</td></tr>
+    <tr><td>Database</td><td>SQLite (dev), PostgreSQL (prod)</td><td>Same models everywhere; production-grade when deployed.</td></tr>
+    <tr><td>AI</td><td>Google Gemini vision API</td><td>Automated photo screening with human fallback.</td></tr>
+    <tr><td>Payments</td><td>Razorpay / RazorpayX (optional)</td><td>Delivery fee collection and volunteer payouts.</td></tr>
+    <tr><td>Hosting</td><td>Docker, Render, GitHub Actions</td><td>Reproducible container, auto-deploy, scheduled health pings.</td></tr>
+  </table>
+
+  <h2>8. Current state</h2>
+  <ul>
+    <li><span class="b">73 automated tests</span> across 9 modules, all passing; config and migration checks clean.</li>
+    <li><span class="b">Deployed and live</span> at https://shareplate-mvp.onrender.com with demo accounts and demo data seeded automatically.</li>
+    <li>A scheduled GitHub Actions job pings the site every 5 minutes so it stays awake on the free hosting tier.</li>
+    <li>Payments and AI screening are optional integrations — the app runs fully without them.</li>
+  </ul>
+</section>
+
+</body>
+</html>

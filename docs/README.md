@@ -12,6 +12,7 @@ Start with [the project guide](project.md) for a plain-language description of t
 | [Deployment](deployment.md) | Production services, Render setup, and release checklist |
 | [Demo walkthrough](demo-presentation.md) | Demonstration accounts and guided walkthrough |
 | [Demo script](demo-script.md) | Timed 10-minute presentation script with accounts, talking points, and screenshots |
+| [Technical overview (PDF)](SharePlate-Overview.pdf) | 3-page printable project summary with diagrams — architecture, lifecycle, and data model |
 
 ## Start here
 
