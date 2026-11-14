@@ -1,7 +1,11 @@
 /**
- * FoodBridge 3D WebGL Interactive Hero Network
+ * SharePlate hero — doodle kitchen tapestry
  * Built with Three.js (r128)
- * Inspired by modern tech interactive canvases (e.g. hackspire.tech)
+ *
+ * A seamless, hand-drawn pattern of kitchen doodles (tomatoes, bread, leaves,
+ * carrots, bowls, cutlery, wheat, sparkles) printed like gold ink on two
+ * cloth planes at different depths. The cloths ripple slowly and the pattern
+ * drifts, reading as a crafted textile — no glowing nodes, no stock 3D fruit.
  */
 
 (function () {
@@ -10,8 +14,9 @@
     const canvas = document.getElementById('hero3d-canvas');
     if (!canvas || typeof THREE === 'undefined') return;
 
-    let scene, camera, renderer;
-    let nodesMesh, linesMesh, particleMesh, centralNodes = [];
+    let scene, camera, renderer, clock;
+    const layers = [];
+
     let mouseX = 0, mouseY = 0;
     let targetX = 0, targetY = 0;
     let windowHalfX = window.innerWidth / 2;
@@ -19,15 +24,374 @@
     let animationFrameId = null;
     let isVisible = true;
 
-    // Node Count & Constellation Parameters
-    const NODE_COUNT = window.innerWidth < 768 ? 32 : 65;
-    const MAX_DISTANCE = 38;
-    const nodePositions = [];
-    const nodeVelocities = [];
+    const isMobile = window.innerWidth < 768;
+
+    const FOG_COLOR = 0x07120a; // matches --bg-forest-900
+
+    function rand(min, max) {
+        return min + Math.random() * (max - min);
+    }
+
+    /* ---------- Doodle stroke helpers ---------- */
+
+    // A circle drawn with a little hand wobble
+    function wobbleCircle(ctx, cx, cy, r, segments) {
+        ctx.beginPath();
+        for (let i = 0; i <= segments; i++) {
+            const a = (i / segments) * Math.PI * 2;
+            const rr = r * (1 + Math.sin(a * 3 + cx) * 0.035 + Math.sin(a * 5 + cy) * 0.02);
+            const x = cx + Math.cos(a) * rr;
+            const y = cy + Math.sin(a) * rr;
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        ctx.stroke();
+    }
+
+    /* ---------- Doodle library (drawn around 0,0, roughly ±s) ---------- */
+
+    const DOODLES = [
+        // Tomato
+        function (ctx, s) {
+            wobbleCircle(ctx, 0, s * 0.12, s * 0.72, 26);
+            ctx.beginPath();
+            ctx.moveTo(0, -s * 0.62);
+            ctx.lineTo(0, -s * 0.92);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(0, -s * 0.84);
+            ctx.lineTo(s * 0.3, -s * 0.98);
+            ctx.moveTo(0, -s * 0.84);
+            ctx.lineTo(-s * 0.3, -s * 0.98);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(0, s * 0.16, s * 0.38, Math.PI * 0.25, Math.PI * 0.85);
+            ctx.stroke();
+        },
+
+        // Bread loaf with score marks
+        function (ctx, s) {
+            ctx.beginPath();
+            ctx.moveTo(-s * 0.85, s * 0.55);
+            ctx.quadraticCurveTo(-s * 0.95, -s * 0.1, -s * 0.5, -s * 0.45);
+            ctx.quadraticCurveTo(0, -s * 0.82, s * 0.5, -s * 0.45);
+            ctx.quadraticCurveTo(s * 0.95, -s * 0.1, s * 0.85, s * 0.55);
+            ctx.closePath();
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(-s * 0.35, -s * 0.5);
+            ctx.lineTo(-s * 0.15, -s * 0.15);
+            ctx.moveTo(0, -s * 0.56);
+            ctx.lineTo(s * 0.2, -s * 0.21);
+            ctx.moveTo(s * 0.35, -s * 0.5);
+            ctx.lineTo(s * 0.55, -s * 0.15);
+            ctx.stroke();
+        },
+
+        // Leaf with veins
+        function (ctx, s) {
+            ctx.beginPath();
+            ctx.moveTo(0, -s * 0.9);
+            ctx.bezierCurveTo(s * 0.9, -s * 0.4, s * 0.7, s * 0.6, 0, s * 0.9);
+            ctx.bezierCurveTo(-s * 0.7, s * 0.6, -s * 0.9, -s * 0.4, 0, -s * 0.9);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(0, -s * 0.7);
+            ctx.lineTo(0, s * 0.75);
+            ctx.stroke();
+            ctx.beginPath();
+            for (let i = 1; i <= 3; i++) {
+                const y = -s * 0.6 + i * s * 0.38;
+                ctx.moveTo(0, y);
+                ctx.lineTo(s * 0.32, y + s * 0.18);
+                ctx.moveTo(0, y);
+                ctx.lineTo(-s * 0.32, y + s * 0.18);
+            }
+            ctx.stroke();
+        },
+
+        // Carrot with fronds
+        function (ctx, s) {
+            ctx.beginPath();
+            ctx.moveTo(-s * 0.45, -s * 0.45);
+            ctx.lineTo(s * 0.45, -s * 0.45);
+            ctx.quadraticCurveTo(s * 0.32, s * 0.4, 0, s * 0.92);
+            ctx.quadraticCurveTo(-s * 0.32, s * 0.4, -s * 0.45, -s * 0.45);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(-s * 0.28, -s * 0.15);
+            ctx.lineTo(-s * 0.05, -s * 0.05);
+            ctx.moveTo(-s * 0.18, s * 0.25);
+            ctx.lineTo(s * 0.02, s * 0.33);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(-s * 0.18, -s * 0.45);
+            ctx.quadraticCurveTo(-s * 0.3, -s * 0.8, -s * 0.5, -s * 0.9);
+            ctx.moveTo(0, -s * 0.45);
+            ctx.quadraticCurveTo(0, -s * 0.8, 0, -s * 1.0);
+            ctx.moveTo(s * 0.18, -s * 0.45);
+            ctx.quadraticCurveTo(s * 0.3, -s * 0.8, s * 0.5, -s * 0.9);
+            ctx.stroke();
+        },
+
+        // Apple
+        function (ctx, s) {
+            wobbleCircle(ctx, 0, s * 0.15, s * 0.68, 24);
+            ctx.beginPath();
+            ctx.moveTo(0, -s * 0.5);
+            ctx.quadraticCurveTo(s * 0.08, -s * 0.85, s * 0.24, -s * 0.95);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(s * 0.22, -s * 0.7);
+            ctx.quadraticCurveTo(s * 0.62, -s * 0.82, s * 0.52, -s * 0.5);
+            ctx.quadraticCurveTo(s * 0.32, -s * 0.52, s * 0.22, -s * 0.7);
+            ctx.stroke();
+        },
+
+        // Bowl with steam curls
+        function (ctx, s) {
+            ctx.beginPath();
+            ctx.arc(0, -s * 0.05, s * 0.68, 0, Math.PI);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(-s * 0.28, s * 0.68);
+            ctx.lineTo(s * 0.28, s * 0.68);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(-s * 0.22, -s * 0.35);
+            ctx.bezierCurveTo(-s * 0.42, -s * 0.55, -s * 0.02, -s * 0.65, -s * 0.18, -s * 0.95);
+            ctx.moveTo(s * 0.22, -s * 0.35);
+            ctx.bezierCurveTo(s * 0.42, -s * 0.55, s * 0.02, -s * 0.65, s * 0.18, -s * 0.95);
+            ctx.stroke();
+        },
+
+        // Fork
+        function (ctx, s) {
+            ctx.beginPath();
+            ctx.moveTo(0, s * 0.9);
+            ctx.lineTo(0, -s * 0.2);
+            ctx.moveTo(-s * 0.26, -s * 0.2);
+            ctx.lineTo(-s * 0.26, -s * 0.82);
+            ctx.moveTo(0, -s * 0.2);
+            ctx.lineTo(0, -s * 0.86);
+            ctx.moveTo(s * 0.26, -s * 0.2);
+            ctx.lineTo(s * 0.26, -s * 0.82);
+            ctx.stroke();
+        },
+
+        // Spoon
+        function (ctx, s) {
+            ctx.beginPath();
+            ctx.ellipse(0, -s * 0.48, s * 0.26, s * 0.4, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(0, -s * 0.08);
+            ctx.lineTo(0, s * 0.9);
+            ctx.stroke();
+        },
+
+        // Plate
+        function (ctx, s) {
+            wobbleCircle(ctx, 0, 0, s * 0.8, 30);
+            wobbleCircle(ctx, 0, 0, s * 0.48, 24);
+        },
+
+        // Cheese wedge with holes
+        function (ctx, s) {
+            ctx.beginPath();
+            ctx.moveTo(-s * 0.75, s * 0.5);
+            ctx.lineTo(s * 0.75, s * 0.5);
+            ctx.lineTo(s * 0.45, -s * 0.55);
+            ctx.closePath();
+            ctx.stroke();
+            [ [-s * 0.15, s * 0.1, s * 0.08], [s * 0.28, s * 0.28, s * 0.11], [s * 0.02, s * 0.34, s * 0.06] ]
+                .forEach(function (h) {
+                    ctx.beginPath();
+                    ctx.arc(h[0], h[1], h[2], 0, Math.PI * 2);
+                    ctx.stroke();
+                });
+        },
+
+        // Wheat sprig
+        function (ctx, s) {
+            ctx.beginPath();
+            ctx.moveTo(0, s * 0.9);
+            ctx.lineTo(0, -s * 0.85);
+            ctx.stroke();
+            ctx.beginPath();
+            for (let i = 0; i < 5; i++) {
+                const y = -s * 0.72 + i * s * 0.3;
+                ctx.moveTo(0, y);
+                ctx.lineTo(-s * 0.3, y - s * 0.16);
+                ctx.moveTo(0, y);
+                ctx.lineTo(s * 0.3, y - s * 0.16);
+            }
+            ctx.stroke();
+        },
+
+        // Sparkle
+        function (ctx, s) {
+            ctx.beginPath();
+            ctx.moveTo(0, -s * 0.55);
+            ctx.lineTo(0, s * 0.55);
+            ctx.moveTo(-s * 0.55, 0);
+            ctx.lineTo(s * 0.55, 0);
+            ctx.stroke();
+        },
+
+        // Little heart
+        function (ctx, s) {
+            ctx.beginPath();
+            ctx.moveTo(0, s * 0.5);
+            ctx.bezierCurveTo(-s * 0.9, -s * 0.1, -s * 0.35, -s * 0.85, 0, -s * 0.32);
+            ctx.bezierCurveTo(s * 0.35, -s * 0.85, s * 0.9, -s * 0.1, 0, s * 0.5);
+            ctx.stroke();
+        },
+
+        // Squiggle filler
+        function (ctx, s) {
+            ctx.beginPath();
+            for (let x = -s; x <= s; x += 4) {
+                const y = Math.sin(x * 0.14) * s * 0.22;
+                if (x === -s) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+        }
+    ];
+
+    /* ---------- Seamless doodle tile ---------- */
+
+    function createDoodleTexture() {
+        const size = 512;
+        const grid = 4;
+        const cell = size / grid;
+
+        const c = document.createElement('canvas');
+        c.width = c.height = size;
+        const ctx = c.getContext('2d');
+
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.88)';
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+
+        for (let gy = 0; gy < grid; gy++) {
+            for (let gx = 0; gx < grid; gx++) {
+                if (Math.random() < 0.14) continue; // leave some breathing room
+
+                const doodle = DOODLES[(Math.random() * DOODLES.length) | 0];
+
+                ctx.save();
+                ctx.translate(
+                    gx * cell + cell / 2 + rand(-10, 10),
+                    gy * cell + cell / 2 + rand(-10, 10)
+                );
+                ctx.rotate(rand(-0.5, 0.5));
+                const scale = rand(0.72, 1.02) * (cell / 128);
+                ctx.scale(scale, scale);
+                doodle(ctx, 40);
+                ctx.restore();
+            }
+        }
+
+        return new THREE.CanvasTexture(c);
+    }
+
+    /* ---------- Waving cloth layers ---------- */
+
+    const LAYERS = [
+        {
+            z: -34,
+            tint: 0xe5c05b,      // champagne gold ink
+            opacity: 0.19,
+            repeat: [7, 4],
+            drift: 0.006,
+            waveAmp: 2.4,
+            waveSpeed: 0.5,
+            tilt: -0.05
+        },
+        {
+            z: -74,
+            tint: 0x5fae8a,      // moss green ink
+            opacity: 0.12,
+            repeat: [7, 4],
+            drift: -0.0035,
+            waveAmp: 4.0,
+            waveSpeed: 0.3,
+            tilt: 0.04
+        }
+    ];
+
+    function buildLayer(config) {
+        const distance = camera.position.z - config.z;
+        const viewHeight = 2 * distance * Math.tan((camera.fov * Math.PI / 180) / 2);
+        const width = viewHeight * 2.5;   // wide enough for ultra-wide screens
+        const height = viewHeight * 1.4;
+
+        const geometry = new THREE.PlaneGeometry(
+            width,
+            height,
+            isMobile ? 36 : 64,
+            isMobile ? 22 : 40
+        );
+
+        const texture = createDoodleTexture();
+        texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+        texture.repeat.set(config.repeat[0], config.repeat[1]);
+        texture.anisotropy = Math.min(4, renderer.capabilities.getMaxAnisotropy());
+
+        const material = new THREE.MeshBasicMaterial({
+            map: texture,
+            color: config.tint,
+            transparent: true,
+            opacity: config.opacity,
+            depthWrite: false
+        });
+
+        const mesh = new THREE.Mesh(geometry, material);
+        mesh.position.set(0, -2, config.z);
+        mesh.rotation.x = config.tilt;
+        scene.add(mesh);
+
+        return {
+            mesh: mesh,
+            texture: texture,
+            config: config,
+            basePositions: Float32Array.from(geometry.attributes.position.array),
+            phase: rand(0, Math.PI * 2)
+        };
+    }
+
+    function updateLayer(layer, seconds, dt) {
+        const position = layer.mesh.geometry.attributes.position;
+        const array = position.array;
+        const base = layer.basePositions;
+        const amp = layer.config.waveAmp;
+        const t = seconds * layer.config.waveSpeed + layer.phase;
+
+        for (let i = 0; i < position.count; i++) {
+            const bx = base[i * 3];
+            const by = base[i * 3 + 1];
+            array[i * 3 + 2] =
+                Math.sin(bx * 0.045 + t) * amp +
+                Math.cos(by * 0.06 + t * 0.8) * amp * 0.6;
+        }
+
+        position.needsUpdate = true;
+
+        // Endless pattern drift
+        layer.texture.offset.x += layer.config.drift * dt;
+        layer.texture.offset.y += layer.config.drift * dt * 0.35;
+    }
+
+    /* ---------- Lifecycle ---------- */
 
     function init() {
         try {
             scene = new THREE.Scene();
+            scene.fog = new THREE.Fog(FOG_COLOR, 120, 260);
 
             camera = new THREE.PerspectiveCamera(
                 55,
@@ -46,14 +410,16 @@
             renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-            buildNetwork();
-            buildParticles();
-            buildCentralHubs();
+            clock = new THREE.Clock();
+
+            LAYERS.forEach(function (config) {
+                layers.push(buildLayer(config));
+            });
 
             // Event Listeners
             window.addEventListener('resize', onWindowResize, { passive: true });
             document.addEventListener('mousemove', onDocumentMouseMove, { passive: true });
-            
+
             // Touch interaction for mobile
             canvas.addEventListener('touchmove', onTouchMove, { passive: true });
 
@@ -72,146 +438,9 @@
 
             animate();
         } catch (e) {
-            console.warn('FoodBridge 3D WebGL initialization skipped:', e);
+            console.warn('SharePlate doodle tapestry initialization skipped:', e);
             canvas.style.display = 'none';
         }
-    }
-
-    // Helper: circular glowing texture
-    function createGlowTexture(colorHex) {
-        const size = 64;
-        const c = document.createElement('canvas');
-        c.width = size;
-        c.height = size;
-        const ctx = c.getContext('2d');
-        const gradient = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
-        gradient.addColorStop(0, colorHex);
-        gradient.addColorStop(0.35, colorHex);
-        gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, size, size);
-        return new THREE.CanvasTexture(c);
-    }
-
-    function buildCentralHubs() {
-        const hubGroup = new THREE.Group();
-        const hubData = [
-            { color: 0x10b981, pos: [-24, 8, 5], label: 'Donors' },
-            { color: 0xf59e0b, pos: [22, -6, 10], label: 'Volunteers' },
-            { color: 0x34d399, pos: [0, 18, -8], label: 'NGOs' }
-        ];
-
-        hubData.forEach((hub) => {
-            // Core sphere
-            const geom = new THREE.SphereGeometry(1.6, 16, 16);
-            const mat = new THREE.MeshBasicMaterial({
-                color: hub.color,
-                wireframe: true,
-                transparent: true,
-                opacity: 0.85
-            });
-            const mesh = new THREE.Mesh(geom, mat);
-            mesh.position.set(...hub.pos);
-
-            // Halo ring
-            const ringGeom = new THREE.RingGeometry(2.2, 2.6, 24);
-            const ringMat = new THREE.MeshBasicMaterial({
-                color: hub.color,
-                side: THREE.DoubleSide,
-                transparent: true,
-                opacity: 0.4
-            });
-            const ringMesh = new THREE.Mesh(ringGeom, ringMat);
-            mesh.add(ringMesh);
-
-            hubGroup.add(mesh);
-            centralNodes.push({ mesh, ring: ringMesh, speed: Math.random() * 0.02 + 0.01 });
-        });
-
-        scene.add(hubGroup);
-    }
-
-    function buildNetwork() {
-        const positions = new Float32Array(NODE_COUNT * 3);
-        const spread = window.innerWidth < 768 ? 45 : 75;
-
-        for (let i = 0; i < NODE_COUNT; i++) {
-            const x = (Math.random() - 0.5) * spread;
-            const y = (Math.random() - 0.5) * spread * 0.7;
-            const z = (Math.random() - 0.5) * 45;
-
-            positions[i * 3] = x;
-            positions[i * 3 + 1] = y;
-            positions[i * 3 + 2] = z;
-
-            nodePositions.push(new THREE.Vector3(x, y, z));
-            nodeVelocities.push(
-                new THREE.Vector3(
-                    (Math.random() - 0.5) * 0.045,
-                    (Math.random() - 0.5) * 0.045,
-                    (Math.random() - 0.5) * 0.025
-                )
-            );
-        }
-
-        const pointGeometry = new THREE.BufferGeometry();
-        pointGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-
-        const pointMaterial = new THREE.PointsMaterial({
-            size: 3.2,
-            map: createGlowTexture('#10b981'),
-            transparent: true,
-            blending: THREE.AdditiveBlending,
-            depthWrite: false
-        });
-
-        nodesMesh = new THREE.Points(pointGeometry, pointMaterial);
-        scene.add(nodesMesh);
-
-        // Dynamic Line Mesh
-        const lineGeometry = new THREE.BufferGeometry();
-        const maxLines = NODE_COUNT * 12;
-        const linePositions = new Float32Array(maxLines * 6);
-        const lineColors = new Float32Array(maxLines * 6);
-
-        lineGeometry.setAttribute('position', new THREE.BufferAttribute(linePositions, 3).setUsage(THREE.DynamicDrawUsage));
-        lineGeometry.setAttribute('color', new THREE.BufferAttribute(lineColors, 3).setUsage(THREE.DynamicDrawUsage));
-
-        const lineMaterial = new THREE.LineBasicMaterial({
-            vertexColors: true,
-            transparent: true,
-            blending: THREE.AdditiveBlending,
-            depthWrite: false,
-            opacity: 0.65
-        });
-
-        linesMesh = new THREE.LineSegments(lineGeometry, lineMaterial);
-        scene.add(linesMesh);
-    }
-
-    function buildParticles() {
-        const particleCount = 80;
-        const geom = new THREE.BufferGeometry();
-        const pos = new Float32Array(particleCount * 3);
-
-        for (let i = 0; i < particleCount * 3; i += 3) {
-            pos[i] = (Math.random() - 0.5) * 110;
-            pos[i + 1] = (Math.random() - 0.5) * 90;
-            pos[i + 2] = (Math.random() - 0.5) * 80;
-        }
-
-        geom.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-        const mat = new THREE.PointsMaterial({
-            size: 2.2,
-            map: createGlowTexture('#f59e0b'),
-            transparent: true,
-            opacity: 0.55,
-            blending: THREE.AdditiveBlending,
-            depthWrite: false
-        });
-
-        particleMesh = new THREE.Points(geom, mat);
-        scene.add(particleMesh);
     }
 
     function onWindowResize() {
@@ -239,73 +468,6 @@
         }
     }
 
-    function updateNodes() {
-        const linePositions = linesMesh.geometry.attributes.position.array;
-        const lineColors = linesMesh.geometry.attributes.color.array;
-        let lineVertexIndex = 0;
-        let lineCount = 0;
-
-        const spread = window.innerWidth < 768 ? 45 : 75;
-        const halfSpread = spread / 2;
-
-        for (let i = 0; i < NODE_COUNT; i++) {
-            const p = nodePositions[i];
-            const v = nodeVelocities[i];
-
-            p.add(v);
-
-            if (p.x < -halfSpread || p.x > halfSpread) v.x = -v.x;
-            if (p.y < -halfSpread * 0.6 || p.y > halfSpread * 0.6) v.y = -v.y;
-            if (p.z < -25 || p.z > 25) v.z = -v.z;
-
-            // Connect nearby nodes
-            for (let j = i + 1; j < NODE_COUNT; j++) {
-                const pj = nodePositions[j];
-                const dx = p.x - pj.x;
-                const dy = p.y - pj.y;
-                const dz = p.z - pj.z;
-                const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-
-                if (dist < MAX_DISTANCE && lineVertexIndex + 6 < linePositions.length) {
-                    const alpha = 1.0 - (dist / MAX_DISTANCE);
-
-                    linePositions[lineVertexIndex] = p.x;
-                    linePositions[lineVertexIndex + 1] = p.y;
-                    linePositions[lineVertexIndex + 2] = p.z;
-
-                    linePositions[lineVertexIndex + 3] = pj.x;
-                    linePositions[lineVertexIndex + 4] = pj.y;
-                    linePositions[lineVertexIndex + 5] = pj.z;
-
-                    // Emerald to gold gradient lines
-                    lineColors[lineVertexIndex] = 0.06;
-                    lineColors[lineVertexIndex + 1] = 0.72 * alpha;
-                    lineColors[lineVertexIndex + 2] = 0.50 * alpha;
-
-                    lineColors[lineVertexIndex + 3] = 0.96 * alpha;
-                    lineColors[lineVertexIndex + 4] = 0.62 * alpha;
-                    lineColors[lineVertexIndex + 5] = 0.04;
-
-                    lineVertexIndex += 6;
-                    lineCount++;
-                }
-            }
-        }
-
-        // Update positions buffer
-        const pointPositions = nodesMesh.geometry.attributes.position.array;
-        for (let i = 0; i < NODE_COUNT; i++) {
-            pointPositions[i * 3] = nodePositions[i].x;
-            pointPositions[i * 3 + 1] = nodePositions[i].y;
-            pointPositions[i * 3 + 2] = nodePositions[i].z;
-        }
-
-        nodesMesh.geometry.attributes.position.needsUpdate = true;
-        linesMesh.geometry.attributes.position.needsUpdate = true;
-        linesMesh.geometry.attributes.color.needsUpdate = true;
-        linesMesh.geometry.setDrawRange(0, lineCount * 2);
-    }
-
     function animate() {
         if (!isVisible) {
             animationFrameId = null;
@@ -314,27 +476,26 @@
 
         animationFrameId = requestAnimationFrame(animate);
 
-        // Smooth camera lerp
+        const dt = Math.min(clock.getDelta(), 0.05);
+        const t = performance.now();
+        const seconds = t * 0.001;
+
+        // Smooth the mouse into a restrained parallax
         targetX += (mouseX - targetX) * 0.05;
         targetY += (mouseY - targetY) * 0.05;
 
-        scene.rotation.y = targetX * 0.012;
-        scene.rotation.x = targetY * 0.008;
+        // Very slow autonomous camera drift so the tapestry breathes
+        const driftX = Math.sin(t * 0.00012) * 4;
+        const driftY = Math.cos(t * 0.00009) * 2.5;
 
-        // Animate central hubs
-        centralNodes.forEach((node, idx) => {
-            node.mesh.rotation.y += node.speed;
-            node.mesh.rotation.x += node.speed * 0.7;
-            node.ring.rotation.z += (idx % 2 === 0 ? 0.015 : -0.015);
+        camera.position.x = driftX + targetX * 0.25;
+        camera.position.y = driftY + targetY * 0.18;
+        camera.lookAt(0, -2, 0);
+
+        layers.forEach(function (layer) {
+            updateLayer(layer, seconds, dt);
         });
 
-        // Rotate ambient particles
-        if (particleMesh) {
-            particleMesh.rotation.y += 0.0008;
-            particleMesh.rotation.x += 0.0004;
-        }
-
-        updateNodes();
         renderer.render(scene, camera);
     }
 
