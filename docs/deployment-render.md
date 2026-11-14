@@ -2,6 +2,8 @@
 
 This deployment uses a Docker web service and managed PostgreSQL. The blueprint uses Singapore for lower latency in India. The current [`render.yaml`](../render.yaml) targets Render's **free tier**: the web service sleeps after 15 minutes of inactivity (about a minute to wake), and the free database expires 30 days after creation. Uploads live in `/tmp/media` and are lost on restart or redeploy. For real production use, change the service plan to `starter`, the database plan to `basic-256mb`, and add the persistent disk as described in the blueprint comments.
 
+To keep the free service awake, `config/keepalive.py` runs a background thread in every gunicorn worker that pings the service's own `/health/` endpoint every 4 minutes (Render sets `RENDER_EXTERNAL_URL`, so no configuration is needed; disable with `KEEPALIVE_ENABLED=false`). A scheduled GitHub Actions workflow, `.github/workflows/keep-alive.yml`, pings `/health/` every 5 minutes as a fallback and visibility check — it needs a `SITE_URL` repository variable (see the workflow header) and is best-effort only, since GitHub can delay or drop scheduled runs.
+
 ## Before deployment
 
 1. Commit the production files and push the repository to GitHub or GitLab.

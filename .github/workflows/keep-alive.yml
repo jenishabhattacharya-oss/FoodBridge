@@ -1,6 +1,13 @@
 # Keeps the free Render web service awake by pinging /health/ every 5
 # minutes, well inside Render's 15-minute idle spin-down window.
 #
+# Primary keep-alive is the app itself: config/keepalive.py makes each
+# gunicorn worker ping RENDER_EXTERNAL_URL/health/ every 4 minutes. This
+# workflow is a fallback and visibility check — GitHub schedules are
+# best-effort: they register 15-60+ minutes after being added, run minutes
+# late under load, and are occasionally dropped entirely, so they cannot be
+# the only mechanism keeping the service awake.
+#
 # One-time setup in the GitHub repository:
 #   Settings → Secrets and variables → Actions → Variables → New variable
 #     name:  SITE_URL
@@ -11,7 +18,7 @@
 #   still leaves a large margin before the 15-minute idle timeout.
 # - GitHub disables scheduled workflows after 60 days of repository
 #   inactivity; GitHub sends an email beforehand. Any commit resets the clock.
-# - A always-awake free service consumes ~720 of the workspace's 750 monthly
+# - An always-awake free service consumes ~720 of the workspace's 750 monthly
 #   free instance hours, so it must be the only always-on free service.
 name: Keep alive
 
