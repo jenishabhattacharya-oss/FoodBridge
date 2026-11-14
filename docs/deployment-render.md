@@ -1,17 +1,17 @@
 # Deploy SharePlate MVP on Render
 
-This deployment uses a Docker web service, managed PostgreSQL, and a one-gigabyte persistent disk for private food and delivery evidence. The blueprint uses Singapore for lower latency in India.
+This deployment uses a Docker web service and managed PostgreSQL. The blueprint uses Singapore for lower latency in India. The current [`render.yaml`](../render.yaml) targets Render's **free tier**: the web service sleeps after 15 minutes of inactivity (about a minute to wake), and the free database expires 30 days after creation. Uploads live in `/tmp/media` and are lost on restart or redeploy. For real production use, change the service plan to `starter`, the database plan to `basic-256mb`, and add the persistent disk as described in the blueprint comments.
 
 ## Before deployment
 
 1. Commit the production files and push the repository to GitHub or GitLab.
 2. Keep `.env` out of the repository. Production secrets are supplied by Render.
-3. The blueprint provisions a `starter` web service and `basic-256mb` Postgres database. Review Render's current pricing before creating the Blueprint.
+3. The blueprint provisions a `free` web service and `free` Postgres database (one per workspace). Review Render's current pricing before creating the Blueprint.
 
 ## Create the service
 
 1. In Render, choose **New > Blueprint** and select this repository.
-2. Render detects [`render.yaml`](../render.yaml) and proposes the web service, database, and persistent media disk.
+2. Render detects [`render.yaml`](../render.yaml) and proposes the web service and database.
 3. Supply the prompted optional secrets:
    - `GEMINI_API_KEY` to enable automatic food-photo screening. Without it, submissions safely enter human review when screening is unavailable.
    - SMTP values to enable password-reset e-mail. Until configured, do not advertise password reset as a production capability.
@@ -20,7 +20,7 @@ This deployment uses a Docker web service, managed PostgreSQL, and a one-gigabyt
 
 ### Demo data
 
-Production startup never seeds demo accounts. Use `python manage.py seed_demo` only in an isolated development environment, and do not deploy its accounts or credentials.
+The blueprint sets `SEED_DEMO_DATA=true`, so a **fresh** production database is seeded automatically with the demo accounts and `[DEMO]` listings (shared password `FoodBridgeDemo123!`, printed in the deploy logs). The startup check only seeds when the demo users are missing, so normal restarts do not reset anything. Once the demo is no longer wanted, set `SEED_DEMO_DATA=false` in the Render dashboard and redeploy.
 
 ## First release checks
 
