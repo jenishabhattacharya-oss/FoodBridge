@@ -1,15 +1,16 @@
+# Free-tier Render blueprint: a free web service and a free PostgreSQL
+# database. Free web services sleep after 15 minutes of inactivity and free
+# databases expire 30 days after creation — fine for a demo, upgrade the
+# plans (service "starter", database "basic-256mb") and re-add a persistent
+# disk for real production use.
 services:
   - type: web
-    name: foodbridge-mvp
+    name: shareplate-mvp
     runtime: docker
-    plan: starter
+    plan: free
     region: singapore
     healthCheckPath: /health/
     dockerfilePath: ./Dockerfile
-    disk:
-      name: foodbridge-media
-      mountPath: /var/data
-      sizeGB: 1
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: config.settings_production
@@ -19,10 +20,13 @@ services:
         generateValue: true
       - key: DATABASE_URL
         fromDatabase:
-          name: foodbridge-db
+          name: shareplate-db
           property: connectionString
+      # Free services have no persistent disk; uploads live in /tmp and are
+      # lost on restart/redeploy. On a paid plan, set this to /var/data/media
+      # together with a disk definition.
       - key: DJANGO_MEDIA_ROOT
-        value: /var/data/media
+        value: /tmp/media
       - key: FOODBRIDGE_PAYMENTS_ENABLED
         value: "false"
       - key: RAZORPAY_MODE
@@ -41,10 +45,10 @@ services:
         sync: false
       - key: RAZORPAYX_ACCOUNT_NUMBER
         sync: false
-      # Seeds the demo workflow automatically on a new deployment. Set to
-      # "false" after the first deployment if this is becoming production.
+      # Seeds the demo workflow on a fresh database. Set to "false" after the
+      # first deployment if this stops being a demo.
       - key: SEED_DEMO_DATA
-        value: "false"
+        value: "true"
       - key: GEMINI_API_KEY
         sync: false
       - key: DJANGO_EMAIL_HOST
@@ -56,8 +60,8 @@ services:
       - key: DJANGO_DEFAULT_FROM_EMAIL
         sync: false
 databases:
-  - name: foodbridge-db
-    plan: basic-256mb
+  - name: shareplate-db
+    plan: free
     region: singapore
-    databaseName: foodbridge
-    user: foodbridge
+    databaseName: shareplate
+    user: shareplate
