@@ -1,0 +1,43 @@
+# Keeps the free Render web service awake by pinging /health/ every 5
+# minutes, well inside Render's 15-minute idle spin-down window.
+#
+# One-time setup in the GitHub repository:
+#   Settings → Secrets and variables → Actions → Variables → New variable
+#     name:  SITE_URL
+#     value: https://shareplate-mvp-<suffix>.onrender.com
+#
+# Notes:
+# - Scheduled workflows can run a few minutes late under GitHub load; that
+#   still leaves a large margin before the 15-minute idle timeout.
+# - GitHub disables scheduled workflows after 60 days of repository
+#   inactivity; GitHub sends an email beforehand. Any commit resets the clock.
+# - A always-awake free service consumes ~720 of the workspace's 750 monthly
+#   free instance hours, so it must be the only always-on free service.
+name: Keep alive
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping health endpoint
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+        run: |
+          if [ -z "$SITE_URL" ]; then
+            echo "::error::SITE_URL repository variable is not set. Add it under Settings → Secrets and variables → Actions → Variables (value: the https://...onrender.com URL of the web service, without a trailing slash)."
+            exit 1
+          fi
+          status=$(curl -s -o /dev/null -w "%{http_code}" --max-time 120 "${SITE_URL%/}/health/")
+          echo "health endpoint status: $status"
+          if [ "$status" != "200" ]; then
+            echo "::error::Unexpected status from ${SITE_URL%/}/health/ — check the Render dashboard."
+            exit 1
+          fi
