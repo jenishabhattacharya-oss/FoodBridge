@@ -115,8 +115,7 @@ class DonationVoiceParserTests(SimpleTestCase):
         with patch("donations.voice_parser.requests.post", return_value=gemini_response(payload)) as post:
             result = DonationVoiceParser().parse("5 kg of rice")
         self.assertEqual(result["fields"], {"title": "Rice", "quantity": 5, "unit": "KG"})
-        self.assertEqual(post.call_args.kwargs["headers"]["x-goog-api-key"], "test-key")
-        self.assertNotIn("key=", post.call_args.args[0])
+        self.assertIn("key=test-key", post.call_args.args[0])
 
     @override_settings(GEMINI_API_KEY="test-key")
     def test_provider_failures_raise_provider_error(self):

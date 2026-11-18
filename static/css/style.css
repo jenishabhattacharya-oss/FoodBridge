@@ -229,11 +229,18 @@ section[id], [id].wn-anchor { scroll-margin-top: calc(var(--nav-offset) + 8px); 
 }
 .wn-hero__inner { max-width: 1000px; margin: 0 auto; text-align: center; will-change: transform, opacity; }
 .wn-hero__title { margin: 1.7rem 0 1.5rem; font-size: clamp(2.7rem, 7.2vw, 6.1rem); font-weight: 700; line-height: 0.98; letter-spacing: -0.055em; }
-.wn-line { display: block; padding-bottom: 0.08em; overflow: hidden; }
-.wn-word { display: inline-block; padding-right: 0.04em; opacity: 0; transform: translateY(110%); animation: wn-rise 1.15s var(--ease-framer) forwards; animation-delay: calc(var(--i, 0) * 90ms + 160ms); }
+/* Extra bottom padding gives descenders (g, y, p) room to paint inside the
+   overflow-clipped reveal mask; the negative margin keeps line spacing intact. */
+.wn-line { display: block; padding-bottom: 0.24em; margin-bottom: -0.16em; overflow: hidden; }
+.wn-word { display: inline-block; padding-right: 0.04em; opacity: 0; transform: translateY(130%); animation: wn-rise 1.15s var(--ease-framer) forwards; animation-delay: calc(var(--i, 0) * 90ms + 160ms); }
 .wn-hero__title em { font-family: var(--font-body); font-style: italic; font-weight: 300; letter-spacing: -0.045em; }
 .wn-hero__title em .wn-word {
+    /* background-clip:text paints only inside this box, so pad it past the
+       italic descenders (the g tail) and cancel the extra height with a
+       negative margin, keeping line spacing unchanged. */
     padding-right: 0.1em;
+    padding-bottom: 0.14em;
+    margin-bottom: -0.14em;
     color: transparent;
     background: linear-gradient(120deg, #fff6d6 0%, var(--accent-gold-bright) 35%, var(--accent-gold) 65%, var(--accent-gold-deep) 100%);
     -webkit-background-clip: text;

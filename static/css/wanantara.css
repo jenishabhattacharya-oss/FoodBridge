@@ -1004,7 +1004,7 @@ select option, .form-select option { color: #0b1a10; background: #eef4ea; }
 @keyframes wn-float { 0% { transform: translate3d(0, 0, 0) scale(1); } 50% { transform: translate3d(4vw, -3vh, 0) scale(1.08); } 100% { transform: translate3d(-3vw, 4vh, 0) scale(0.95); } }
 @keyframes wn-spin { to { transform: rotate(360deg); } }
 @keyframes wn-fade-up { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
-@keyframes wn-rise { from { opacity: 0; transform: translateY(110%); } to { opacity: 1; transform: none; } }
+@keyframes wn-rise { from { opacity: 0; transform: translateY(130%); } to { opacity: 1; transform: none; } }
 @keyframes wn-marquee { to { transform: translateX(-50%); } }
 @keyframes wn-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
 

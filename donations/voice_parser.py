@@ -203,11 +203,12 @@ class DonationVoiceParser:
 
     def _call_model(self, transcript, now):
         model = getattr(settings, "GEMINI_TEXT_MODEL", "gemini-2.0-flash")
-        timeout = getattr(settings, "VOICE_PARSE_TIMEOUT_SECONDS", 10)
+        # Model responses can take longer under load; keep this configurable while
+        # allowing the default reverse-proxy request window to complete.
+        timeout = getattr(settings, "VOICE_PARSE_TIMEOUT_SECONDS", 30)
         try:
             response = requests.post(
-                f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent",
-                headers={"x-goog-api-key": settings.GEMINI_API_KEY},
+                f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={settings.GEMINI_API_KEY}",
                 json={
                     "contents": [{"parts": [{"text": self._build_prompt(transcript, now)}]}],
                     "generationConfig": {"responseMimeType": "application/json", "temperature": 0},
