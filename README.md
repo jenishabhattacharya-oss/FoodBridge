@@ -43,8 +43,6 @@ The [documentation index](docs/README.md) links to simple guides for each part o
 - [Database](docs/database.md) — models, relationships, migrations, and storage.
 - [Development](docs/development.md) — local setup, configuration, demo data, and useful commands.
 - [Deployment](docs/deployment.md) — production architecture and Render deployment.
-- [Demo walkthrough](docs/demo-presentation.md) — sample accounts and presentation steps.
-- [Demo script](docs/demo-script.md) — timed presentation script with screenshots.
 
 ## Built with
 

@@ -37,7 +37,7 @@ To load sample records for a local walkthrough:
 python manage.py seed_demo
 ```
 
-The command prints the demo password and refreshes only the demonstration accounts whose email starts with `demo.` and linked sample records. Do not use sample accounts in a live environment. See the [demo walkthrough](demo-presentation.md) for steps.
+The command prints the demo password and login details, and refreshes only the demonstration accounts whose email starts with `demo.` and linked sample records. Do not use sample accounts in a live environment.
 
 ## Useful commands
 
